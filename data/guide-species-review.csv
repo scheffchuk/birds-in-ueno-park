@@ -1,0 +1,69 @@
+sciName,comNameEn,comNameJa,comNameZhTw,winter,spring,summer,autumn
+Accipiter nisus,Eurasian Sparrowhawk,ハイタカ,北雀鷹,25,0,0,3
+Aegithalos caudatus,Long-tailed Tit,エナガ,Long-tailed Tit,25,25,35,50
+Alcedo atthis,Common Kingfisher,カワセミ,翠鳥,50,50,15,50
+Anas acuta,Northern Pintail,オナガガモ,尖尾鴨,80,80,15,80
+Anas crecca,Green-winged Teal,コガモ,小水鴨,25,15,0,35
+Anas platyrhynchos,Mallard,マガモ,綠頭鴨,25,25,8,35
+Anas zonorhyncha,Eastern Spot-billed Duck,カルガモ,花嘴鴨,80,80,80,80
+Apus nipalensis,House Swift,ヒメアマツバメ,小雨燕,25,8,50,15
+Ardea alba,Great Egret,ダイサギ,大白鷺,50,80,50,25
+Ardea cinerea,Gray Heron,アオサギ,蒼鷺,80,80,50,80
+Ardea intermedia,Medium Egret,チュウサギ,中白鷺,8,15,15,15
+Aythya baeri,Baer's Pochard,Baer's Pochard,Baer's Pochard,15,0,0,8
+Aythya ferina,Common Pochard,ホシハジロ,紅頭潛鴨,80,80,15,80
+Aythya fuligula,Tufted Duck,キンクロハジロ,鳳頭潛鴨,80,80,0,80
+Aythya marila,Greater Scaup,スズガモ,斑背潛鴨,15,8,0,15
+Bucephala clangula,Common Goldeneye,ホオジロガモ,鵲鴨,3,3,0,15
+Buteo japonicus,Eastern Buzzard,ノスリ,東方鵟,25,3,0,8
+Cecropis daurica,Eastern Red-rumped Swallow,コシアカツバメ,金腰燕,0,0,25,0
+Chloris sinica,Oriental Greenfinch,カワラヒワ,金翅雀,25,15,25,25
+Chroicocephalus ridibundus,Black-headed Gull,ユリカモメ,紅嘴鷗,80,80,15,80
+Coccothraustes coccothraustes,Hawfinch,シメ,臘嘴雀,15,3,0,0
+Columba livia,Rock Pigeon,カワラバト,野鴿,80,80,80,80
+Corvus corone,Carrion Crow,ハシボソガラス,小嘴烏鴉,50,35,35,50
+Corvus macrorhynchos,Large-billed Crow,ハシブトガラス,巨嘴鴉,80,80,80,80
+Cyanopica cyanus,Azure-winged Magpie,オナガ,灰喜鵲,25,25,25,35
+Cygnus olor,Mute Swan,コブハクチョウ,疣鼻天鵝,8,8,0,15
+Delichon dasypus,Asian House-Martin,イワツバメ,東方毛腳燕,0,15,50,0
+Egretta garzetta,Little Egret,コサギ,小白鷺,80,80,80,80
+Emberiza personata,Masked Bunting,Masked Bunting,Masked Bunting,25,8,0,3
+Falco tinnunculus,Eurasian Kestrel,チョウゲンボウ,紅隼,3,15,0,8
+Fringilla montifringilla,Brambling,アトリ,花雀,15,3,0,0
+Fulica atra,Eurasian Coot,オオバン,白冠雞,80,80,0,80
+Gallinula chloropus,Eurasian Moorhen,バン,紅冠水雞,25,25,15,15
+Garrulax canorus,Chinese Hwamei,ガビチョウ,大陸畫眉,0,8,25,0
+Hirundo rustica,Barn Swallow,ツバメ,家燕,0,80,80,15
+Horornis diphone,Japanese Bush Warbler,ウグイス,日本樹鶯,50,25,0,15
+Hypsipetes amaurotis,Brown-eared Bulbul,ヒヨドリ,棕耳鵯,80,80,80,80
+Lanius bucephalus,Bull-headed Shrike,モズ,紅頭伯勞,8,8,0,15
+Larus canus,Common Gull,カモメ,歐亞海鷗,8,15,0,8
+Larus crassirostris,Black-tailed Gull,ウミネコ,黑尾鷗,25,80,35,25
+Larus schistisagus,Slaty-backed Gull,オオセグロカモメ,灰背鷗,8,3,0,15
+Larus vegae,Vega Gull,セグロカモメ,Vega Gull,25,35,0,35
+Mareca penelope,Eurasian Wigeon,ヒドリガモ,赤頸鴨,35,15,0,25
+Mareca strepera,Gadwall,オカヨシガモ,赤膀鴨,15,15,0,15
+Milvus migrans,Black Kite,トビ,黑鳶,25,15,8,35
+Motacilla alba,White Wagtail,ハクセキレイ,白鶺鴒,50,50,35,50
+Motacilla cinerea,Gray Wagtail,キセキレイ,灰鶺鴒,25,15,0,0
+Motacilla grandis,Japanese Wagtail,セグロセキレイ,日本鶺鴒,15,8,0,15
+Nycticorax nycticorax,Black-crowned Night Heron,ゴイサギ,夜鷺,35,50,35,25
+Parus cinereus,Asian Tit,クロシジュウカラ,Cinereous Tit,80,80,80,80
+Passer montanus,Eurasian Tree Sparrow,スズメ,麻雀,80,80,80,80
+Periparus ater,Coal Tit,ヒガラ,煤山雀,8,3,25,25
+Phalacrocorax carbo,Great Cormorant,カワウ,鸕鷀,80,80,80,80
+Phoenicurus auroreus,Daurian Redstart,ジョウビタキ,黃尾鴝,25,8,0,15
+Phylloscopus coronatus,Eastern Crowned Warbler,センダイムシクイ,冠羽柳鶯,0,0,15,15
+Psittacula krameri,Rose-ringed Parakeet,ホンセイインコ,紅領綠鸚鵡,50,25,25,50
+Sittiparus varius,Varied Tit,ヤマガラ,雜色山雀,8,8,15,15
+Spatula clypeata,Northern Shoveler,ハシビロガモ,琵嘴鴨,50,35,0,50
+Spodiopsar cineraceus,White-cheeked Starling,ムクドリ,灰椋鳥,80,80,80,80
+Streptopelia orientalis,Oriental Turtle-Dove,キジバト,金背鳩,80,80,50,80
+Tachybaptus ruficollis,Little Grebe,カイツブリ,小鸊鷉,50,80,80,80
+Tachyspiza gularis,Japanese Sparrowhawk,Japanese Sparrowhawk,Japanese Sparrowhawk,0,3,25,0
+Treron sieboldii,White-bellied Green-Pigeon,アオバト,綠鳩,0,0,15,8
+Turdus chrysolaus,Brown-headed Thrush,アカハラ,赤腹鶇,25,15,0,3
+Turdus eunomus,Dusky Thrush,ツグミ,斑點鶇,80,50,0,15
+Turdus pallidus,Pale Thrush,シロハラ,白腹鶇,25,25,0,0
+Yungipicus kizuki,Japanese Pygmy Woodpecker,コゲラ,Japanese Pygmy Woodpecker,25,25,25,25
+Zosterops japonicus,Warbling White-eye,メジロ,日菲繡眼,80,80,35,50

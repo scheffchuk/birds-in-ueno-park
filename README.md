@@ -6,6 +6,8 @@ Curated bird guide for Ueno Park / Shinobazu Pond. Collage sized by seasonal **P
 
 ```bash
 pnpm install
+pnpm exec convex dev   # keep running; links .env.local
+pnpm seed:histogram    # eBird TSVs → Guide species + Convex
 pnpm dev
 ```
 
@@ -16,4 +18,4 @@ pnpm test
 pnpm typecheck
 ```
 
-Domain language: [`CONTEXT.md`](CONTEXT.md). Plan: [`PLAN.md`](PLAN.md).
+Histogram inputs: [`data/ebird/`](data/ebird/). Domain language: [`CONTEXT.md`](CONTEXT.md). Plan: [`PLAN.md`](PLAN.md).
