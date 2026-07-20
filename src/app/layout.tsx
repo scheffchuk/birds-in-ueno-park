@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Fraunces, Source_Sans_3 } from "next/font/google";
+import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
 import { cn } from "@/lib/utils";
@@ -26,13 +27,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={cn("h-full font-sans", display.variable, sans.variable)}
-    >
-      <body className="min-h-full antialiased">
-        <Providers>{children}</Providers>
-      </body>
-    </html>
+    <ConvexAuthNextjsServerProvider>
+      <html
+        lang="en"
+        className={cn("h-full font-sans", display.variable, sans.variable)}
+      >
+        <body className="min-h-full antialiased">
+          <Providers>{children}</Providers>
+        </body>
+      </html>
+    </ConvexAuthNextjsServerProvider>
   );
 }
