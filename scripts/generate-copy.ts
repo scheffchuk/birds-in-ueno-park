@@ -62,8 +62,10 @@ function parseArgs(argv: string[]): { limit?: number; slug?: string; dryRun: boo
 async function main() {
   const { limit, slug, dryRun } = parseArgs(process.argv.slice(2));
 
-  if (!process.env.XAI_API_KEY && !dryRun) {
-    console.error("XAI_API_KEY is required (no Gemini). Add it to .env.local.");
+  if (!process.env.AI_GATEWAY_API_KEY && !dryRun) {
+    console.error(
+      "AI_GATEWAY_API_KEY is required (routes xAI Grok; no Gemini). Add it to .env.local.",
+    );
     process.exit(1);
   }
 

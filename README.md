@@ -20,9 +20,9 @@ pnpm typecheck
 
 Histogram inputs: [`data/ebird/`](data/ebird/). Domain language: [`CONTEXT.md`](CONTEXT.md). Plan: [`PLAN.md`](PLAN.md).
 
-## Species copy (xAI)
+## Species copy (xAI via AI Gateway)
 
-Offline script writes EN / JA / ZH-TW descriptions + spotting tips. Requires `XAI_API_KEY` in `.env.local` (no Gemini).
+Offline script writes EN / JA / ZH-TW descriptions + spotting tips. Requires `AI_GATEWAY_API_KEY` in `.env.local` (Grok through Vercel AI Gateway; no Gemini).
 
 **Spot-check (~5 species) before a full batch:**
 

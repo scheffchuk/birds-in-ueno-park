@@ -1,5 +1,4 @@
-import { generateText, Output } from "ai";
-import { xai } from "@ai-sdk/xai";
+import { generateText, Output, gateway } from "ai";
 import { z } from "zod";
 import type { SpeciesCopy } from "./copy-plan";
 
@@ -19,12 +18,12 @@ export type GenerateCopyInput = {
   comNameZhTw: string;
 };
 
-/** Call xAI for trilingual description + spotting tips (Ueno / Shinobazu context). */
+/** Call xAI Grok via Vercel AI Gateway for trilingual copy. */
 export async function generateSpeciesCopy(
   input: GenerateCopyInput,
 ): Promise<SpeciesCopy> {
   const { output } = await generateText({
-    model: xai("grok-4-1-fast-non-reasoning"),
+    model: gateway("xai/grok-4.1-fast-non-reasoning"),
     output: Output.object({ schema: speciesCopySchema }),
     prompt: `You write short field-guide copy for wild birds regularly seen at Ueno Park and Shinobazu Pond in Tokyo.
 
