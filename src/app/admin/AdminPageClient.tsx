@@ -1,7 +1,8 @@
 "use client";
 
 import { useAuthActions } from "@convex-dev/auth/react";
-import { useConvexAuth, useMutation, useQuery } from "convex/react";
+import { useAuthToken } from "@convex-dev/auth/react";
+import { useAction, useConvexAuth, useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import { useState } from "react";
 import { api } from "../../../convex/_generated/api";
@@ -70,6 +71,235 @@ export function AdminPageClient() {
   );
 }
 
+function IllustrationPipelinePanel({
+  species,
+}: {
+  species: Array<{
+    _id: Id<"species">;
+    slug: string;
+    sciName: string;
+    comNameEn: string;
+    listed: boolean;
+    illustrationStatus: string;
+    anatomyRef?: Id<"_storage">;
+  }>;
+}) {
+  const summary = useQuery(api.illustrationPipeline.illustrationStatusSummary);
+  const pending = useQuery(api.illustrationPipeline.listPendingReview);
+  const token = useAuthToken();
+  const ensureAnatomy = useAction(
+    api.illustrationAnatomy.ensureAnatomyFromWikipedia,
+  );
+  const approveIllustrations = useMutation(api.admin.approveIllustrations);
+  const rejectAndRegenerate = useMutation(
+    api.illustrationPipeline.rejectAndRegenerate,
+  );
+
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  const listed = species.filter((s) => s.listed);
+  const missingAnatomy = listed.filter((s) => !s.anatomyRef).slice(0, 20);
+
+  async function generateMissing(limit = 20) {
+    if (!token) {
+      setError("No auth token");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/illustrations/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, limit }),
+      });
+      const json = (await res.json()) as {
+        error?: string;
+        requestCount?: number;
+        batchId?: string | null;
+        skipped?: string[];
+        message?: string;
+      };
+      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+      setMessage(
+        json.message ??
+          `Submitted ${json.requestCount ?? 0} pose requests (batch ${json.batchId ?? "none"}). Skipped: ${(json.skipped ?? []).join(", ") || "none"}.`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Generate failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function seedAnatomySlice() {
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      let ok = 0;
+      let fail = 0;
+      for (const sp of missingAnatomy) {
+        const id = await ensureAnatomy({
+          slug: sp.slug,
+          sciName: sp.sciName,
+        });
+        if (id) ok += 1;
+        else fail += 1;
+      }
+      setMessage(`Anatomy seeded: ${ok} ok, ${fail} missing on Wikipedia`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Anatomy seed failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function rejectOne(speciesId: Id<"species">) {
+    setBusy(true);
+    setError(null);
+    try {
+      const { slug } = await rejectAndRegenerate({ speciesId });
+      if (!token) throw new Error("No auth token");
+      const res = await fetch("/api/illustrations/generate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, slugs: [slug], limit: 1 }),
+      });
+      const json = (await res.json()) as { error?: string };
+      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+      setMessage(`Rejected ${slug}; generation re-triggered`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Reject failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="flex flex-col gap-4 border border-border p-4">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h2 className="font-display text-xl">Illustration pipeline</h2>
+          <p className="text-sm text-muted-foreground">
+            Batchwork generate → Workflow mat/verify → pendingReview
+          </p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={busy || missingAnatomy.length === 0}
+            onClick={() => void seedAnatomySlice()}
+          >
+            Seed anatomy ({missingAnatomy.length})
+          </Button>
+          <Button
+            size="sm"
+            disabled={busy || !token}
+            onClick={() => void generateMissing(20)}
+          >
+            Generate missing (20)
+          </Button>
+        </div>
+      </div>
+
+      {summary ? (
+        <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 md:grid-cols-6">
+          {(
+            [
+              ["queued", summary.queued],
+              ["generating", summary.generating],
+              ["pendingReview", summary.pendingReview],
+              ["approved", summary.approved],
+              ["failed", summary.failed],
+              ["no anatomy", summary.missingAnatomy],
+            ] as const
+          ).map(([label, n]) => (
+            <div key={label}>
+              <dt className="text-muted-foreground">{label}</dt>
+              <dd className="font-mono text-lg">{n}</dd>
+            </div>
+          ))}
+        </dl>
+      ) : (
+        <p className="text-sm text-muted-foreground">Loading status…</p>
+      )}
+
+      {pending && pending.length > 0 ? (
+        <div className="flex flex-col gap-4">
+          <p className="text-sm font-medium">
+            Review queue ({pending.length})
+          </p>
+          <ul className="flex flex-col gap-6">
+            {pending.map((sp) => (
+              <li key={sp._id} className="flex flex-col gap-2">
+                <p className="text-sm">
+                  <span className="font-medium">{sp.comNameEn}</span>{" "}
+                  <span className="italic text-muted-foreground">
+                    {sp.sciName}
+                  </span>
+                </p>
+                <div className="flex flex-wrap gap-4">
+                  {sp.anatomyUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={sp.anatomyUrl}
+                      alt="Anatomy ref"
+                      className="h-28 w-auto object-contain"
+                    />
+                  ) : null}
+                  {sp.perchUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={sp.perchUrl}
+                      alt="Perch"
+                      className="h-28 w-auto object-contain"
+                    />
+                  ) : null}
+                  {sp.flightUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={sp.flightUrl}
+                      alt="Flight"
+                      className="h-28 w-auto object-contain"
+                    />
+                  ) : null}
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    size="sm"
+                    disabled={busy}
+                    onClick={() =>
+                      void approveIllustrations({ speciesId: sp._id })
+                    }
+                  >
+                    Approve
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={busy}
+                    onClick={() => void rejectOne(sp._id)}
+                  >
+                    Reject + regen
+                  </Button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ) : null}
+
+      {message ? <p className="text-sm text-muted-foreground">{message}</p> : null}
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+    </section>
+  );
+}
+
 function AdminSpeciesPanel() {
   const species = useQuery(api.admin.listSpecies);
   const [showCreate, setShowCreate] = useState(false);
@@ -80,6 +310,8 @@ function AdminSpeciesPanel() {
 
   return (
     <div className="flex flex-col gap-8">
+      <IllustrationPipelinePanel species={species} />
+
       <div className="flex items-center justify-between gap-4">
         <p className="text-sm text-muted-foreground">
           {species.length} species · curated fields marked
@@ -387,8 +619,11 @@ function IllustrationControls({
   const generateUploadUrl = useMutation(api.admin.generateUploadUrl);
   const attachIllustrations = useMutation(api.admin.attachIllustrations);
   const approveIllustrations = useMutation(api.admin.approveIllustrations);
-  const rejectIllustrations = useMutation(api.admin.rejectIllustrations);
+  const rejectIllustrations = useMutation(
+    api.illustrationPipeline.rejectAndRegenerate,
+  );
   const startIllustrationRegen = useMutation(api.admin.startIllustrationRegen);
+  const token = useAuthToken();
 
   const [perchFile, setPerchFile] = useState<File | null>(null);
   const [flightFile, setFlightFile] = useState<File | null>(null);
@@ -432,6 +667,25 @@ function IllustrationControls({
       setFlightFile(null);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Attach failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function rejectPair() {
+    setBusy(true);
+    setError(null);
+    try {
+      const { slug } = await rejectIllustrations({ speciesId: species._id });
+      if (token) {
+        await fetch("/api/illustrations/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, slugs: [slug], limit: 1 }),
+        });
+      }
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Reject failed");
     } finally {
       setBusy(false);
     }
@@ -492,9 +746,9 @@ function IllustrationControls({
           size="sm"
           variant="outline"
           disabled={busy || species.illustrationStatus !== "pendingReview"}
-          onClick={() => void rejectIllustrations({ speciesId: species._id })}
+          onClick={() => void rejectPair()}
         >
-          Reject
+          Reject + regen
         </Button>
         <Button
           size="sm"

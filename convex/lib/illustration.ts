@@ -80,3 +80,87 @@ export function planStartIllustrationRegen(): {
 } {
   return { illustrationStatus: "generating" };
 }
+
+export type IllustrationPose = "perch" | "flight";
+
+export type StagedPoseFields = {
+  illustrationPerch?: string;
+  illustrationFlight?: string;
+  maskPerch?: MaskBits;
+  maskFlight?: MaskBits;
+  dimsPerch?: number[];
+  dimsFlight?: number[];
+};
+
+/** Clear cutouts and flip to generating before a Batchwork job. */
+export function planStartIllustrationGeneration(): StagedPoseFields & {
+  illustrationStatus: "generating";
+} {
+  return {
+    illustrationStatus: "generating",
+    illustrationPerch: undefined,
+    illustrationFlight: undefined,
+    maskPerch: undefined,
+    maskFlight: undefined,
+    dimsPerch: undefined,
+    dimsFlight: undefined,
+  };
+}
+
+/**
+ * Stage one verified pose. pendingReview only when both poses are present.
+ */
+export function planStageIllustrationPose(input: {
+  pose: IllustrationPose;
+  storageId: string;
+  mask: MaskBits;
+  dims: number[];
+  existing: StagedPoseFields;
+}): StagedPoseFields & {
+  illustrationStatus: "generating" | "pendingReview";
+} {
+  const next: StagedPoseFields = { ...input.existing };
+  if (input.pose === "perch") {
+    next.illustrationPerch = input.storageId;
+    next.maskPerch = input.mask;
+    next.dimsPerch = input.dims;
+  } else {
+    next.illustrationFlight = input.storageId;
+    next.maskFlight = input.mask;
+    next.dimsFlight = input.dims;
+  }
+
+  const both =
+    Boolean(next.illustrationPerch) && Boolean(next.illustrationFlight);
+
+  if (input.pose === "perch") {
+    return {
+      illustrationPerch: next.illustrationPerch,
+      maskPerch: next.maskPerch,
+      dimsPerch: next.dimsPerch,
+      illustrationStatus: both ? "pendingReview" : "generating",
+    };
+  }
+  return {
+    illustrationFlight: next.illustrationFlight,
+    maskFlight: next.maskFlight,
+    dimsFlight: next.dimsFlight,
+    illustrationStatus: both ? "pendingReview" : "generating",
+  };
+}
+
+/** Fail closed when a pose fails verify after retry. */
+export function planFailIllustrationPose(): {
+  illustrationStatus: "failed";
+} {
+  return { illustrationStatus: "failed" };
+}
+
+/**
+ * Reject review: clear art and return to generating so regen can re-submit.
+ */
+export function planRejectAndRegenerate(): StagedPoseFields & {
+  illustrationStatus: "generating";
+} {
+  return planStartIllustrationGeneration();
+}

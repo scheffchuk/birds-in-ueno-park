@@ -1,9 +1,15 @@
 export {
   planApproveIllustrations,
   planAttachIllustrations,
+  planFailIllustrationPose,
+  planRejectAndRegenerate,
   planRejectIllustrations,
+  planStageIllustrationPose,
+  planStartIllustrationGeneration,
   planStartIllustrationRegen,
   type AttachIllustrationsInput,
   type AttachIllustrationsPlan,
+  type IllustrationPose,
   type MaskBits,
+  type StagedPoseFields,
 } from "../../../convex/lib/illustration";

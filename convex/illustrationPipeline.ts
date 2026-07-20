@@ -1,0 +1,523 @@
+import { v } from "convex/values";
+import {
+  internalMutation,
+  internalQuery,
+  mutation,
+  query,
+} from "./_generated/server";
+import { requireAdmin } from "./lib/auth";
+import {
+  planFailIllustrationPose,
+  planRejectAndRegenerate,
+  planStageIllustrationPose,
+  planStartIllustrationGeneration,
+} from "./lib/illustration";
+import { selectSpeciesForGeneration } from "./lib/selectForGeneration";
+import {
+  formatIllustrationCustomId,
+  type IllustrationPose,
+} from "./lib/illustrationCustomId";
+import { buildIllustrationPrompt } from "./lib/illustrationPrompt";
+
+const poseValidator = v.union(v.literal("perch"), v.literal("flight"));
+
+const maskArg = v.object({
+  w: v.number(),
+  h: v.number(),
+  bits: v.string(),
+});
+
+function requirePipelineSecret(secret: string): void {
+  const expected = process.env.ILLUSTRATION_PIPELINE_SECRET;
+  if (!expected || secret !== expected) {
+    throw new Error("Unauthorized pipeline request");
+  }
+}
+
+function publicSiteBase(): string {
+  const base =
+    process.env.SITE_URL ??
+    process.env.NEXT_PUBLIC_SITE_URL ??
+    process.env.CONVEX_SITE_URL;
+  if (!base) {
+    throw new Error("SITE_URL is required to build public ref URLs");
+  }
+  return base.replace(/\/$/, "");
+}
+
+function convexSiteBase(): string {
+  const site = process.env.CONVEX_SITE_URL;
+  if (!site) {
+    throw new Error("CONVEX_SITE_URL is required for anatomy ref URLs");
+  }
+  return site.replace(/\/$/, "");
+}
+
+/** Status counts for the admin illustration grid (~130 Guide species; bounded). */
+export const illustrationStatusSummary = query({
+  args: {},
+  returns: v.object({
+    queued: v.number(),
+    generating: v.number(),
+    pendingReview: v.number(),
+    approved: v.number(),
+    failed: v.number(),
+    missingAnatomy: v.number(),
+  }),
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+    // eslint-disable-next-line @convex-dev/no-query-collect -- Guide species set is bounded (~130)
+    const all = await ctx.db.query("species").collect();
+    const summary = {
+      queued: 0,
+      generating: 0,
+      pendingReview: 0,
+      approved: 0,
+      failed: 0,
+      missingAnatomy: 0,
+    };
+    for (const sp of all) {
+      if (!sp.listed) continue;
+      summary[sp.illustrationStatus] += 1;
+      if (!sp.anatomyRef) summary.missingAnatomy += 1;
+    }
+    return summary;
+  },
+});
+
+/** Species awaiting pair review (with anatomy URL when present). */
+export const listPendingReview = query({
+  args: {},
+  returns: v.array(
+    v.object({
+      _id: v.id("species"),
+      slug: v.string(),
+      sciName: v.string(),
+      comNameEn: v.string(),
+      perchUrl: v.optional(v.string()),
+      flightUrl: v.optional(v.string()),
+      anatomyUrl: v.optional(v.string()),
+    }),
+  ),
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+    const pending = await ctx.db
+      .query("species")
+      .withIndex("by_illustration_status", (q) =>
+        q.eq("illustrationStatus", "pendingReview"),
+      )
+      .collect();
+
+    const out = [];
+    for (const sp of pending) {
+      out.push({
+        _id: sp._id,
+        slug: sp.slug,
+        sciName: sp.sciName,
+        comNameEn: sp.comNameEn,
+        perchUrl: sp.illustrationPerch
+          ? ((await ctx.storage.getUrl(sp.illustrationPerch)) ?? undefined)
+          : undefined,
+        flightUrl: sp.illustrationFlight
+          ? ((await ctx.storage.getUrl(sp.illustrationFlight)) ?? undefined)
+          : undefined,
+        anatomyUrl: sp.anatomyRef
+          ? ((await ctx.storage.getUrl(sp.anatomyRef)) ?? undefined)
+          : undefined,
+      });
+    }
+    out.sort((a, b) => a.comNameEn.localeCompare(b.comNameEn));
+    return out;
+  },
+});
+
+/**
+ * Mark selected species generating and return Batchwork edit requests
+ * (stable public HTTPS anatomy + style URLs).
+ */
+export const prepareIllustrationBatch = mutation({
+  args: {
+    limit: v.optional(v.number()),
+    slugs: v.optional(v.array(v.string())),
+  },
+    returns: v.object({
+    requests: v.array(
+      v.object({
+        customId: v.string(),
+        prompt: v.string(),
+        images: v.array(v.object({ imageUrl: v.string() })),
+        slug: v.string(),
+        pose: poseValidator,
+        sciName: v.string(),
+        comNameEn: v.string(),
+      }),
+    ),
+    skipped: v.array(v.string()),
+  }),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+
+    // eslint-disable-next-line @convex-dev/no-query-collect -- Guide species set is bounded (~130)
+    const all = await ctx.db.query("species").collect();
+    const candidates = all.map((sp) => ({
+      slug: sp.slug,
+      listed: sp.listed,
+      illustrationStatus: sp.illustrationStatus,
+      hasAnatomyRef: Boolean(sp.anatomyRef),
+      _id: sp._id,
+      sciName: sp.sciName,
+      comNameEn: sp.comNameEn,
+      anatomyRef: sp.anatomyRef,
+    }));
+
+    const selected = selectSpeciesForGeneration(candidates, {
+      limit: args.limit ?? 20,
+      slugs: args.slugs,
+    });
+
+    const site = publicSiteBase();
+    const convexSite = convexSiteBase();
+    const anatomyUrl = (slug: string) =>
+      `${convexSite}/refs/anatomy/${slug}`;
+
+    const requests: Array<{
+      customId: string;
+      prompt: string;
+      images: Array<{ imageUrl: string }>;
+      slug: string;
+      pose: IllustrationPose;
+      sciName: string;
+      comNameEn: string;
+    }> = [];
+    const skipped: string[] = [];
+    const clear = planStartIllustrationGeneration();
+
+    for (const c of selected) {
+      const sp = candidates.find((x) => x.slug === c.slug);
+      if (!sp?.anatomyRef) {
+        skipped.push(c.slug);
+        continue;
+      }
+
+      await ctx.db.patch(sp._id, {
+        illustrationStatus: clear.illustrationStatus,
+        illustrationPerch: undefined,
+        illustrationFlight: undefined,
+        maskPerch: undefined,
+        maskFlight: undefined,
+        dimsPerch: undefined,
+        dimsFlight: undefined,
+      });
+
+      for (const pose of ["perch", "flight"] as const) {
+        const stylePublic = `${site}/refs/style/${pose}.jpg`;
+        requests.push({
+          customId: formatIllustrationCustomId(sp.slug, pose),
+          prompt: buildIllustrationPrompt({
+            sciName: sp.sciName,
+            comNameEn: sp.comNameEn,
+            pose,
+          }),
+          images: [
+            { imageUrl: anatomyUrl(sp.slug) },
+            { imageUrl: stylePublic },
+          ],
+          slug: sp.slug,
+          pose,
+          sciName: sp.sciName,
+          comNameEn: sp.comNameEn,
+        });
+      }
+    }
+
+    return { requests, skipped };
+  },
+});
+
+export const recordIllustrationBatch = mutation({
+  args: {
+    secret: v.string(),
+    provider: v.string(),
+    batchId: v.string(),
+    requests: v.array(
+      v.object({
+        customId: v.string(),
+        slug: v.string(),
+        pose: poseValidator,
+        sciName: v.string(),
+        comNameEn: v.string(),
+      }),
+    ),
+  },
+  returns: v.id("illustrationBatches"),
+  handler: async (ctx, args) => {
+    requirePipelineSecret(args.secret);
+    return await ctx.db.insert("illustrationBatches", {
+      provider: args.provider,
+      batchId: args.batchId,
+      status: "open",
+      createdAt: Date.now(),
+      requests: args.requests,
+    });
+  },
+});
+
+export const listOpenIllustrationBatches = query({
+  args: { secret: v.string() },
+  returns: v.array(
+    v.object({
+      _id: v.id("illustrationBatches"),
+      provider: v.string(),
+      batchId: v.string(),
+      requests: v.array(
+        v.object({
+          customId: v.string(),
+          slug: v.string(),
+          pose: poseValidator,
+          sciName: v.string(),
+          comNameEn: v.string(),
+        }),
+      ),
+    }),
+  ),
+  handler: async (ctx, args) => {
+    requirePipelineSecret(args.secret);
+    const open = await ctx.db
+      .query("illustrationBatches")
+      .withIndex("by_status", (q) => q.eq("status", "open"))
+      .collect();
+    return open.map((j) => ({
+      _id: j._id,
+      provider: j.provider,
+      batchId: j.batchId,
+      requests: j.requests,
+    }));
+  },
+});
+
+export const markIllustrationBatchDelivered = mutation({
+  args: {
+    secret: v.string(),
+    batchDocId: v.id("illustrationBatches"),
+    status: v.union(v.literal("delivered"), v.literal("failed")),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    requirePipelineSecret(args.secret);
+    await ctx.db.patch(args.batchDocId, { status: args.status });
+    return null;
+  },
+});
+
+export const stageIllustrationPose = mutation({
+  args: {
+    secret: v.string(),
+    slug: v.string(),
+    pose: poseValidator,
+    storageId: v.id("_storage"),
+    mask: maskArg,
+    dims: v.array(v.number()),
+  },
+  returns: v.union(
+    v.literal("generating"),
+    v.literal("pendingReview"),
+  ),
+  handler: async (ctx, args) => {
+    requirePipelineSecret(args.secret);
+    const sp = await ctx.db
+      .query("species")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    if (!sp) throw new Error(`Species not found: ${args.slug}`);
+
+    const patch = planStageIllustrationPose({
+      pose: args.pose,
+      storageId: args.storageId,
+      mask: args.mask,
+      dims: args.dims,
+      existing: {
+        illustrationPerch: sp.illustrationPerch,
+        illustrationFlight: sp.illustrationFlight,
+        maskPerch: sp.maskPerch,
+        maskFlight: sp.maskFlight,
+        dimsPerch: sp.dimsPerch,
+        dimsFlight: sp.dimsFlight,
+      },
+    });
+
+    if (args.pose === "perch") {
+      await ctx.db.patch(sp._id, {
+        illustrationPerch: args.storageId,
+        maskPerch: args.mask,
+        dimsPerch: args.dims,
+        illustrationStatus: patch.illustrationStatus,
+      });
+    } else {
+      await ctx.db.patch(sp._id, {
+        illustrationFlight: args.storageId,
+        maskFlight: args.mask,
+        dimsFlight: args.dims,
+        illustrationStatus: patch.illustrationStatus,
+      });
+    }
+    return patch.illustrationStatus;
+  },
+});
+
+export const failIllustrationPose = mutation({
+  args: {
+    secret: v.string(),
+    slug: v.string(),
+    reason: v.optional(v.string()),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    requirePipelineSecret(args.secret);
+    const sp = await ctx.db
+      .query("species")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    if (!sp) throw new Error(`Species not found: ${args.slug}`);
+    console.error("Illustration pose failed", {
+      slug: args.slug,
+      reason: args.reason,
+    });
+    await ctx.db.patch(sp._id, planFailIllustrationPose());
+    return null;
+  },
+});
+
+/** Pipeline upload URL (no admin session — secret gated). */
+export const generatePipelineUploadUrl = mutation({
+  args: { secret: v.string() },
+  returns: v.string(),
+  handler: async (ctx, args) => {
+    requirePipelineSecret(args.secret);
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+export const attachAnatomyRef = mutation({
+  args: {
+    speciesId: v.id("species"),
+    storageId: v.id("_storage"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    const sp = await ctx.db.get(args.speciesId);
+    if (!sp) throw new Error("Species not found");
+    await ctx.db.patch(args.speciesId, { anatomyRef: args.storageId });
+    return null;
+  },
+});
+
+export const upsertStylePrint = mutation({
+  args: {
+    key: v.string(),
+    pose: poseValidator,
+    storageId: v.id("_storage"),
+  },
+  returns: v.id("stylePrints"),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    const existing = await ctx.db
+      .query("stylePrints")
+      .withIndex("by_key", (q) => q.eq("key", args.key))
+      .unique();
+    if (existing) {
+      await ctx.db.patch(existing._id, {
+        pose: args.pose,
+        storageId: args.storageId,
+      });
+      return existing._id;
+    }
+    return await ctx.db.insert("stylePrints", {
+      key: args.key,
+      pose: args.pose,
+      storageId: args.storageId,
+    });
+  },
+});
+
+export const getSpeciesForVerify = internalQuery({
+  args: { slug: v.string() },
+  returns: v.union(
+    v.object({
+      sciName: v.string(),
+      comNameEn: v.string(),
+    }),
+    v.null(),
+  ),
+  handler: async (ctx, args) => {
+    const sp = await ctx.db
+      .query("species")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    if (!sp) return null;
+    return { sciName: sp.sciName, comNameEn: sp.comNameEn };
+  },
+});
+
+/** Reject pair and clear art so the next generate pass can re-submit. */
+export const rejectAndRegenerate = mutation({
+  args: { speciesId: v.id("species") },
+  returns: v.object({ slug: v.string() }),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+    const sp = await ctx.db.get(args.speciesId);
+    if (!sp) throw new Error("Species not found");
+    const clear = planRejectAndRegenerate();
+    await ctx.db.patch(args.speciesId, {
+      illustrationStatus: clear.illustrationStatus,
+      illustrationPerch: undefined,
+      illustrationFlight: undefined,
+      maskPerch: undefined,
+      maskFlight: undefined,
+      dimsPerch: undefined,
+      dimsFlight: undefined,
+    });
+    return { slug: sp.slug };
+  },
+});
+
+export const resolveAnatomyStorage = internalQuery({
+  args: { slug: v.string() },
+  returns: v.union(v.id("_storage"), v.null()),
+  handler: async (ctx, args) => {
+    const sp = await ctx.db
+      .query("species")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    return sp?.anatomyRef ?? null;
+  },
+});
+
+export const resolveStyleStorage = internalQuery({
+  args: { key: v.string() },
+  returns: v.union(v.id("_storage"), v.null()),
+  handler: async (ctx, args) => {
+    const row = await ctx.db
+      .query("stylePrints")
+      .withIndex("by_key", (q) => q.eq("key", args.key))
+      .unique();
+    return row?.storageId ?? null;
+  },
+});
+
+export const setAnatomyRefInternal = internalMutation({
+  args: {
+    slug: v.string(),
+    storageId: v.id("_storage"),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    const sp = await ctx.db
+      .query("species")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    if (!sp) throw new Error(`Species not found: ${args.slug}`);
+    await ctx.db.patch(sp._id, { anatomyRef: args.storageId });
+    return null;
+  },
+});

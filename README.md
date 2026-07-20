@@ -41,7 +41,28 @@ Convex Auth + GitHub OAuth, gated by `ADMIN_GITHUB_IDS` (comma-separated GitHub 
 
 On the Convex deployment:
 
-1. `SITE_URL` — e.g. `http://localhost:3000`
+1. `SITE_URL` — e.g. `http://localhost:3000` (also used for public style-ref URLs)
 2. `JWT_PRIVATE_KEY` + `JWKS` — from Convex Auth setup (`npx @convex-dev/auth` or manual)
 3. `AUTH_GITHUB_ID` / `AUTH_GITHUB_SECRET` — [GitHub OAuth App](https://github.com/settings/developers); callback `https://<deployment>.convex.site/api/auth/callback/github`
 4. `ADMIN_GITHUB_IDS` — your numeric GitHub user id(s)
+5. `ILLUSTRATION_PIPELINE_SECRET` — shared secret for Workflow → Convex staging
+6. `CONVEX_SITE_URL` — e.g. `https://<deployment>.convex.site` (anatomy refs at `/refs/anatomy/:slug`)
+
+On Vercel / `.env.local` (Next):
+
+1. `NEXT_PUBLIC_CONVEX_URL`
+2. `XAI_API_KEY` — Batchwork `grok-imagine-image-quality` edits
+3. `FAL_KEY` — BiRefNet matting
+4. `AI_GATEWAY_API_KEY` — vision verify via Gateway
+5. `ILLUSTRATION_PIPELINE_SECRET` — same as Convex
+6. `CRON_SECRET` — protect `/api/cron/illustration-batches`
+7. `SITE_URL` / `NEXT_PUBLIC_SITE_URL` — public base for `/refs/style/{perch,flight}.jpg`
+
+### Illustration pipeline (#8)
+
+1. Seed anatomy for a slice: Admin → **Seed anatomy (N)** (Wikipedia → Convex; served at `CONVEX_SITE_URL/refs/anatomy/:slug`)
+2. Style placeholders live in `public/refs/style/` (replace with Koson/Yoshida prints when ready)
+3. **Generate missing (20)** submits Batchwork; cron (or immediate poll) starts per-pose Workflows
+4. Review queue: approve pair, or **Reject + regen** (re-triggers generation)
+
+Manual attach (#7) still works for cutouts without running the pipeline.
