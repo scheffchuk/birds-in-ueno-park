@@ -8,6 +8,7 @@ import {
   type ExistingPrevalence,
   type Season,
 } from "./lib/seedPlan";
+import { loadListedSpecies, loadPrevalenceForSpecies } from "./lib/loadSpecies";
 
 const prevalenceValidator = v.object({
   winter: v.number(),
@@ -25,7 +26,7 @@ const guideSpeciesValidator = v.object({
   prevalence: prevalenceValidator,
 });
 
-const collageSpeciesValidator = v.object({
+const speciesRecordValidator = v.object({
   slug: v.string(),
   sciName: v.string(),
   comNameEn: v.string(),
@@ -45,42 +46,47 @@ const collageSpeciesValidator = v.object({
 /** Listed Guide species with seasonal Prevalence for the collage. */
 export const listForCollage = query({
   args: {},
-  returns: v.array(collageSpeciesValidator),
+  returns: v.array(speciesRecordValidator),
   handler: async (ctx) => {
-    const listed = await ctx.db
-      .query("species")
-      .withIndex("by_listed", (q) => q.eq("listed", true))
-      .collect();
+    return await loadListedSpecies(ctx);
+  },
+});
 
-    const out = [];
-    for (const sp of listed) {
-      const prevalence = {
-        winter: 0,
-        spring: 0,
-        summer: 0,
-        autumn: 0,
-      };
-      for (const season of SEASONS) {
-        const row = await ctx.db
-          .query("prevalence")
-          .withIndex("by_species_and_season", (q) =>
-            q.eq("speciesId", sp._id).eq("season", season),
-          )
-          .unique();
-        if (row) prevalence[season] = row.value;
-      }
-      out.push({
-        slug: sp.slug,
-        sciName: sp.sciName,
-        comNameEn: sp.comNameEn,
-        comNameJa: sp.comNameJa,
-        comNameZhTw: sp.comNameZhTw,
-        listed: sp.listed,
-        illustrationStatus: sp.illustrationStatus,
-        prevalence,
-      });
-    }
-    return out;
+/**
+ * Listed Guide species for the Atlas (includes species awaiting art).
+ * Client filters/sorts by Season via selectForAtlas.
+ */
+export const listAtlas = query({
+  args: {},
+  returns: v.array(speciesRecordValidator),
+  handler: async (ctx) => {
+    return await loadListedSpecies(ctx);
+  },
+});
+
+/** Atlas detail: Listed seeded species only; Unlisted / missing → null. */
+export const getSpecies = query({
+  args: { slug: v.string() },
+  returns: v.union(speciesRecordValidator, v.null()),
+  handler: async (ctx, args) => {
+    const sp = await ctx.db
+      .query("species")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .unique();
+    if (!sp || !sp.listed) return null;
+
+    const prevalence = await loadPrevalenceForSpecies(ctx, sp._id);
+
+    return {
+      slug: sp.slug,
+      sciName: sp.sciName,
+      comNameEn: sp.comNameEn,
+      comNameJa: sp.comNameJa,
+      comNameZhTw: sp.comNameZhTw,
+      listed: sp.listed,
+      illustrationStatus: sp.illustrationStatus,
+      prevalence,
+    };
   },
 });
 

@@ -3,21 +3,7 @@ import type {
   SeasonFilter,
   SpeciesRecord,
 } from "./types";
-
-function prevalenceForFilter(
-  record: SpeciesRecord,
-  filter: SeasonFilter,
-): number {
-  if (filter === "all") {
-    return Math.max(
-      record.prevalence.winter,
-      record.prevalence.spring,
-      record.prevalence.summer,
-      record.prevalence.autumn,
-    );
-  }
-  return record.prevalence[filter];
-}
+import { prevalenceForFilter } from "./prevalence";
 
 export function selectForCollage(
   species: SpeciesRecord[],

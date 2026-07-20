@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as lib_loadSpecies from "../lib/loadSpecies.js";
 import type * as lib_seedPlan from "../lib/seedPlan.js";
 import type * as species from "../species.js";
 
@@ -18,6 +19,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  "lib/loadSpecies": typeof lib_loadSpecies;
   "lib/seedPlan": typeof lib_seedPlan;
   species: typeof species;
 }>;

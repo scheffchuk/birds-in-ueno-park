@@ -94,8 +94,9 @@ export function CollageView({ species }: CollageViewProps) {
           </Empty>
         ) : (
           placed.map((tile) => (
-            <div
+            <Link
               key={tile.slug}
+              href={`/atlas/${tile.slug}`}
               className="absolute"
               style={{
                 left: tile.x,
@@ -109,7 +110,7 @@ export function CollageView({ species }: CollageViewProps) {
                 label={tile.comNameEn}
                 prevalence={tile.prevalence}
               />
-            </div>
+            </Link>
           ))
         )}
       </div>
