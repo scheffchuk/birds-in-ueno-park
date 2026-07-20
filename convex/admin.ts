@@ -4,6 +4,7 @@ import type { MutationCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { requireAdmin } from "./lib/auth";
 import {
+  planAdminCopyEdit,
   planAdminCreateSpecies,
   planAdminNameEdit,
   planAdminPrevalenceEdit,
@@ -44,6 +45,12 @@ const adminSpeciesValidator = v.object({
   ),
   prevalence: prevalenceValidator,
   prevalenceCurated: prevalenceCuratedValidator,
+  descriptionEn: v.optional(v.string()),
+  descriptionJa: v.optional(v.string()),
+  descriptionZhTw: v.optional(v.string()),
+  spottingTipsEn: v.optional(v.string()),
+  spottingTipsJa: v.optional(v.string()),
+  spottingTipsZhTw: v.optional(v.string()),
 });
 
 /** Whether the caller is an allowlisted admin (for UI gating). */
@@ -109,6 +116,12 @@ export const listSpecies = query({
         illustrationStatus: sp.illustrationStatus,
         prevalence,
         prevalenceCurated,
+        descriptionEn: sp.descriptionEn,
+        descriptionJa: sp.descriptionJa,
+        descriptionZhTw: sp.descriptionZhTw,
+        spottingTipsEn: sp.spottingTipsEn,
+        spottingTipsJa: sp.spottingTipsJa,
+        spottingTipsZhTw: sp.spottingTipsZhTw,
       });
     }
 
@@ -177,6 +190,50 @@ export const updateNames = mutation({
         comNameEn: args.comNameEn,
         comNameJa: args.comNameJa,
         comNameZhTw: args.comNameZhTw,
+      },
+    });
+
+    if (Object.keys(speciesPatch).length > 0) {
+      await ctx.db.patch(args.speciesId, speciesPatch);
+    }
+    return null;
+  },
+});
+
+export const updateCopy = mutation({
+  args: {
+    speciesId: v.id("species"),
+    descriptionEn: v.optional(v.string()),
+    descriptionJa: v.optional(v.string()),
+    descriptionZhTw: v.optional(v.string()),
+    spottingTipsEn: v.optional(v.string()),
+    spottingTipsJa: v.optional(v.string()),
+    spottingTipsZhTw: v.optional(v.string()),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+
+    const sp = await ctx.db.get(args.speciesId);
+    if (!sp) throw new Error("Species not found");
+
+    const { speciesPatch } = planAdminCopyEdit({
+      existing: {
+        curatedFields: sp.curatedFields,
+        descriptionEn: sp.descriptionEn,
+        descriptionJa: sp.descriptionJa,
+        descriptionZhTw: sp.descriptionZhTw,
+        spottingTipsEn: sp.spottingTipsEn,
+        spottingTipsJa: sp.spottingTipsJa,
+        spottingTipsZhTw: sp.spottingTipsZhTw,
+      },
+      patch: {
+        descriptionEn: args.descriptionEn,
+        descriptionJa: args.descriptionJa,
+        descriptionZhTw: args.descriptionZhTw,
+        spottingTipsEn: args.spottingTipsEn,
+        spottingTipsJa: args.spottingTipsJa,
+        spottingTipsZhTw: args.spottingTipsZhTw,
       },
     });
 

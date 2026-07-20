@@ -1,8 +1,11 @@
 export {
+  planAdminCopyEdit,
   planAdminCreateSpecies,
   planAdminNameEdit,
   planAdminPrevalenceEdit,
   planAdminSetListed,
+  type AdminCopyEditInput,
+  type AdminCopyEditPlan,
   type AdminCreateInput,
   type AdminCreatePlan,
   type AdminNameEditInput,

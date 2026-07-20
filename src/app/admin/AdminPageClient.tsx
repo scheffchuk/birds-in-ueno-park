@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 
 const SEASONS = ["winter", "spring", "summer", "autumn"] as const;
@@ -136,15 +137,28 @@ function SpeciesEditor({
     curatedFields: string[];
     prevalence: Record<Season, number>;
     prevalenceCurated: Record<Season, boolean>;
+    descriptionEn?: string;
+    descriptionJa?: string;
+    descriptionZhTw?: string;
+    spottingTipsEn?: string;
+    spottingTipsJa?: string;
+    spottingTipsZhTw?: string;
   };
 }) {
   const updateNames = useMutation(api.admin.updateNames);
+  const updateCopy = useMutation(api.admin.updateCopy);
   const updatePrevalence = useMutation(api.admin.updatePrevalence);
   const setListed = useMutation(api.admin.setListed);
 
   const [en, setEn] = useState(species.comNameEn);
   const [ja, setJa] = useState(species.comNameJa);
   const [zh, setZh] = useState(species.comNameZhTw);
+  const [descEn, setDescEn] = useState(species.descriptionEn ?? "");
+  const [descJa, setDescJa] = useState(species.descriptionJa ?? "");
+  const [descZh, setDescZh] = useState(species.descriptionZhTw ?? "");
+  const [tipsEn, setTipsEn] = useState(species.spottingTipsEn ?? "");
+  const [tipsJa, setTipsJa] = useState(species.spottingTipsJa ?? "");
+  const [tipsZh, setTipsZh] = useState(species.spottingTipsZhTw ?? "");
   const [prev, setPrev] = useState(species.prevalence);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -160,6 +174,26 @@ function SpeciesEditor({
         comNameEn: en,
         comNameJa: ja,
         comNameZhTw: zh,
+      });
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Save failed");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function saveCopy() {
+    setSaving(true);
+    setError(null);
+    try {
+      await updateCopy({
+        speciesId: species._id,
+        descriptionEn: descEn,
+        descriptionJa: descJa,
+        descriptionZhTw: descZh,
+        spottingTipsEn: tipsEn,
+        spottingTipsJa: tipsJa,
+        spottingTipsZhTw: tipsZh,
       });
     } catch (e) {
       setError(e instanceof Error ? e.message : "Save failed");
@@ -235,6 +269,56 @@ function SpeciesEditor({
         </Button>
       </div>
 
+      <div className="mt-4 grid gap-3 sm:grid-cols-3">
+        <TextField
+          label="Description EN"
+          curated={curated.has("descriptionEn")}
+          value={descEn}
+          onChange={setDescEn}
+        />
+        <TextField
+          label="Description JA"
+          curated={curated.has("descriptionJa")}
+          value={descJa}
+          onChange={setDescJa}
+        />
+        <TextField
+          label="Description ZH-TW"
+          curated={curated.has("descriptionZhTw")}
+          value={descZh}
+          onChange={setDescZh}
+        />
+        <TextField
+          label="Tips EN"
+          curated={curated.has("spottingTipsEn")}
+          value={tipsEn}
+          onChange={setTipsEn}
+        />
+        <TextField
+          label="Tips JA"
+          curated={curated.has("spottingTipsJa")}
+          value={tipsJa}
+          onChange={setTipsJa}
+        />
+        <TextField
+          label="Tips ZH-TW"
+          curated={curated.has("spottingTipsZhTw")}
+          value={tipsZh}
+          onChange={setTipsZh}
+        />
+      </div>
+
+      <div className="mt-3 flex flex-wrap gap-2">
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={saving}
+          onClick={() => void saveCopy()}
+        >
+          Save copy
+        </Button>
+      </div>
+
       <div className="mt-4 grid gap-3 sm:grid-cols-4">
         {SEASONS.map((season) => (
           <div key={season} className="flex flex-col gap-1">
@@ -291,6 +375,32 @@ function Field({
         <ProvenanceMark curated={curated} />
       </Label>
       <Input value={value} onChange={(e) => onChange(e.target.value)} />
+    </div>
+  );
+}
+
+function TextField({
+  label,
+  curated,
+  value,
+  onChange,
+}: {
+  label: string;
+  curated: boolean;
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <Label>
+        {label}
+        <ProvenanceMark curated={curated} />
+      </Label>
+      <Textarea
+        value={value}
+        rows={4}
+        onChange={(e) => onChange(e.target.value)}
+      />
     </div>
   );
 }

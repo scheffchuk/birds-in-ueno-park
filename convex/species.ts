@@ -8,6 +8,7 @@ import {
   type ExistingPrevalence,
   type Season,
 } from "./lib/seedPlan";
+import { planCopyUpsert } from "./lib/copyPlan";
 import { loadListedSpecies, loadPrevalenceForSpecies } from "./lib/loadSpecies";
 
 const prevalenceValidator = v.object({
@@ -41,6 +42,22 @@ const speciesRecordValidator = v.object({
     v.literal("failed"),
   ),
   prevalence: prevalenceValidator,
+  descriptionEn: v.optional(v.string()),
+  descriptionJa: v.optional(v.string()),
+  descriptionZhTw: v.optional(v.string()),
+  spottingTipsEn: v.optional(v.string()),
+  spottingTipsJa: v.optional(v.string()),
+  spottingTipsZhTw: v.optional(v.string()),
+});
+
+const speciesCopyValidator = v.object({
+  slug: v.string(),
+  descriptionEn: v.string(),
+  descriptionJa: v.string(),
+  descriptionZhTw: v.string(),
+  spottingTipsEn: v.string(),
+  spottingTipsJa: v.string(),
+  spottingTipsZhTw: v.string(),
 });
 
 /** Listed Guide species with seasonal Prevalence for the collage. */
@@ -86,7 +103,75 @@ export const getSpecies = query({
       listed: sp.listed,
       illustrationStatus: sp.illustrationStatus,
       prevalence,
+      descriptionEn: sp.descriptionEn,
+      descriptionJa: sp.descriptionJa,
+      descriptionZhTw: sp.descriptionZhTw,
+      spottingTipsEn: sp.spottingTipsEn,
+      spottingTipsJa: sp.spottingTipsJa,
+      spottingTipsZhTw: sp.spottingTipsZhTw,
     };
+  },
+});
+
+/**
+ * Upsert AI-generated copy for Guide species.
+ * Skips fields listed in curatedFields; never flips Listed.
+ */
+export const seedSpeciesCopy = internalMutation({
+  args: {
+    copies: v.array(speciesCopyValidator),
+  },
+  returns: v.object({
+    patched: v.number(),
+    skipped: v.number(),
+    missing: v.number(),
+  }),
+  handler: async (ctx, args) => {
+    let patched = 0;
+    let skipped = 0;
+    let missing = 0;
+
+    for (const incoming of args.copies) {
+      const existing = await ctx.db
+        .query("species")
+        .withIndex("by_slug", (q) => q.eq("slug", incoming.slug))
+        .unique();
+
+      if (!existing) {
+        missing += 1;
+        continue;
+      }
+
+      const plan = planCopyUpsert({
+        incoming: {
+          descriptionEn: incoming.descriptionEn,
+          descriptionJa: incoming.descriptionJa,
+          descriptionZhTw: incoming.descriptionZhTw,
+          spottingTipsEn: incoming.spottingTipsEn,
+          spottingTipsJa: incoming.spottingTipsJa,
+          spottingTipsZhTw: incoming.spottingTipsZhTw,
+        },
+        existing: {
+          curatedFields: existing.curatedFields,
+          descriptionEn: existing.descriptionEn,
+          descriptionJa: existing.descriptionJa,
+          descriptionZhTw: existing.descriptionZhTw,
+          spottingTipsEn: existing.spottingTipsEn,
+          spottingTipsJa: existing.spottingTipsJa,
+          spottingTipsZhTw: existing.spottingTipsZhTw,
+        },
+      });
+
+      if (Object.keys(plan.speciesPatch).length === 0) {
+        skipped += 1;
+        continue;
+      }
+
+      await ctx.db.patch(existing._id, plan.speciesPatch);
+      patched += 1;
+    }
+
+    return { patched, skipped, missing };
   },
 });
 

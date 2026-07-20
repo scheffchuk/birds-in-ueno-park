@@ -9,7 +9,20 @@ type AtlasDetailViewProps = {
   species: SpeciesRecord;
 };
 
+function hasText(value: string | undefined): value is string {
+  return typeof value === "string" && value.trim().length > 0;
+}
+
 export function AtlasDetailView({ species }: AtlasDetailViewProps) {
+  const hasDescription =
+    hasText(species.descriptionEn) ||
+    hasText(species.descriptionJa) ||
+    hasText(species.descriptionZhTw);
+  const hasTips =
+    hasText(species.spottingTipsEn) ||
+    hasText(species.spottingTipsJa) ||
+    hasText(species.spottingTipsZhTw);
+
   return (
     <article className="mx-auto flex min-h-screen w-full max-w-2xl flex-col gap-10 px-6 py-10">
       <header className="flex flex-col gap-4">
@@ -31,6 +44,24 @@ export function AtlasDetailView({ species }: AtlasDetailViewProps) {
           <p className="text-sm italic text-muted-foreground">{species.sciName}</p>
         </div>
       </header>
+
+      {hasDescription ? (
+        <section className="flex flex-col gap-4">
+          <h2 className="font-heading text-xl">About / 概要</h2>
+          <CopyBlock lang="EN" text={species.descriptionEn} />
+          <CopyBlock lang="JA" text={species.descriptionJa} />
+          <CopyBlock lang="ZH-TW" text={species.descriptionZhTw} />
+        </section>
+      ) : null}
+
+      {hasTips ? (
+        <section className="flex flex-col gap-4">
+          <h2 className="font-heading text-xl">Spotting tips / 観察のヒント</h2>
+          <CopyBlock lang="EN" text={species.spottingTipsEn} />
+          <CopyBlock lang="JA" text={species.spottingTipsJa} />
+          <CopyBlock lang="ZH-TW" text={species.spottingTipsZhTw} />
+        </section>
+      ) : null}
 
       <section className="flex flex-col gap-4">
         <h2 className="font-heading text-xl">Prevalence by Season</h2>
@@ -55,5 +86,23 @@ export function AtlasDetailView({ species }: AtlasDetailViewProps) {
         ← Collage
       </Link>
     </article>
+  );
+}
+
+function CopyBlock({
+  lang,
+  text,
+}: {
+  lang: string;
+  text: string | undefined;
+}) {
+  if (!hasText(text)) return null;
+  return (
+    <div className="flex flex-col gap-1">
+      <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {lang}
+      </p>
+      <p className="text-base leading-relaxed whitespace-pre-wrap">{text}</p>
+    </div>
   );
 }

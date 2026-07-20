@@ -20,6 +20,21 @@ pnpm typecheck
 
 Histogram inputs: [`data/ebird/`](data/ebird/). Domain language: [`CONTEXT.md`](CONTEXT.md). Plan: [`PLAN.md`](PLAN.md).
 
+## Species copy (xAI)
+
+Offline script writes EN / JA / ZH-TW descriptions + spotting tips. Requires `XAI_API_KEY` in `.env.local` (no Gemini).
+
+**Spot-check (~5 species) before a full batch:**
+
+```bash
+pnpm seed:copy -- --limit 5 --dry-run   # preview selection
+pnpm seed:copy -- --limit 5             # generate + Convex upsert
+# review Atlas detail pages, then:
+pnpm seed:copy                          # full Guide species list
+```
+
+Options: `--limit N`, `--slug <slug>`, `--dry-run`. Re-runs skip fields in `curatedFields` (admin hand-edits). Output also lands in `data/species-copy.json`.
+
 ## Admin (`/admin`)
 
 Convex Auth + GitHub OAuth, gated by `ADMIN_GITHUB_IDS` (comma-separated GitHub user ids).

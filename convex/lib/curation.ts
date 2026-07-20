@@ -1,3 +1,4 @@
+import { COPY_FIELDS, type CopyField } from "./copyPlan";
 import { slugFromSciName } from "./slug";
 
 export type Season = "winter" | "spring" | "summer" | "autumn";
@@ -115,4 +116,40 @@ export function planAdminPrevalenceEdit(args: {
 /** Soft-hide / restore via Listed only. */
 export function planAdminSetListed(listed: boolean): { listed: boolean } {
   return { listed };
+}
+
+export type AdminCopyEditInput = {
+  existing: {
+    curatedFields: string[];
+  } & Partial<Record<CopyField, string | undefined>>;
+  patch: Partial<Record<CopyField, string>>;
+};
+
+export type AdminCopyEditPlan = {
+  speciesPatch: Partial<Record<CopyField, string>> & {
+    curatedFields?: string[];
+  };
+};
+
+/** Hand-edit description / spotting tips; append changed fields to curatedFields. */
+export function planAdminCopyEdit(
+  args: AdminCopyEditInput,
+): AdminCopyEditPlan {
+  const curated = new Set(args.existing.curatedFields);
+  const speciesPatch: AdminCopyEditPlan["speciesPatch"] = {};
+  let touched = false;
+
+  for (const field of COPY_FIELDS) {
+    const next = args.patch[field];
+    if (next === undefined) continue;
+    if (next === args.existing[field]) continue;
+    speciesPatch[field] = next;
+    curated.add(field);
+    touched = true;
+  }
+
+  if (!touched) return { speciesPatch: {} };
+
+  speciesPatch.curatedFields = [...curated];
+  return { speciesPatch };
 }

@@ -20,6 +20,12 @@ export type SpeciesRecord = {
   listed: boolean;
   illustrationStatus: IllustrationStatus;
   prevalence: SeasonalPrevalence;
+  descriptionEn?: string;
+  descriptionJa?: string;
+  descriptionZhTw?: string;
+  spottingTipsEn?: string;
+  spottingTipsJa?: string;
+  spottingTipsZhTw?: string;
 };
 
 export type CollageBird = {
