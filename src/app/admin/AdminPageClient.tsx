@@ -143,6 +143,16 @@ function SpeciesEditor({
     spottingTipsEn?: string;
     spottingTipsJa?: string;
     spottingTipsZhTw?: string;
+    illustrationStatus:
+      | "queued"
+      | "generating"
+      | "pendingReview"
+      | "approved"
+      | "failed";
+    perchUrl?: string;
+    flightUrl?: string;
+    dimsPerch?: number[];
+    dimsFlight?: number[];
   };
 }) {
   const updateNames = useMutation(api.admin.updateNames);
@@ -227,6 +237,9 @@ function SpeciesEditor({
           <h2 className="font-display text-xl">{species.comNameEn}</h2>
           <p className="text-sm italic text-muted-foreground">{species.sciName}</p>
           <p className="font-mono text-xs text-muted-foreground">{species.slug}</p>
+          <p className="text-xs text-muted-foreground">
+            Illustration: {species.illustrationStatus}
+          </p>
         </div>
         <label className="flex items-center gap-2 text-sm">
           <Checkbox
@@ -353,8 +366,170 @@ function SpeciesEditor({
         </Button>
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
       </div>
+
+      <IllustrationControls species={species} />
     </article>
   );
+}
+
+function IllustrationControls({
+  species,
+}: {
+  species: {
+    _id: Id<"species">;
+    illustrationStatus: string;
+    perchUrl?: string;
+    flightUrl?: string;
+    dimsPerch?: number[];
+    dimsFlight?: number[];
+  };
+}) {
+  const generateUploadUrl = useMutation(api.admin.generateUploadUrl);
+  const attachIllustrations = useMutation(api.admin.attachIllustrations);
+  const approveIllustrations = useMutation(api.admin.approveIllustrations);
+  const rejectIllustrations = useMutation(api.admin.rejectIllustrations);
+  const startIllustrationRegen = useMutation(api.admin.startIllustrationRegen);
+
+  const [perchFile, setPerchFile] = useState<File | null>(null);
+  const [flightFile, setFlightFile] = useState<File | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function upload(file: File): Promise<{
+    storageId: Id<"_storage">;
+    dims: number[];
+  }> {
+    const uploadUrl = await generateUploadUrl({});
+    const result = await fetch(uploadUrl, {
+      method: "POST",
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+      body: file,
+    });
+    if (!result.ok) throw new Error(`Upload failed (${result.status})`);
+    const json = (await result.json()) as { storageId: Id<"_storage"> };
+    const dims = await readImageDims(file);
+    return { storageId: json.storageId, dims };
+  }
+
+  async function attach() {
+    if (!perchFile || !flightFile) {
+      setError("Choose both perched and flight cutouts");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    try {
+      const perch = await upload(perchFile);
+      const flight = await upload(flightFile);
+      await attachIllustrations({
+        speciesId: species._id,
+        illustrationPerch: perch.storageId,
+        illustrationFlight: flight.storageId,
+        dimsPerch: perch.dims,
+        dimsFlight: flight.dims,
+      });
+      setPerchFile(null);
+      setFlightFile(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Attach failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="mt-6 flex flex-col gap-3 border-t border-border pt-4">
+      <p className="text-sm font-medium">Illustrations (pair)</p>
+      <div className="flex flex-wrap gap-4">
+        {species.perchUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={species.perchUrl}
+            alt="Perch preview"
+            className="h-24 w-auto object-contain"
+          />
+        ) : null}
+        {species.flightUrl ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={species.flightUrl}
+            alt="Flight preview"
+            className="h-24 w-auto object-contain"
+          />
+        ) : null}
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="flex flex-col gap-1">
+          <Label>Perched cutout</Label>
+          <Input
+            type="file"
+            accept="image/png,image/webp"
+            onChange={(e) => setPerchFile(e.target.files?.[0] ?? null)}
+          />
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label>Flight cutout</Label>
+          <Input
+            type="file"
+            accept="image/png,image/webp"
+            onChange={(e) => setFlightFile(e.target.files?.[0] ?? null)}
+          />
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        <Button size="sm" disabled={busy} onClick={() => void attach()}>
+          Attach pair
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          disabled={busy || species.illustrationStatus !== "pendingReview"}
+          onClick={() => void approveIllustrations({ speciesId: species._id })}
+        >
+          Approve
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={busy || species.illustrationStatus !== "pendingReview"}
+          onClick={() => void rejectIllustrations({ speciesId: species._id })}
+        >
+          Reject
+        </Button>
+        <Button
+          size="sm"
+          variant="destructive"
+          disabled={busy || species.illustrationStatus !== "approved"}
+          onClick={() =>
+            void startIllustrationRegen({ speciesId: species._id })
+          }
+        >
+          Start regen
+        </Button>
+      </div>
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+    </section>
+  );
+}
+
+function readImageDims(file: File): Promise<number[]> {
+  return new Promise((resolve, reject) => {
+    const url = URL.createObjectURL(file);
+    const img = new window.Image();
+    img.onload = () => {
+      const long = Math.max(img.naturalWidth, img.naturalHeight);
+      const scale = long > 0 ? 560 / long : 1;
+      const w = Math.round(img.naturalWidth * scale);
+      const h = Math.round(img.naturalHeight * scale);
+      URL.revokeObjectURL(url);
+      resolve([w, h]);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(url);
+      reject(new Error("Could not read image dimensions"));
+    };
+    img.src = url;
+  });
 }
 
 function Field({

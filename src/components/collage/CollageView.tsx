@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { packCollage } from "@/lib/collage/pack";
@@ -19,6 +20,17 @@ import { SeasonPicker } from "./SeasonPicker";
 type CollageViewProps = {
   species: SpeciesRecord[];
 };
+
+function poseUrl(tile: PackedBird): string | undefined {
+  let h = 0;
+  for (let i = 0; i < tile.slug.length; i += 1) {
+    h = (h * 31 + tile.slug.charCodeAt(i)) | 0;
+  }
+  const preferFlight = (h & 1) === 1;
+  if (preferFlight && tile.flightUrl) return tile.flightUrl;
+  if (tile.perchUrl) return tile.perchUrl;
+  return tile.flightUrl;
+}
 
 export function CollageView({ species }: CollageViewProps) {
   const [season, setSeason] = useState<SeasonFilter>(() =>
@@ -93,25 +105,39 @@ export function CollageView({ species }: CollageViewProps) {
             </EmptyContent>
           </Empty>
         ) : (
-          placed.map((tile) => (
-            <Link
-              key={tile.slug}
-              href={`/atlas/${tile.slug}`}
-              className="absolute"
-              style={{
-                left: tile.x,
-                top: tile.y,
-                width: tile.width,
-                height: tile.height,
-              }}
-              title={`${tile.comNameEn}\n${tile.comNameJa}\n${tile.comNameZhTw}\n${tile.sciName}`}
-            >
-              <PlaceholderSilhouette
-                label={tile.comNameEn}
-                prevalence={tile.prevalence}
-              />
-            </Link>
-          ))
+          placed.map((tile) => {
+            const src = poseUrl(tile);
+            return (
+              <Link
+                key={tile.slug}
+                href={`/atlas/${tile.slug}`}
+                className="absolute"
+                style={{
+                  left: tile.x,
+                  top: tile.y,
+                  width: tile.width,
+                  height: tile.height,
+                }}
+                title={`${tile.comNameEn}\n${tile.comNameJa}\n${tile.comNameZhTw}\n${tile.sciName}`}
+              >
+                {src ? (
+                  <Image
+                    src={src}
+                    alt={tile.comNameEn}
+                    fill
+                    sizes={`${Math.ceil(tile.width)}px`}
+                    className="object-contain"
+                    unoptimized
+                  />
+                ) : (
+                  <PlaceholderSilhouette
+                    label={tile.comNameEn}
+                    prevalence={tile.prevalence}
+                  />
+                )}
+              </Link>
+            );
+          })
         )}
       </div>
     </div>

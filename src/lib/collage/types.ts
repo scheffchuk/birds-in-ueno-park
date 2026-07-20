@@ -11,6 +11,22 @@ export type IllustrationStatus =
 
 export type SeasonalPrevalence = Record<Season, number>;
 
+export type CollageBird = {
+  slug: string;
+  sciName: string;
+  comNameEn: string;
+  comNameJa: string;
+  comNameZhTw: string;
+  /** Prevalence for the selected Season filter (0–100). */
+  prevalence: number;
+  perchUrl?: string;
+  flightUrl?: string;
+  dimsPerch?: number[];
+  dimsFlight?: number[];
+  maskPerch?: { w: number; h: number; bits: string };
+  maskFlight?: { w: number; h: number; bits: string };
+};
+
 export type SpeciesRecord = {
   slug: string;
   sciName: string;
@@ -26,16 +42,12 @@ export type SpeciesRecord = {
   spottingTipsEn?: string;
   spottingTipsJa?: string;
   spottingTipsZhTw?: string;
-};
-
-export type CollageBird = {
-  slug: string;
-  sciName: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-  /** Prevalence for the selected Season filter (0–100). */
-  prevalence: number;
+  perchUrl?: string;
+  flightUrl?: string;
+  dimsPerch?: number[];
+  dimsFlight?: number[];
+  maskPerch?: { w: number; h: number; bits: string };
+  maskFlight?: { w: number; h: number; bits: string };
 };
 
 export type PackedBird = CollageBird & {

@@ -9,13 +9,23 @@ import {
   type Season,
 } from "./lib/seedPlan";
 import { planCopyUpsert } from "./lib/copyPlan";
-import { loadListedSpecies, loadPrevalenceForSpecies } from "./lib/loadSpecies";
+import {
+  loadListedSpecies,
+  loadPrevalenceForSpecies,
+  loadSpeciesForCollage,
+} from "./lib/loadSpecies";
 
 const prevalenceValidator = v.object({
   winter: v.number(),
   spring: v.number(),
   summer: v.number(),
   autumn: v.number(),
+});
+
+const maskValidator = v.object({
+  w: v.number(),
+  h: v.number(),
+  bits: v.string(),
 });
 
 const guideSpeciesValidator = v.object({
@@ -50,6 +60,35 @@ const speciesRecordValidator = v.object({
   spottingTipsZhTw: v.optional(v.string()),
 });
 
+const collageSpeciesValidator = v.object({
+  slug: v.string(),
+  sciName: v.string(),
+  comNameEn: v.string(),
+  comNameJa: v.string(),
+  comNameZhTw: v.string(),
+  listed: v.boolean(),
+  illustrationStatus: v.union(
+    v.literal("queued"),
+    v.literal("generating"),
+    v.literal("pendingReview"),
+    v.literal("approved"),
+    v.literal("failed"),
+  ),
+  prevalence: prevalenceValidator,
+  descriptionEn: v.optional(v.string()),
+  descriptionJa: v.optional(v.string()),
+  descriptionZhTw: v.optional(v.string()),
+  spottingTipsEn: v.optional(v.string()),
+  spottingTipsJa: v.optional(v.string()),
+  spottingTipsZhTw: v.optional(v.string()),
+  perchUrl: v.optional(v.string()),
+  flightUrl: v.optional(v.string()),
+  dimsPerch: v.optional(v.array(v.number())),
+  dimsFlight: v.optional(v.array(v.number())),
+  maskPerch: v.optional(maskValidator),
+  maskFlight: v.optional(maskValidator),
+});
+
 const speciesCopyValidator = v.object({
   slug: v.string(),
   descriptionEn: v.string(),
@@ -60,12 +99,18 @@ const speciesCopyValidator = v.object({
   spottingTipsZhTw: v.string(),
 });
 
-/** Listed Guide species with seasonal Prevalence for the collage. */
+/** Listed Guide species with cutout URLs + mask/dims for the collage. */
 export const listForCollage = query({
   args: {},
-  returns: v.array(speciesRecordValidator),
+  returns: v.array(collageSpeciesValidator),
   handler: async (ctx) => {
-    return await loadListedSpecies(ctx);
+    const all = await loadSpeciesForCollage(ctx);
+    return all.filter(
+      (sp) =>
+        sp.illustrationStatus === "approved" &&
+        Boolean(sp.perchUrl) &&
+        Boolean(sp.flightUrl),
+    );
   },
 });
 

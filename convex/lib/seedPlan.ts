@@ -29,7 +29,7 @@ export type SpeciesUpsertPlan = {
   touchListed: false;
   insert: (GuideSpeciesSeed & {
     listed: true;
-    illustrationStatus: "approved";
+    illustrationStatus: "queued";
     curatedFields: [];
   }) | null;
   speciesPatch: Partial<{
@@ -66,7 +66,7 @@ export function planSpeciesUpsert(args: {
       insert: {
         ...incoming,
         listed: true,
-        illustrationStatus: "approved",
+        illustrationStatus: "queued",
         curatedFields: [],
       },
       speciesPatch: {},

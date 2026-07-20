@@ -15,6 +15,7 @@ import type * as lib_allowlist from "../lib/allowlist.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_copyPlan from "../lib/copyPlan.js";
 import type * as lib_curation from "../lib/curation.js";
+import type * as lib_illustration from "../lib/illustration.js";
 import type * as lib_loadSpecies from "../lib/loadSpecies.js";
 import type * as lib_seedPlan from "../lib/seedPlan.js";
 import type * as lib_slug from "../lib/slug.js";
@@ -34,6 +35,7 @@ declare const fullApi: ApiFromModules<{
   "lib/auth": typeof lib_auth;
   "lib/copyPlan": typeof lib_copyPlan;
   "lib/curation": typeof lib_curation;
+  "lib/illustration": typeof lib_illustration;
   "lib/loadSpecies": typeof lib_loadSpecies;
   "lib/seedPlan": typeof lib_seedPlan;
   "lib/slug": typeof lib_slug;

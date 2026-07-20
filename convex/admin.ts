@@ -4,6 +4,12 @@ import type { MutationCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { requireAdmin } from "./lib/auth";
 import {
+  planApproveIllustrations,
+  planAttachIllustrations,
+  planRejectIllustrations,
+  planStartIllustrationRegen,
+} from "./lib/illustration";
+import {
   planAdminCopyEdit,
   planAdminCreateSpecies,
   planAdminNameEdit,
@@ -51,6 +57,12 @@ const adminSpeciesValidator = v.object({
   spottingTipsEn: v.optional(v.string()),
   spottingTipsJa: v.optional(v.string()),
   spottingTipsZhTw: v.optional(v.string()),
+  illustrationPerch: v.optional(v.id("_storage")),
+  illustrationFlight: v.optional(v.id("_storage")),
+  perchUrl: v.optional(v.string()),
+  flightUrl: v.optional(v.string()),
+  dimsPerch: v.optional(v.array(v.number())),
+  dimsFlight: v.optional(v.array(v.number())),
 });
 
 /** Whether the caller is an allowlisted admin (for UI gating). */
@@ -122,6 +134,16 @@ export const listSpecies = query({
         spottingTipsEn: sp.spottingTipsEn,
         spottingTipsJa: sp.spottingTipsJa,
         spottingTipsZhTw: sp.spottingTipsZhTw,
+        illustrationPerch: sp.illustrationPerch,
+        illustrationFlight: sp.illustrationFlight,
+        perchUrl: sp.illustrationPerch
+          ? ((await ctx.storage.getUrl(sp.illustrationPerch)) ?? undefined)
+          : undefined,
+        flightUrl: sp.illustrationFlight
+          ? ((await ctx.storage.getUrl(sp.illustrationFlight)) ?? undefined)
+          : undefined,
+        dimsPerch: sp.dimsPerch,
+        dimsFlight: sp.dimsFlight,
       });
     }
 
@@ -306,6 +328,109 @@ export const setListed = mutation({
 
     const patch = planAdminSetListed(args.listed);
     await ctx.db.patch(args.speciesId, patch);
+    return null;
+  },
+});
+
+const maskArg = v.object({
+  w: v.number(),
+  h: v.number(),
+  bits: v.string(),
+});
+
+/** Short-lived upload URL for illustration cutouts. */
+export const generateUploadUrl = mutation({
+  args: {},
+  returns: v.string(),
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+    return await ctx.storage.generateUploadUrl();
+  },
+});
+
+/** Attach perched + flight cutouts (and optional mask/dims) as one pair. */
+export const attachIllustrations = mutation({
+  args: {
+    speciesId: v.id("species"),
+    illustrationPerch: v.id("_storage"),
+    illustrationFlight: v.id("_storage"),
+    maskPerch: v.optional(maskArg),
+    maskFlight: v.optional(maskArg),
+    dimsPerch: v.optional(v.array(v.number())),
+    dimsFlight: v.optional(v.array(v.number())),
+  },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+
+    const sp = await ctx.db.get(args.speciesId);
+    if (!sp) throw new Error("Species not found");
+
+    const patch = planAttachIllustrations({
+      illustrationPerch: args.illustrationPerch,
+      illustrationFlight: args.illustrationFlight,
+      maskPerch: args.maskPerch,
+      maskFlight: args.maskFlight,
+      dimsPerch: args.dimsPerch,
+      dimsFlight: args.dimsFlight,
+    });
+
+    await ctx.db.patch(args.speciesId, {
+      illustrationPerch: args.illustrationPerch,
+      illustrationFlight: args.illustrationFlight,
+      illustrationStatus: patch.illustrationStatus,
+      ...(patch.maskPerch ? { maskPerch: patch.maskPerch } : {}),
+      ...(patch.maskFlight ? { maskFlight: patch.maskFlight } : {}),
+      ...(patch.dimsPerch ? { dimsPerch: patch.dimsPerch } : {}),
+      ...(patch.dimsFlight ? { dimsFlight: patch.dimsFlight } : {}),
+    });
+    return null;
+  },
+});
+
+export const approveIllustrations = mutation({
+  args: { speciesId: v.id("species") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+
+    const sp = await ctx.db.get(args.speciesId);
+    if (!sp) throw new Error("Species not found");
+
+    const patch = planApproveIllustrations({
+      illustrationPerch: sp.illustrationPerch,
+      illustrationFlight: sp.illustrationFlight,
+    });
+    await ctx.db.patch(args.speciesId, patch);
+    return null;
+  },
+});
+
+export const rejectIllustrations = mutation({
+  args: { speciesId: v.id("species") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+
+    const sp = await ctx.db.get(args.speciesId);
+    if (!sp) throw new Error("Species not found");
+
+    await ctx.db.patch(args.speciesId, planRejectIllustrations());
+    return null;
+  },
+});
+
+/** Flip approved art to generating so the collage drops it until re-approval. */
+export const startIllustrationRegen = mutation({
+  args: { speciesId: v.id("species") },
+  returns: v.null(),
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx);
+
+    const sp = await ctx.db.get(args.speciesId);
+    if (!sp) throw new Error("Species not found");
+
+    await ctx.db.patch(args.speciesId, planStartIllustrationRegen());
     return null;
   },
 });

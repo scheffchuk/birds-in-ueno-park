@@ -11,6 +11,8 @@ function species(
     comNameEn: overrides.sciName,
     comNameJa: overrides.sciName,
     comNameZhTw: overrides.sciName,
+    perchUrl: "https://example.com/perch.png",
+    flightUrl: "https://example.com/flight.png",
     prevalence: {
       winter: 0,
       spring: 0,
@@ -97,5 +99,36 @@ describe("selectForCollage", () => {
       "winter" satisfies Season,
     );
     expect(onlyPending).toEqual([]);
+  });
+
+  it("omits approved species that lack cutout URLs", () => {
+    const winter = selectForCollage(
+      [
+        species({
+          slug: "no-art",
+          sciName: "No Art",
+          perchUrl: undefined,
+          flightUrl: undefined,
+          prevalence: { winter: 50, spring: 50, summer: 50, autumn: 50 },
+        }),
+      ],
+      "winter",
+    );
+    expect(winter).toEqual([]);
+  });
+
+  it("omits regenerating species even when cutout URLs remain", () => {
+    const winter = selectForCollage(
+      [
+        species({
+          slug: "regen",
+          sciName: "Regen Bird",
+          illustrationStatus: "generating",
+          prevalence: { winter: 50, spring: 50, summer: 50, autumn: 50 },
+        }),
+      ],
+      "winter",
+    );
+    expect(winter).toEqual([]);
   });
 });

@@ -8,6 +8,18 @@ const GAP = 8;
 
 type Sized = CollageBird & { width: number; height: number };
 
+function aspectRatio(bird: CollageBird): number {
+  const dims = bird.dimsPerch ?? bird.dimsFlight;
+  if (dims && dims.length >= 2) {
+    const w = dims[0];
+    const h = dims[1];
+    if (typeof w === "number" && typeof h === "number" && h > 0) {
+      return w / h;
+    }
+  }
+  return ASPECT;
+}
+
 function sizeTiles(birds: CollageBird[], viewportW: number, viewportH: number): Sized[] {
   const vpArea = viewportW * viewportH;
   const budget = vpArea * PACKING_BUDGET_FRAC;
@@ -16,14 +28,16 @@ function sizeTiles(birds: CollageBird[], viewportW: number, viewportH: number): 
   const scored = birds.map((bird) => ({
     ...bird,
     score: Math.pow(Math.max(1, bird.prevalence), COUNT_EXP),
+    ar: aspectRatio(bird),
   }));
   const sumScore = scored.reduce((a, t) => a + t.score, 0) || 1;
 
   const tiles = scored.map((t) => {
     const area = Math.max(minArea, (budget * t.score) / sumScore);
-    const width = Math.sqrt(area * ASPECT);
-    const height = width / ASPECT;
-    return { ...t, width, height };
+    const width = Math.sqrt(area * t.ar);
+    const height = width / t.ar;
+    const { score: _score, ar: _ar, ...rest } = t;
+    return { ...rest, width, height };
   });
 
   let sumA = tiles.reduce((a, t) => a + t.width * t.height, 0);
@@ -43,7 +57,7 @@ function sizeTiles(birds: CollageBird[], viewportW: number, viewportH: number): 
     }
   }
 
-  return tiles.map(({ score: _score, ...rest }) => rest);
+  return tiles;
 }
 
 function overlaps(

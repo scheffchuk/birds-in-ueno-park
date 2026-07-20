@@ -40,7 +40,7 @@ describe("planSpeciesUpsert", () => {
     ]);
   });
 
-  it("defaults listed true and illustrationStatus approved for new species", () => {
+  it("defaults listed true and illustrationStatus queued for new species", () => {
     const planned = planSpeciesUpsert({
       incoming: {
         sciName: "Hirundo rustica",
@@ -55,7 +55,7 @@ describe("planSpeciesUpsert", () => {
     });
     expect(planned.insert).toMatchObject({
       listed: true,
-      illustrationStatus: "approved",
+      illustrationStatus: "queued",
       curatedFields: [],
       slug: "hirundo-rustica",
     });

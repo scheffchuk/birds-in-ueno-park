@@ -90,7 +90,7 @@ function writeFixtureTs(guide: GuideSpeciesSeed[]) {
     comNameJa: g.comNameJa,
     comNameZhTw: g.comNameZhTw,
     listed: true,
-    illustrationStatus: "approved" as const,
+    illustrationStatus: "queued" as const,
     prevalence: g.prevalence,
   }));
   const body = `import type { SpeciesRecord } from "@/lib/collage/types";

@@ -10,10 +10,15 @@ const hasConvex = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
 
 function CollageFromConvex() {
   const fromConvex = useQuery(api.species.listForCollage);
-  // Loading → fixtures; empty/seeded → Convex result (no silent fixture swap)
-  const species: SpeciesRecord[] =
-    fromConvex === undefined ? FIXTURE_SPECIES : fromConvex;
+  if (fromConvex === undefined) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center bg-background text-muted-foreground">
+        Loading collage…
+      </main>
+    );
+  }
 
+  const species: SpeciesRecord[] = fromConvex;
   return (
     <main className="flex min-h-screen flex-col bg-background">
       <CollageView species={species} />
