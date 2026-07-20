@@ -1,10 +1,18 @@
 # Birds in Ueno
 
+## Package manager
+
+Use **pnpm** only (`pnpm install`, `pnpm add`, `pnpm exec`, `pnpm dlx`, …). Do not use npm or yarn.
+
+## UI
+
+Use **shadcn/ui** primitives (`pnpm dlx shadcn@latest add …`) for interactive UI. Compose with existing components before custom markup.
+
 ## Agent skills
 
 ### Issue tracker
 
-GitHub Issues via the `gh` CLI (repo not created yet — `gh` will use `git remote` once it exists). See `docs/agents/issue-tracker.md`.
+GitHub Issues via the `gh` CLI (`scheffchuk/birds-in-ueno-park`). See `docs/agents/issue-tracker.md`.
 
 ### Triage labels
 
