@@ -3,13 +3,17 @@
 import type { SeasonFilter } from "@/lib/collage/types";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
-const TABS: { id: SeasonFilter; label: string }[] = [
+const SEASON_OPTIONS: { id: SeasonFilter; label: string }[] = [
   { id: "winter", label: "Winter 冬" },
   { id: "spring", label: "Spring 春" },
   { id: "summer", label: "Summer 夏" },
   { id: "autumn", label: "Autumn 秋" },
   { id: "all", label: "All year 通年" },
 ];
+
+function isSeasonFilter(value: string): value is SeasonFilter {
+  return SEASON_OPTIONS.some((option) => option.id === value);
+}
 
 type SeasonPickerProps = {
   value: SeasonFilter;
@@ -22,13 +26,7 @@ export function SeasonPicker({ value, onChange }: SeasonPickerProps) {
       value={[value]}
       onValueChange={(next) => {
         const selected = next[0];
-        if (
-          selected === "winter" ||
-          selected === "spring" ||
-          selected === "summer" ||
-          selected === "autumn" ||
-          selected === "all"
-        ) {
+        if (selected && isSeasonFilter(selected)) {
           onChange(selected);
         }
       }}
@@ -37,9 +35,13 @@ export function SeasonPicker({ value, onChange }: SeasonPickerProps) {
       spacing={0}
       aria-label="Season"
     >
-      {TABS.map((tab) => (
-        <ToggleGroupItem key={tab.id} value={tab.id} aria-label={tab.label}>
-          {tab.label}
+      {SEASON_OPTIONS.map((option) => (
+        <ToggleGroupItem
+          key={option.id}
+          value={option.id}
+          aria-label={option.label}
+        >
+          {option.label}
         </ToggleGroupItem>
       ))}
     </ToggleGroup>

@@ -25,6 +25,7 @@ export function CollageView({ species }: CollageViewProps) {
     currentTokyoSeason(),
   );
   const [placed, setPlaced] = useState<PackedBird[]>([]);
+  const [layoutReady, setLayoutReady] = useState(false);
   const stageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -35,8 +36,10 @@ export function CollageView({ species }: CollageViewProps) {
       const selected = selectForCollage(species, season);
       const { width, height } = el.getBoundingClientRect();
       setPlaced(packCollage(selected, width, height));
+      setLayoutReady(true);
     };
 
+    setLayoutReady(false);
     layout();
     const observer = new ResizeObserver(layout);
     observer.observe(el);
@@ -44,6 +47,7 @@ export function CollageView({ species }: CollageViewProps) {
   }, [species, season]);
 
   const birds = selectForCollage(species, season);
+  const showEmpty = birds.length === 0 || (layoutReady && placed.length === 0);
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
@@ -69,7 +73,7 @@ export function CollageView({ species }: CollageViewProps) {
         className="relative min-h-[70vh] flex-1 overflow-hidden"
         aria-label="Bird collage"
       >
-        {birds.length === 0 ? (
+        {showEmpty ? (
           <Empty className="absolute inset-0 border-0">
             <EmptyHeader>
               <EmptyTitle className="font-heading text-xl">

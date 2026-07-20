@@ -1,6 +1,5 @@
 import type {
   CollageBird,
-  Season,
   SeasonFilter,
   SpeciesRecord,
 } from "./types";
@@ -40,13 +39,4 @@ export function selectForCollage(
     });
   }
   return selected;
-}
-
-export function isSeason(value: string): value is Season {
-  return (
-    value === "winter" ||
-    value === "spring" ||
-    value === "summer" ||
-    value === "autumn"
-  );
 }
