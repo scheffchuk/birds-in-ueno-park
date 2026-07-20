@@ -6,7 +6,7 @@ import { packCollage } from "@/lib/collage/pack";
 import { selectForCollage } from "@/lib/collage/select";
 import { currentTokyoSeason } from "@/lib/collage/season";
 import type { PackedBird, SeasonFilter, SpeciesRecord } from "@/lib/collage/types";
-import { Button } from "@/components/ui/button";
+import { buttonVariants } from "@/components/ui/button";
 import {
   Empty,
   EmptyContent,
@@ -62,9 +62,12 @@ export function CollageView({ species }: CollageViewProps) {
         </div>
         <nav className="flex flex-wrap items-center gap-3">
           <SeasonPicker value={season} onChange={setSeason} />
-          <Button variant="link" size="sm" render={<Link href="/atlas" />}>
+          <Link
+            href="/atlas"
+            className={buttonVariants({ variant: "link", size: "sm" })}
+          >
             Atlas 図鑑
-          </Button>
+          </Link>
         </nav>
       </header>
 
@@ -84,9 +87,9 @@ export function CollageView({ species }: CollageViewProps) {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Button render={<Link href="/atlas" />}>
+              <Link href="/atlas" className={buttonVariants()}>
                 Browse the Atlas 図鑑を見る
-              </Button>
+              </Link>
             </EmptyContent>
           </Empty>
         ) : (
