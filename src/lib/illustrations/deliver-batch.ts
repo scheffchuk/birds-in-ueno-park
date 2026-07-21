@@ -1,4 +1,4 @@
-import { getBatch, getBatchResults, isTerminalStatus } from "batchwork";
+import { getBatch, getBatchResults } from "batchwork";
 import type { BatchProvider } from "batchwork";
 import { start } from "workflow/api";
 import { processIllustrationPose } from "../../../workflows/generate-illustration-pose";
@@ -7,6 +7,11 @@ import {
   pipelineClient,
   pipelineSecret,
 } from "@/lib/illustrations/pipeline-client";
+import {
+  batchFailureReason,
+  isBatchCompletedSuccess,
+  isBatchEffectivelyTerminal,
+} from "@/lib/illustrations/batch-terminal";
 
 /** Poll one open Batchwork job; on completion start per-pose workflows. */
 export async function deliverIllustrationBatch(job: {
@@ -26,7 +31,7 @@ export async function deliverIllustrationBatch(job: {
     id: job.batchId,
   });
   const snapshot = await batch.poll();
-  if (!isTerminalStatus(snapshot.status)) {
+  if (!isBatchEffectivelyTerminal(snapshot)) {
     return "open";
   }
 
@@ -34,12 +39,13 @@ export async function deliverIllustrationBatch(job: {
   const secret = pipelineSecret();
   const byCustomId = new Map(job.requests.map((r) => [r.customId, r]));
 
-  if (snapshot.status !== "completed") {
+  if (!isBatchCompletedSuccess(snapshot)) {
+    const reason = batchFailureReason(snapshot);
     for (const req of job.requests) {
       await client.mutation(api.illustrationPipeline.failIllustrationPose, {
         secret,
         slug: req.slug,
-        reason: `batch ${snapshot.status}`,
+        reason,
       });
     }
     await client.mutation(

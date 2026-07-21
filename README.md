@@ -51,9 +51,9 @@ On the Convex deployment:
 On Vercel / `.env.local` (Next):
 
 1. `NEXT_PUBLIC_CONVEX_URL`
-2. `XAI_API_KEY` — Batchwork `grok-imagine-image-quality` edits
-3. `FAL_KEY` — BiRefNet matting
-4. `AI_GATEWAY_API_KEY` — vision verify via Gateway
+2. `XAI_API_KEY` — vision verify (`grok-4-fast`)
+3. `FAL_KEY` — BiRefNet matting (cream-key fallback if exhausted)
+4. `AI_GATEWAY_API_KEY` — species copy + **illustration generate** (`google/gemini-2.5-flash-image`)
 5. `ILLUSTRATION_PIPELINE_SECRET` — same as Convex
 6. `CRON_SECRET` — protect `/api/cron/illustration-batches`
 7. `SITE_URL` / `NEXT_PUBLIC_SITE_URL` — public base for `/refs/style/{perch,flight}.jpg`
@@ -62,7 +62,7 @@ On Vercel / `.env.local` (Next):
 
 1. Seed anatomy for a slice: Admin → **Seed anatomy (N)** (Wikipedia → Convex; served at `CONVEX_SITE_URL/refs/anatomy/:slug`)
 2. Style placeholders live in `public/refs/style/` (replace with Koson/Yoshida prints when ready)
-3. **Generate missing (20)** submits Batchwork; cron (or immediate poll) starts per-pose Workflows
+3. **Generate missing (20)** runs sync Gemini Flash Image (`google/gemini-2.5-flash-image` via AI Gateway), uploads PNG, starts per-pose Workflows (mat → verify → stage)
 4. Review queue: approve pair, or **Reject + regen** (re-triggers generation)
 
 Manual attach (#7) still works for cutouts without running the pipeline.

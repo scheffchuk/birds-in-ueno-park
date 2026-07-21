@@ -13,10 +13,19 @@ export function buildIllustrationPrompt(input: {
   sciName: string;
   comNameEn: string;
   pose: IllustrationPose;
+  /** Which pose the anatomy photo shows (defaults to same as output pose). */
+  anatomyPose?: IllustrationPose;
 }): string {
   const pose = POSE_WORDS[input.pose];
   const sci = input.sciName;
   const com = input.comNameEn;
+  const anatomyPose = input.anatomyPose ?? input.pose;
+  const anatomyNote =
+    anatomyPose === "flight"
+      ? "IMAGE 1 shows this species IN FLIGHT — match wing shape, underwing pattern, and flight silhouette from it."
+      : input.pose === "flight"
+        ? "IMAGE 1 is a perched photo of this species — use it for colors and markings, but invent a natural flight posture (both wings extended)."
+        : "IMAGE 1 shows this species perched — match posture cues and plumage from it.";
 
   return `Generate a ${pose} ${com} (${sci}) in the style of an Edo-period Japanese kachō-e woodblock print, matching the painting technique of IMAGE 2 closely. Look at IMAGE 2: the bird is rendered with VERY FEW MARKS. The body is essentially 2-4 flat color zones with sharp boundaries. There is almost no internal texture on the body - no feather-by-feather rendering, no pen-line stippling, no gradient shading. The bird in IMAGE 2 looks like it was painted with maybe 30 brush strokes total. YOUR output should look the same: a few flat color zones, a few confident outline strokes, an accent stroke or two for major wing or tail markings, and that's it.
 
@@ -30,7 +39,7 @@ The ENTIRE bird must fit within the image frame: head, both wings (fully extende
 
 ### Reference handling
 
-- IMAGE 1 (positive, anatomy) IS ${com}. Match its proportions, head color, throat, wing pattern, back color, tail pattern, leg color. If the reference shows non-breeding or worn plumage, render the brightest BREEDING (adult-summer) plumage instead - render the most diagnostic, recognizable version of the species.
+- IMAGE 1 (positive, anatomy) IS ${com}. ${anatomyNote} Match its proportions, head color, throat, wing pattern, back color, tail pattern, leg color. If the reference shows non-breeding or worn plumage, render the brightest BREEDING (adult-summer) plumage instead - render the most diagnostic, recognizable version of the species.
 - IMAGE 2 (positive, style) is a real Edo-period kachō-e woodblock print. The bird in IMAGE 2 is a DIFFERENT species - IGNORE its species, only borrow its painting style. Render the bird in IMAGE 2's painting style. DO NOT copy any compositional elements from IMAGE 2 (branches, leaves, water, moon, scenery).
 
 Treat IMAGE 1 for anatomy and color information ONLY. Treat IMAGE 2 for style ONLY. The output should look like an Edo-period woodblock print of the species in IMAGE 1, painted by the artist of IMAGE 2.

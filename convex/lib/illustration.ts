@@ -92,7 +92,7 @@ export type StagedPoseFields = {
   dimsFlight?: number[];
 };
 
-/** Clear cutouts and flip to generating before a Batchwork job. */
+/** Clear cutouts and flip to generating before a generate job. */
 export function planStartIllustrationGeneration(): StagedPoseFields & {
   illustrationStatus: "generating";
 } {

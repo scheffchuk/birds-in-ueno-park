@@ -82,6 +82,7 @@ function IllustrationPipelinePanel({
     listed: boolean;
     illustrationStatus: string;
     anatomyRef?: Id<"_storage">;
+    anatomyRefFlight?: Id<"_storage">;
   }>;
 }) {
   const summary = useQuery(api.illustrationPipeline.illustrationStatusSummary);
@@ -90,9 +91,18 @@ function IllustrationPipelinePanel({
   const ensureAnatomy = useAction(
     api.illustrationAnatomy.ensureAnatomyFromWikipedia,
   );
+  const ensureFlightAnatomy = useAction(
+    api.illustrationAnatomy.ensureFlightAnatomyFromCommons,
+  );
+  const shrinkAnatomy = useAction(
+    api.illustrationAnatomy.shrinkOversizedAnatomyRefs,
+  );
   const approveIllustrations = useMutation(api.admin.approveIllustrations);
   const rejectAndRegenerate = useMutation(
     api.illustrationPipeline.rejectAndRegenerate,
+  );
+  const resetApprovedWithoutCutouts = useMutation(
+    api.illustrationPipeline.resetApprovedWithoutCutouts,
   );
 
   const [busy, setBusy] = useState(false);
@@ -101,6 +111,9 @@ function IllustrationPipelinePanel({
 
   const listed = species.filter((s) => s.listed);
   const missingAnatomy = listed.filter((s) => !s.anatomyRef).slice(0, 20);
+  const missingFlightAnatomy = listed
+    .filter((s) => !s.anatomyRefFlight)
+    .slice(0, 20);
 
   async function generateMissing(limit = 20) {
     if (!token) {
@@ -141,18 +154,130 @@ function IllustrationPipelinePanel({
     setMessage(null);
     try {
       let ok = 0;
-      let fail = 0;
+      const failures: string[] = [];
       for (const sp of missingAnatomy) {
-        const id = await ensureAnatomy({
+        const result = await ensureAnatomy({
           slug: sp.slug,
           sciName: sp.sciName,
+          comNameEn: sp.comNameEn,
         });
-        if (id) ok += 1;
-        else fail += 1;
+        if ("storageId" in result) {
+          ok += 1;
+        } else {
+          failures.push(`${sp.slug}: ${result.error}`);
+        }
       }
-      setMessage(`Anatomy seeded: ${ok} ok, ${fail} missing on Wikipedia`);
+      const failNote =
+        failures.length > 0
+          ? ` Failures: ${failures.slice(0, 5).join(" · ")}${failures.length > 5 ? ` (+${failures.length - 5} more)` : ""}`
+          : "";
+      setMessage(`Anatomy seeded: ${ok} ok, ${failures.length} failed.${failNote}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Anatomy seed failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function seedFlightAnatomySlice() {
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      let ok = 0;
+      const failures: string[] = [];
+      for (const sp of missingFlightAnatomy) {
+        const result = await ensureFlightAnatomy({
+          slug: sp.slug,
+          sciName: sp.sciName,
+          comNameEn: sp.comNameEn,
+        });
+        if ("storageId" in result) {
+          ok += 1;
+        } else {
+          failures.push(`${sp.slug}: ${result.error}`);
+        }
+        // Pace requests — iNat/Commons rate-limit tight loops.
+        await new Promise((r) => setTimeout(r, 600));
+      }
+      const failNote =
+        failures.length > 0
+          ? ` Failures: ${failures.slice(0, 5).join(" · ")}${failures.length > 5 ? ` (+${failures.length - 5} more)` : ""}`
+          : "";
+      setMessage(
+        `Flight anatomy seeded: ${ok} ok, ${failures.length} failed.${failNote}`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Flight anatomy seed failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function shrinkOversizedAnatomy() {
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const result = await shrinkAnatomy({ limit: 80 });
+      setMessage(
+        `Anatomy shrink: checked ${result.checked}, shrunk ${result.shrunk}, ok-size ${result.skipped}${
+          result.errors.length
+            ? `. Errors: ${result.errors.slice(0, 3).join(" · ")}`
+            : ""
+        }`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Anatomy shrink failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function pollBatches() {
+    if (!token) {
+      setError("No auth token");
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const res = await fetch("/api/illustrations/poll-batches", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token }),
+      });
+      const json = (await res.json()) as {
+        error?: string;
+        processed?: number;
+        results?: Array<{ batchId: string; status: string }>;
+      };
+      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+      const detail = (json.results ?? [])
+        .map((r) => `${r.batchId}: ${r.status}`)
+        .join(" · ");
+      setMessage(
+        `Polled ${json.processed ?? 0} batch(es). ${detail || "None open."}`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Poll failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function resetBogusApproved() {
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const { reset } = await resetApprovedWithoutCutouts({});
+      setMessage(
+        `Reset ${reset} approved/pending species without cutouts → queued.`,
+      );
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Reset failed");
     } finally {
       setBusy(false);
     }
@@ -185,7 +310,7 @@ function IllustrationPipelinePanel({
         <div>
           <h2 className="font-display text-xl">Illustration pipeline</h2>
           <p className="text-sm text-muted-foreground">
-            Batchwork generate → Workflow mat/verify → pendingReview
+            Sync Gemini Flash Image → Workflow mat/verify → pendingReview
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -199,6 +324,38 @@ function IllustrationPipelinePanel({
           </Button>
           <Button
             size="sm"
+            variant="outline"
+            disabled={busy || missingFlightAnatomy.length === 0}
+            onClick={() => void seedFlightAnatomySlice()}
+          >
+            Seed flight anatomy ({missingFlightAnatomy.length})
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={busy}
+            onClick={() => void shrinkOversizedAnatomy()}
+          >
+            Shrink large anatomy
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={busy}
+            onClick={() => void resetBogusApproved()}
+          >
+            Reset approved w/o art
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={busy || !token}
+            onClick={() => void pollBatches()}
+          >
+            Poll batches
+          </Button>
+          <Button
+            size="sm"
             disabled={busy || !token}
             onClick={() => void generateMissing(20)}
           >
@@ -208,7 +365,7 @@ function IllustrationPipelinePanel({
       </div>
 
       {summary ? (
-        <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 md:grid-cols-6">
+        <dl className="grid grid-cols-2 gap-2 text-sm sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7">
           {(
             [
               ["queued", summary.queued],
@@ -217,6 +374,7 @@ function IllustrationPipelinePanel({
               ["approved", summary.approved],
               ["failed", summary.failed],
               ["no anatomy", summary.missingAnatomy],
+              ["no flight anat.", summary.missingFlightAnatomy],
             ] as const
           ).map(([label, n]) => (
             <div key={label}>
@@ -245,28 +403,56 @@ function IllustrationPipelinePanel({
                 </p>
                 <div className="flex flex-wrap gap-4">
                   {sp.anatomyUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={sp.anatomyUrl}
-                      alt="Anatomy ref"
-                      className="h-28 w-auto object-contain"
-                    />
+                    <figure className="flex flex-col gap-1">
+                      <figcaption className="text-xs text-muted-foreground">
+                        Anatomy perch
+                      </figcaption>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={sp.anatomyUrl}
+                        alt="Anatomy perch"
+                        className="h-28 w-auto object-contain"
+                      />
+                    </figure>
+                  ) : null}
+                  {sp.anatomyFlightUrl ? (
+                    <figure className="flex flex-col gap-1">
+                      <figcaption className="text-xs text-muted-foreground">
+                        Anatomy flight
+                      </figcaption>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={sp.anatomyFlightUrl}
+                        alt="Anatomy flight"
+                        className="h-28 w-auto object-contain"
+                      />
+                    </figure>
                   ) : null}
                   {sp.perchUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={sp.perchUrl}
-                      alt="Perch"
-                      className="h-28 w-auto object-contain"
-                    />
+                    <figure className="flex flex-col gap-1">
+                      <figcaption className="text-xs text-muted-foreground">
+                        Illust perch
+                      </figcaption>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={sp.perchUrl}
+                        alt="Perch"
+                        className="h-28 w-auto object-contain"
+                      />
+                    </figure>
                   ) : null}
                   {sp.flightUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={sp.flightUrl}
-                      alt="Flight"
-                      className="h-28 w-auto object-contain"
-                    />
+                    <figure className="flex flex-col gap-1">
+                      <figcaption className="text-xs text-muted-foreground">
+                        Illust flight
+                      </figcaption>
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={sp.flightUrl}
+                        alt="Flight"
+                        className="h-28 w-auto object-contain"
+                      />
+                    </figure>
                   ) : null}
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -385,6 +571,8 @@ function SpeciesEditor({
     flightUrl?: string;
     dimsPerch?: number[];
     dimsFlight?: number[];
+    anatomyPerchUrl?: string;
+    anatomyFlightUrl?: string;
   };
 }) {
   const updateNames = useMutation(api.admin.updateNames);
@@ -599,8 +787,143 @@ function SpeciesEditor({
         {error ? <p className="text-sm text-destructive">{error}</p> : null}
       </div>
 
+      <AnatomyControls species={species} />
       <IllustrationControls species={species} />
     </article>
+  );
+}
+
+function AnatomyControls({
+  species,
+}: {
+  species: {
+    _id: Id<"species">;
+    anatomyPerchUrl?: string;
+    anatomyFlightUrl?: string;
+  };
+}) {
+  const generateUploadUrl = useMutation(api.admin.generateUploadUrl);
+  const attachAnatomyRef = useMutation(
+    api.illustrationPipeline.attachAnatomyRef,
+  );
+
+  const [perchFile, setPerchFile] = useState<File | null>(null);
+  const [flightFile, setFlightFile] = useState<File | null>(null);
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  async function upload(file: File): Promise<Id<"_storage">> {
+    const uploadUrl = await generateUploadUrl({});
+    const result = await fetch(uploadUrl, {
+      method: "POST",
+      headers: { "Content-Type": file.type || "application/octet-stream" },
+      body: file,
+    });
+    if (!result.ok) throw new Error(`Upload failed (${result.status})`);
+    const json = (await result.json()) as { storageId: Id<"_storage"> };
+    return json.storageId;
+  }
+
+  async function savePose(pose: "perch" | "flight", file: File | null) {
+    if (!file) {
+      setError(`Choose a ${pose} anatomy photo first`);
+      return;
+    }
+    setBusy(true);
+    setError(null);
+    setMessage(null);
+    try {
+      const storageId = await upload(file);
+      await attachAnatomyRef({
+        speciesId: species._id,
+        storageId,
+        pose,
+      });
+      if (pose === "perch") setPerchFile(null);
+      else setFlightFile(null);
+      setMessage(`Saved ${pose} anatomy ref`);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : "Anatomy upload failed");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <section className="mt-6 flex flex-col gap-3 border-t border-border pt-4">
+      <p className="text-sm font-medium">Anatomy refs (pair)</p>
+      <p className="text-xs text-muted-foreground">
+        Reference photos used as IMAGE 1 for generate. Replace blurry or wrong
+        flight shots here.
+      </p>
+      <div className="flex flex-wrap gap-6">
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-muted-foreground">Perch</span>
+          {species.anatomyPerchUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={species.anatomyPerchUrl}
+              alt="Perch anatomy"
+              className="h-28 w-auto max-w-[12rem] object-contain"
+            />
+          ) : (
+            <p className="text-xs text-muted-foreground">Missing</p>
+          )}
+        </div>
+        <div className="flex flex-col gap-1">
+          <span className="text-xs text-muted-foreground">Flight</span>
+          {species.anatomyFlightUrl ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={species.anatomyFlightUrl}
+              alt="Flight anatomy"
+              className="h-28 w-auto max-w-[12rem] object-contain"
+            />
+          ) : (
+            <p className="text-xs text-muted-foreground">Missing</p>
+          )}
+        </div>
+      </div>
+      <div className="grid gap-3 sm:grid-cols-2">
+        <div className="flex flex-col gap-1">
+          <Label>Replace perch anatomy</Label>
+          <Input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => setPerchFile(e.target.files?.[0] ?? null)}
+          />
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={busy || !perchFile}
+            onClick={() => void savePose("perch", perchFile)}
+          >
+            Upload perch
+          </Button>
+        </div>
+        <div className="flex flex-col gap-1">
+          <Label>Replace flight anatomy</Label>
+          <Input
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => setFlightFile(e.target.files?.[0] ?? null)}
+          />
+          <Button
+            size="sm"
+            variant="outline"
+            disabled={busy || !flightFile}
+            onClick={() => void savePose("flight", flightFile)}
+          >
+            Upload flight
+          </Button>
+        </div>
+      </div>
+      {message ? (
+        <p className="text-sm text-muted-foreground">{message}</p>
+      ) : null}
+      {error ? <p className="text-sm text-destructive">{error}</p> : null}
+    </section>
   );
 }
 

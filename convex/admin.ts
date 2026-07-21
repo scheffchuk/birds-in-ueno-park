@@ -64,6 +64,9 @@ const adminSpeciesValidator = v.object({
   dimsPerch: v.optional(v.array(v.number())),
   dimsFlight: v.optional(v.array(v.number())),
   anatomyRef: v.optional(v.id("_storage")),
+  anatomyRefFlight: v.optional(v.id("_storage")),
+  anatomyPerchUrl: v.optional(v.string()),
+  anatomyFlightUrl: v.optional(v.string()),
 });
 
 /** Whether the caller is an allowlisted admin (for UI gating). */
@@ -146,6 +149,13 @@ export const listSpecies = query({
         dimsPerch: sp.dimsPerch,
         dimsFlight: sp.dimsFlight,
         anatomyRef: sp.anatomyRef,
+        anatomyRefFlight: sp.anatomyRefFlight,
+        anatomyPerchUrl: sp.anatomyRef
+          ? ((await ctx.storage.getUrl(sp.anatomyRef)) ?? undefined)
+          : undefined,
+        anatomyFlightUrl: sp.anatomyRefFlight
+          ? ((await ctx.storage.getUrl(sp.anatomyRefFlight)) ?? undefined)
+          : undefined,
       });
     }
 

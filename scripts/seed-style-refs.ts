@@ -1,8 +1,9 @@
 /**
  * Upload public/refs/style/{perch,flight}.jpg into Convex stylePrints
- * and register keys so /refs/style/:key HTTP also works.
+ * so Batchwork can fetch them at CONVEX_SITE_URL/refs/style/:key
  *
  * Usage: pnpm seed:style-refs
+ * Needs: NEXT_PUBLIC_CONVEX_URL + ILLUSTRATION_PIPELINE_SECRET in .env.local
  */
 import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
@@ -13,11 +14,15 @@ const root = resolve(import.meta.dirname, "..");
 
 async function uploadStyle(
   client: ConvexHttpClient,
+  secret: string,
   pose: "perch" | "flight",
   filePath: string,
 ) {
   const bytes = readFileSync(filePath);
-  const uploadUrl = await client.mutation(api.admin.generateUploadUrl, {});
+  const uploadUrl = await client.mutation(
+    api.illustrationPipeline.generatePipelineUploadUrl,
+    { secret },
+  );
   const res = await fetch(uploadUrl, {
     method: "POST",
     headers: { "Content-Type": "image/jpeg" },
@@ -25,7 +30,8 @@ async function uploadStyle(
   });
   if (!res.ok) throw new Error(`Upload failed for ${pose}: ${res.status}`);
   const { storageId } = (await res.json()) as { storageId: string };
-  await client.mutation(api.illustrationPipeline.upsertStylePrint, {
+  await client.mutation(api.illustrationPipeline.upsertStylePrintPipeline, {
+    secret,
     key: pose,
     pose,
     storageId: storageId as never,
@@ -35,15 +41,13 @@ async function uploadStyle(
 
 async function main() {
   const url = process.env.NEXT_PUBLIC_CONVEX_URL;
-  const token = process.env.CONVEX_ADMIN_TOKEN;
+  const secret = process.env.ILLUSTRATION_PIPELINE_SECRET;
   if (!url) {
     console.error("NEXT_PUBLIC_CONVEX_URL required");
     process.exit(1);
   }
-  if (!token) {
-    console.error(
-      "CONVEX_ADMIN_TOKEN required (admin session JWT). Sign in at /admin and copy from localStorage, or run upload via Admin UI.",
-    );
+  if (!secret) {
+    console.error("ILLUSTRATION_PIPELINE_SECRET required");
     process.exit(1);
   }
 
@@ -55,10 +59,16 @@ async function main() {
   }
 
   const client = new ConvexHttpClient(url);
-  client.setAuth(token);
-  await uploadStyle(client, "perch", perch);
-  await uploadStyle(client, "flight", flight);
-  console.log("Done. Style also served at /refs/style/{perch,flight}.jpg");
+  await uploadStyle(client, secret, "perch", perch);
+  await uploadStyle(client, secret, "flight", flight);
+
+  const site =
+    process.env.NEXT_PUBLIC_CONVEX_SITE_URL ??
+    process.env.CONVEX_SITE_URL ??
+    "(set CONVEX_SITE_URL)";
+  console.log(`Done. Public URLs:`);
+  console.log(`  ${site}/refs/style/perch`);
+  console.log(`  ${site}/refs/style/flight`);
 }
 
 main().catch((err) => {

@@ -1,5 +1,5 @@
 /**
- * Per-pose post-pipeline: download Batchwork URL → fal mat → sharp mask → verify → stage.
+ * Per-pose post-pipeline: download → fal (or cream-key) mat → sharp mask → verify → stage.
  */
 import { FatalError } from "workflow";
 
@@ -17,10 +17,16 @@ export async function processIllustrationPose(input: PoseWorkflowInput) {
   const matted = await matteWithFal(bytes);
   const processed = await cropAndMask(matted);
 
+  const { parseIllustrationCustomId } = await import(
+    "../src/lib/admin/illustration-custom-id"
+  );
+  const { pose } = parseIllustrationCustomId(input.customId);
+
   let verified = await verifyWithVision({
     pngBytes: processed.png,
     sciName: input.sciName,
     comNameEn: input.comNameEn,
+    pose,
   });
   // Retry verify once before failing the species closed.
   if (!verified.ok) {
@@ -28,6 +34,7 @@ export async function processIllustrationPose(input: PoseWorkflowInput) {
       pngBytes: processed.png,
       sciName: input.sciName,
       comNameEn: input.comNameEn,
+      pose,
     });
   }
   if (!verified.ok) {
@@ -54,7 +61,36 @@ async function downloadResultImage(url: string): Promise<ArrayBuffer> {
 
 async function matteWithFal(bytes: ArrayBuffer): Promise<ArrayBuffer> {
   "use step";
+  try {
+    return await matteViaFal(bytes);
+  } catch (err) {
+    const detail = falErrorDetail(err);
+    console.warn("fal matting failed; falling back to cream-key", detail);
+    return await matteViaCreamKey(bytes);
+  }
+}
+
+function falErrorDetail(err: unknown): string {
+  if (err && typeof err === "object") {
+    const body = "body" in err ? err.body : undefined;
+    if (body && typeof body === "object" && body !== null && "detail" in body) {
+      return String(body.detail);
+    }
+    if ("message" in err && typeof err.message === "string") {
+      return err.message;
+    }
+  }
+  return String(err);
+}
+
+async function matteViaFal(bytes: ArrayBuffer): Promise<ArrayBuffer> {
   const { fal } = await import("@fal-ai/client");
+  const key = process.env.FAL_KEY;
+  if (!key) {
+    throw new Error("FAL_KEY not set");
+  }
+  fal.config({ credentials: key });
+
   const dataUrl = `data:image/png;base64,${Buffer.from(bytes).toString("base64")}`;
   const result = await fal.subscribe("fal-ai/birefnet/v2", {
     input: {
@@ -68,6 +104,32 @@ async function matteWithFal(bytes: ArrayBuffer): Promise<ArrayBuffer> {
   const res = await fetch(outUrl);
   if (!res.ok) throw new Error(`fal download failed: ${res.status}`);
   return await res.arrayBuffer();
+}
+
+async function matteViaCreamKey(bytes: ArrayBuffer): Promise<ArrayBuffer> {
+  const sharp = (await import("sharp")).default;
+  const { applyCreamKeyRgba } = await import(
+    "../src/lib/illustrations/cream-matte"
+  );
+
+  const image = sharp(Buffer.from(bytes)).ensureAlpha();
+  const { data, info } = await image
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+  const rgba = applyCreamKeyRgba(
+    new Uint8Array(data),
+    info.width,
+    info.height,
+  );
+  const png = await sharp(Buffer.from(rgba), {
+    raw: { width: info.width, height: info.height, channels: 4 },
+  })
+    .png()
+    .toBuffer();
+  return png.buffer.slice(
+    png.byteOffset,
+    png.byteOffset + png.byteLength,
+  ) as ArrayBuffer;
 }
 
 async function cropAndMask(matted: ArrayBuffer): Promise<{
@@ -143,41 +205,68 @@ async function verifyWithVision(input: {
   pngBytes: Buffer;
   sciName: string;
   comNameEn: string;
+  pose: "perch" | "flight";
 }): Promise<{ ok: boolean; reason?: string }> {
   "use step";
   const { generateObject } = await import("ai");
-  const { gateway } = await import("@ai-sdk/gateway");
+  const { createXai } = await import("@ai-sdk/xai");
+  const sharp = (await import("sharp")).default;
   const { verifyResultSchema, passesIllustrationVerify } = await import(
     "../src/lib/admin/illustration-verify"
   );
 
-  const dataUrl = `data:image/png;base64,${input.pngBytes.toString("base64")}`;
-  const { object } = await generateObject({
-    model: gateway("xai/grok-4.1-fast-non-reasoning"),
-    schema: verifyResultSchema,
-    messages: [
-      {
-        role: "user",
-        content: [
-          {
-            type: "text",
-            text: `You are a rigorous ornithologist examining a stylized kachō-e woodblock-style bird illustration. The bird is intended to be a ${input.comNameEn} (${input.sciName}).
-
-Respond with JSON fields only. Be honest: if the species looks wrong, set matchesTarget false. Flag sticks/branches/perches. Count wings, legs, heads, tails.`,
-          },
-          { type: "image", image: dataUrl },
-        ],
-      },
-    ],
-  });
-
-  if (!passesIllustrationVerify(object)) {
-    return {
-      ok: false,
-      reason: `verify rejected: matches=${object.matchesTarget} wings=${object.wingCount} perch=${object.hasStickOrPerch} issues=${object.anatomyIssues}`,
-    };
+  const apiKey = process.env.XAI_API_KEY;
+  if (!apiKey) {
+    return { ok: false, reason: "XAI_API_KEY required for vision verify" };
   }
-  return { ok: true };
+
+  // Keep vision payload small; Gateway/Vertex also choke on huge data-URI images.
+  const visionPng = await sharp(input.pngBytes)
+    .resize({ width: 1280, height: 1280, fit: "inside", withoutEnlargement: true })
+    .png()
+    .toBuffer();
+
+  const poseNote =
+    input.pose === "flight"
+      ? "This is a FLIGHT pose: both wings should be visible/extended. Legs may be tucked (count 0–2)."
+      : "This is a PERCHED side/profile pose: often only ONE wing and ONE leg are visible — that is OK.";
+
+  const xai = createXai({ apiKey });
+  try {
+    const { object } = await generateObject({
+      // Direct xAI — Gateway routes grok-4.1-fast* vision via Vertex and 400s.
+      model: xai("grok-4-fast"),
+      schema: verifyResultSchema,
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: `You are a rigorous ornithologist examining a stylized kachō-e woodblock-style bird illustration. The bird is intended to be a ${input.comNameEn} (${input.sciName}).
+
+${poseNote}
+
+Respond with JSON fields only. Be honest: if the species looks wrong, set matchesTarget false. Flag sticks/branches/perches. Count only body parts that are clearly visible.
+If there are no anatomy problems, set anatomyIssues to an empty string (not the word "none").`,
+            },
+            { type: "file", data: visionPng, mediaType: "image/png" },
+          ],
+        },
+      ],
+    });
+
+    if (!passesIllustrationVerify(object, input.pose)) {
+      return {
+        ok: false,
+        reason: `verify rejected: matches=${object.matchesTarget} wings=${object.wingCount} legs=${object.legCount} perch=${object.hasStickOrPerch} issues=${object.anatomyIssues}`,
+      };
+    }
+    return { ok: true };
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, reason: `verify API error: ${message}` };
+  }
 }
 
 async function stagePose(input: {

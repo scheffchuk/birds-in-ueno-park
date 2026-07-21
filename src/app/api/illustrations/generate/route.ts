@@ -1,13 +1,19 @@
-import { batch } from "batchwork";
+import { start } from "workflow/api";
+import { processIllustrationPose } from "../../../../../workflows/generate-illustration-pose";
 import {
   api,
   pipelineClient,
   pipelineSecret,
 } from "@/lib/illustrations/pipeline-client";
-import { deliverIllustrationBatch } from "@/lib/illustrations/deliver-batch";
+import { geminiImageEdit } from "@/lib/illustrations/gemini-image-edit";
+import { mapPool } from "@/lib/illustrations/xai-sync-edit";
+import type { Id } from "../../../../../convex/_generated/dataModel";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
+
+/** Concurrent Gemini Flash Image calls. */
+const EDIT_CONCURRENCY = 3;
 
 type Body = {
   limit?: number;
@@ -17,8 +23,9 @@ type Body = {
 };
 
 /**
- * Admin-triggered Batchwork submit for missing poses (default limit 20).
- * Poll `/api/cron/illustration-batches` (or Vercel Cron) to start pose workflows.
+ * Admin-triggered Gemini Flash Image generates for missing poses (default 20).
+ * Uses AI Gateway `google/gemini-2.5-flash-image` (same family as AvianVisitors).
+ * Starts a per-pose Workflow as each image returns.
  */
 export async function POST(request: Request) {
   const body = (await request.json()) as Body;
@@ -34,9 +41,9 @@ export async function POST(request: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 403 });
   }
 
-  if (!process.env.XAI_API_KEY) {
+  if (!process.env.AI_GATEWAY_API_KEY) {
     return Response.json(
-      { error: "XAI_API_KEY required for Batchwork xAI image edit" },
+      { error: "AI_GATEWAY_API_KEY required for Gemini image edit" },
       { status: 500 },
     );
   }
@@ -63,57 +70,87 @@ export async function POST(request: Request) {
   if (requests.length === 0) {
     return Response.json({
       ok: true,
-      batchId: null,
       requestCount: 0,
+      started: 0,
+      failed: 0,
       skipped: prepared.skipped,
-      message: "No species selected for generation",
+      message:
+        (prepared as { emptyReason?: string }).emptyReason ??
+        "No species selected for generation",
     });
   }
-
-  const job = await batch.images.edit({
-    model: "xai/grok-imagine-image-quality",
-    requests: requests.map((r: PreparedRequest) => ({
-      customId: r.customId,
-      prompt: r.prompt,
-      images: r.images,
-    })),
-  });
 
   const secret = pipelineSecret();
-  const requestsMeta = requests.map((r: PreparedRequest) => ({
-    customId: r.customId,
-    slug: r.slug,
-    pose: r.pose,
-    sciName: r.sciName,
-    comNameEn: r.comNameEn,
-  }));
+  let started = 0;
+  let failed = 0;
 
-  const batchDocId = await client.mutation(
-    api.illustrationPipeline.recordIllustrationBatch,
-    {
-      secret,
-      provider: job.provider,
-      batchId: job.id,
-      requests: requestsMeta,
-    },
-  );
+  await mapPool(requests, EDIT_CONCURRENCY, async (r) => {
+    try {
+      const { pngBytes } = await geminiImageEdit({
+        prompt: r.prompt,
+        imageUrls: r.images.map((img) => img.imageUrl),
+      });
 
-  try {
-    await deliverIllustrationBatch({
-      _id: batchDocId,
-      provider: job.provider,
-      batchId: job.id,
-      requests: requestsMeta,
-    });
-  } catch (err) {
-    console.error("Immediate batch deliver deferred to cron", err);
-  }
+      const imageUrl = await uploadPipelinePng(client, secret, pngBytes);
+
+      await start(processIllustrationPose, [
+        {
+          customId: r.customId,
+          imageUrl,
+          sciName: r.sciName,
+          comNameEn: r.comNameEn,
+        },
+      ]);
+      started += 1;
+    } catch (err) {
+      failed += 1;
+      const reason =
+        err instanceof Error ? err.message : "Gemini image edit failed";
+      console.error("Illustration Gemini edit failed", {
+        customId: r.customId,
+        reason,
+      });
+      await client.mutation(api.illustrationPipeline.failIllustrationPose, {
+        secret,
+        slug: r.slug,
+        reason,
+      });
+    }
+  });
 
   return Response.json({
     ok: true,
-    batchId: job.id,
-    provider: job.provider,
+    mode: "gemini",
+    model: "google/gemini-2.5-flash-image",
     requestCount: requests.length,
+    started,
+    failed,
     skipped: prepared.skipped,
   });
+}
+
+async function uploadPipelinePng(
+  client: ReturnType<typeof pipelineClient>,
+  secret: string,
+  pngBytes: Buffer,
+): Promise<string> {
+  const uploadUrl = await client.mutation(
+    api.illustrationPipeline.generatePipelineUploadUrl,
+    { secret },
+  );
+  const uploadRes = await fetch(uploadUrl, {
+    method: "POST",
+    headers: { "Content-Type": "image/png" },
+    body: new Uint8Array(pngBytes),
+  });
+  if (!uploadRes.ok) {
+    throw new Error(`Convex upload failed: ${uploadRes.status}`);
+  }
+  const { storageId } = (await uploadRes.json()) as { storageId: string };
+  const url = await client.mutation(
+    api.illustrationPipeline.getPipelineStorageUrl,
+    { secret, storageId: storageId as Id<"_storage"> },
+  );
+  if (!url) throw new Error("Convex storage URL missing after upload");
+  return url;
 }

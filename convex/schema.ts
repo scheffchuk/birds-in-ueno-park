@@ -34,6 +34,8 @@ export default defineSchema({
       v.literal("failed"),
     ),
     anatomyRef: v.optional(v.id("_storage")),
+    /** Flight-pose anatomy photo (Commons); perch uses anatomyRef. */
+    anatomyRefFlight: v.optional(v.id("_storage")),
     slug: v.string(),
     listed: v.boolean(),
     curatedFields: v.array(v.string()),

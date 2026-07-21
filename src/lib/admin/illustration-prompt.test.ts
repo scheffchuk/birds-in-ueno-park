@@ -23,7 +23,9 @@ describe("buildIllustrationPrompt", () => {
       sciName: "Anas platyrhynchos",
       comNameEn: "Mallard",
       pose: "flight",
+      anatomyPose: "flight",
     });
     expect(prompt).toMatch(/in flight with wings spread/i);
+    expect(prompt).toMatch(/IMAGE 1 shows this species IN FLIGHT/i);
   });
 });
