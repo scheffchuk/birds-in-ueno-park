@@ -4,6 +4,7 @@ import { useAuthActions } from "@convex-dev/auth/react";
 import { useAuthToken } from "@convex-dev/auth/react";
 import { useAction, useConvexAuth, useMutation, useQuery } from "convex/react";
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { api } from "../../../convex/_generated/api";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -420,11 +421,13 @@ function IllustrationPipelinePanel({
                       <figcaption className="text-xs text-muted-foreground">
                         Anatomy perch
                       </figcaption>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={sp.anatomyUrl}
                         alt="Anatomy perch"
+                        width={224}
+                        height={112}
                         className="h-28 w-auto object-contain"
+                        unoptimized
                       />
                     </figure>
                   ) : null}
@@ -433,11 +436,13 @@ function IllustrationPipelinePanel({
                       <figcaption className="text-xs text-muted-foreground">
                         Anatomy flight
                       </figcaption>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={sp.anatomyFlightUrl}
                         alt="Anatomy flight"
+                        width={224}
+                        height={112}
                         className="h-28 w-auto object-contain"
+                        unoptimized
                       />
                     </figure>
                   ) : null}
@@ -446,11 +451,13 @@ function IllustrationPipelinePanel({
                       <figcaption className="text-xs text-muted-foreground">
                         Illust perch
                       </figcaption>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={sp.perchUrl}
                         alt="Perch"
+                        width={224}
+                        height={112}
                         className="h-28 w-auto object-contain"
+                        unoptimized
                       />
                     </figure>
                   ) : null}
@@ -459,11 +466,13 @@ function IllustrationPipelinePanel({
                       <figcaption className="text-xs text-muted-foreground">
                         Illust flight
                       </figcaption>
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={sp.flightUrl}
                         alt="Flight"
+                        width={224}
+                        height={112}
                         className="h-28 w-auto object-contain"
+                        unoptimized
                       />
                     </figure>
                   ) : null}
@@ -890,11 +899,13 @@ function AnatomyControls({
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Perch</span>
           {species.anatomyPerchUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={species.anatomyPerchUrl}
               alt="Perch anatomy"
+              width={192}
+              height={112}
               className="h-28 w-auto max-w-[12rem] object-contain"
+              unoptimized
             />
           ) : (
             <p className="text-xs text-muted-foreground">Missing</p>
@@ -903,11 +914,13 @@ function AnatomyControls({
         <div className="flex flex-col gap-1">
           <span className="text-xs text-muted-foreground">Flight</span>
           {species.anatomyFlightUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={species.anatomyFlightUrl}
               alt="Flight anatomy"
+              width={192}
+              height={112}
               className="h-28 w-auto max-w-[12rem] object-contain"
+              unoptimized
             />
           ) : (
             <p className="text-xs text-muted-foreground">Missing</p>
@@ -1060,19 +1073,23 @@ function IllustrationControls({
       <p className="text-sm font-medium">Illustrations (pair)</p>
       <div className="flex flex-wrap gap-4">
         {species.perchUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={species.perchUrl}
             alt="Perch preview"
+            width={192}
+            height={96}
             className="h-24 w-auto object-contain"
+            unoptimized
           />
         ) : null}
         {species.flightUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
+          <Image
             src={species.flightUrl}
             alt="Flight preview"
+            width={192}
+            height={96}
             className="h-24 w-auto object-contain"
+            unoptimized
           />
         ) : null}
       </div>
