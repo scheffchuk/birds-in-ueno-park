@@ -58,6 +58,8 @@ const speciesRecordValidator = v.object({
   spottingTipsEn: v.optional(v.string()),
   spottingTipsJa: v.optional(v.string()),
   spottingTipsZhTw: v.optional(v.string()),
+  perchUrl: v.optional(v.string()),
+  flightUrl: v.optional(v.string()),
 });
 
 const collageSpeciesValidator = v.object({
@@ -138,6 +140,12 @@ export const getSpecies = query({
     if (!sp || !sp.listed) return null;
 
     const prevalence = await loadPrevalenceForSpecies(ctx, sp._id);
+    const perchUrl = sp.illustrationPerch
+      ? ((await ctx.storage.getUrl(sp.illustrationPerch)) ?? undefined)
+      : undefined;
+    const flightUrl = sp.illustrationFlight
+      ? ((await ctx.storage.getUrl(sp.illustrationFlight)) ?? undefined)
+      : undefined;
 
     return {
       slug: sp.slug,
@@ -154,6 +162,8 @@ export const getSpecies = query({
       spottingTipsEn: sp.spottingTipsEn,
       spottingTipsJa: sp.spottingTipsJa,
       spottingTipsZhTw: sp.spottingTipsZhTw,
+      perchUrl,
+      flightUrl,
     };
   },
 });

@@ -1,11 +1,12 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, internalMutation } from "./_generated/server";
 import type { MutationCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 import { requireAdmin } from "./lib/auth";
 import {
   planApproveIllustrations,
   planAttachIllustrations,
+  planDeferIncompleteIllustrations,
   planRejectIllustrations,
   planStartIllustrationRegen,
 } from "./lib/illustration";
@@ -446,6 +447,52 @@ export const startIllustrationRegen = mutation({
     return null;
   },
 });
+
+/**
+ * Park incomplete illustration pairs as queued for later manual attach.
+ * Does not clear partial cutouts.
+ */
+export const deferIncompleteIllustrations = mutation({
+  args: {},
+  returns: v.object({
+    deferred: v.number(),
+    slugs: v.array(v.string()),
+  }),
+  handler: async (ctx) => {
+    await requireAdmin(ctx);
+    return await deferIncompleteIllustrationsInternal(ctx);
+  },
+});
+
+export const deferIncompleteIllustrationsNow = internalMutation({
+  args: {},
+  returns: v.object({
+    deferred: v.number(),
+    slugs: v.array(v.string()),
+  }),
+  handler: async (ctx) => {
+    return await deferIncompleteIllustrationsInternal(ctx);
+  },
+});
+
+async function deferIncompleteIllustrationsInternal(
+  ctx: MutationCtx,
+): Promise<{ deferred: number; slugs: string[] }> {
+  // eslint-disable-next-line @convex-dev/no-query-collect -- bounded Guide list (~65)
+  const all = await ctx.db.query("species").collect();
+  const slugs: string[] = [];
+  for (const sp of all) {
+    const patch = planDeferIncompleteIllustrations({
+      illustrationStatus: sp.illustrationStatus,
+      illustrationPerch: sp.illustrationPerch,
+      illustrationFlight: sp.illustrationFlight,
+    });
+    if (!patch) continue;
+    await ctx.db.patch(sp._id, patch);
+    slugs.push(sp.slug);
+  }
+  return { deferred: slugs.length, slugs };
+}
 
 async function writeCuratedPrevalence(
   ctx: MutationCtx,

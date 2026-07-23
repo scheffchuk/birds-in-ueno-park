@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   planApproveIllustrations,
   planAttachIllustrations,
+  planDeferIncompleteIllustrations,
   planRejectAndRegenerate,
   planRejectIllustrations,
   planStartIllustrationRegen,
@@ -118,5 +119,48 @@ describe("planRejectAndRegenerate", () => {
       maskFlight: undefined,
       dimsFlight: undefined,
     });
+  });
+});
+
+describe("planDeferIncompleteIllustrations", () => {
+  it("queues failed/generating species missing a pose for later manual attach", () => {
+    expect(
+      planDeferIncompleteIllustrations({
+        illustrationStatus: "failed",
+        illustrationPerch: "p",
+        illustrationFlight: undefined,
+      }),
+    ).toEqual({ illustrationStatus: "queued" });
+    expect(
+      planDeferIncompleteIllustrations({
+        illustrationStatus: "generating",
+        illustrationPerch: undefined,
+        illustrationFlight: undefined,
+      }),
+    ).toEqual({ illustrationStatus: "queued" });
+  });
+
+  it("leaves complete pairs and already-queued incompletes alone", () => {
+    expect(
+      planDeferIncompleteIllustrations({
+        illustrationStatus: "approved",
+        illustrationPerch: "p",
+        illustrationFlight: "f",
+      }),
+    ).toBeNull();
+    expect(
+      planDeferIncompleteIllustrations({
+        illustrationStatus: "pendingReview",
+        illustrationPerch: "p",
+        illustrationFlight: "f",
+      }),
+    ).toBeNull();
+    expect(
+      planDeferIncompleteIllustrations({
+        illustrationStatus: "queued",
+        illustrationPerch: undefined,
+        illustrationFlight: undefined,
+      }),
+    ).toBeNull();
   });
 });

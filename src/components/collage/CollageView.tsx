@@ -7,7 +7,6 @@ import { packCollage } from "@/lib/collage/pack";
 import { selectForCollage } from "@/lib/collage/select";
 import { currentTokyoSeason } from "@/lib/collage/season";
 import type { PackedBird, SeasonFilter, SpeciesRecord } from "@/lib/collage/types";
-import { buttonVariants } from "@/components/ui/button";
 import {
   Empty,
   EmptyContent,
@@ -15,6 +14,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { SiteFooter } from "@/components/site/SiteFooter";
 import { SeasonPicker } from "./SeasonPicker";
 
 type CollageViewProps = {
@@ -38,6 +38,7 @@ export function CollageView({ species }: CollageViewProps) {
   );
   const [placed, setPlaced] = useState<PackedBird[]>([]);
   const [layoutReady, setLayoutReady] = useState(false);
+  const [hovered, setHovered] = useState<PackedBird | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -63,30 +64,42 @@ export function CollageView({ species }: CollageViewProps) {
 
   return (
     <div className="flex min-h-0 flex-1 flex-col">
-      <header className="flex flex-wrap items-center justify-between gap-4 px-4 py-4 md:px-8">
-        <div className="flex flex-col gap-1">
-          <p className="font-heading text-2xl tracking-tight md:text-3xl">
-            Birds in Ueno
-          </p>
-          <p className="text-sm text-muted-foreground">
-            Ueno Park · Shinobazu Pond
-          </p>
-        </div>
-        <nav className="flex flex-wrap items-center gap-3">
-          <SeasonPicker value={season} onChange={setSeason} />
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-30 flex items-center justify-between px-4 pt-4 md:px-7 md:pt-5">
+        <SeasonPicker
+          value={season}
+          onChange={setSeason}
+          className="pointer-events-auto"
+        />
+        <nav className="pointer-events-auto flex items-center gap-2">
           <Link
             href="/atlas"
-            className={buttonVariants({ variant: "link", size: "sm" })}
+            className="rounded-full bg-background px-3.5 py-2 font-mono text-[10px] tracking-[0.18em] text-ink uppercase shadow-[var(--raised)] transition-transform hover:-translate-y-px"
           >
             Atlas 図鑑
           </Link>
+          <Link
+            href="/about"
+            className="rounded-full bg-background px-3.5 py-2 font-mono text-[10px] tracking-[0.18em] text-ink uppercase shadow-[var(--raised)] transition-transform hover:-translate-y-px"
+          >
+            About
+          </Link>
         </nav>
+      </div>
+
+      <header className="flex flex-col items-center gap-1.5 px-4 pt-20 pb-3 text-center md:pt-24 md:pb-4">
+        <p className="font-heading text-sm tracking-[0.06em] text-ink-2 italic md:text-base">
+          Ueno Park · Shinobazu Pond
+        </p>
+        <h1 className="font-heading text-2xl font-bold tracking-[0.06em] text-ink uppercase md:text-4xl">
+          Birds in Ueno
+        </h1>
       </header>
 
       <div
         ref={stageRef}
-        className="relative min-h-[70vh] flex-1 overflow-hidden"
+        className="relative mx-auto min-h-[60vh] w-full max-w-[1300px] flex-1 overflow-hidden px-2 md:px-8"
         aria-label="Bird collage"
+        onMouseLeave={() => setHovered(null)}
       >
         {showEmpty ? (
           <Empty className="absolute inset-0 border-0">
@@ -99,26 +112,32 @@ export function CollageView({ species }: CollageViewProps) {
               </EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Link href="/atlas" className={buttonVariants()}>
+              <Link
+                href="/atlas"
+                className="rounded-full bg-background px-4 py-2 font-mono text-[10px] tracking-[0.18em] text-ink uppercase shadow-[var(--raised)]"
+              >
                 Browse the Atlas 図鑑を見る
               </Link>
             </EmptyContent>
           </Empty>
         ) : (
-          placed.map((tile) => {
+          placed.map((tile, index) => {
             const src = poseUrl(tile);
+            const delay = Math.min(index * 28, 420);
             return (
               <Link
                 key={tile.slug}
                 href={`/atlas/${tile.slug}`}
-                className="absolute"
+                className="collage-tile-enter absolute transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]"
                 style={{
                   left: tile.x,
                   top: tile.y,
                   width: tile.width,
                   height: tile.height,
+                  animation: `collage-tile-in 420ms cubic-bezier(.2,.7,.3,1) ${delay}ms backwards`,
                 }}
-                title={`${tile.comNameEn}\n${tile.comNameJa}\n${tile.comNameZhTw}\n${tile.sciName}`}
+                onMouseEnter={() => setHovered(tile)}
+                onFocus={() => setHovered(tile)}
               >
                 {src ? (
                   <Image
@@ -126,7 +145,7 @@ export function CollageView({ species }: CollageViewProps) {
                     alt={tile.comNameEn}
                     fill
                     sizes={`${Math.ceil(tile.width)}px`}
-                    className="object-contain"
+                    className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
                     unoptimized
                   />
                 ) : (
@@ -139,7 +158,22 @@ export function CollageView({ species }: CollageViewProps) {
             );
           })
         )}
+
+        <div
+          className="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-background px-3.5 py-1.5 font-heading text-[13px] tracking-wide text-ink italic shadow-[0_6px_18px_rgba(26,22,18,0.12)] transition-opacity duration-150"
+          style={{ opacity: hovered ? 1 : 0 }}
+          aria-hidden={!hovered}
+        >
+          {hovered ? (
+            <span>
+              <span className="font-semibold not-italic">{hovered.comNameEn}</span>
+              <span className="text-ink-soft"> · {hovered.comNameJa}</span>
+            </span>
+          ) : null}
+        </div>
       </div>
+
+      <SiteFooter />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 export {
   planApproveIllustrations,
   planAttachIllustrations,
+  planDeferIncompleteIllustrations,
   planFailIllustrationPose,
   planRejectAndRegenerate,
   planRejectIllustrations,

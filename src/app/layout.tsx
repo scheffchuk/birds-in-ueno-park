@@ -32,7 +32,7 @@ export default function RootLayout({
         lang="en"
         className={cn("h-full font-sans", display.variable, sans.variable)}
       >
-        <body className="min-h-full antialiased">
+        <body className="flex min-h-full flex-col antialiased">
           <Providers>{children}</Providers>
         </body>
       </html>

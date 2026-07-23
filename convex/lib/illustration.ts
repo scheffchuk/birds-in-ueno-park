@@ -181,3 +181,27 @@ export function planRejectAndRegenerate(
     dimsFlight: undefined,
   };
 }
+
+export type IllustrationPipelineStatus =
+  | "queued"
+  | "generating"
+  | "pendingReview"
+  | "approved"
+  | "failed";
+
+/**
+ * Park incomplete pairs as queued for later manual attach (no auto-regen).
+ * Leaves complete pairs and already-queued incompletes unchanged.
+ */
+export function planDeferIncompleteIllustrations(input: {
+  illustrationStatus: IllustrationPipelineStatus;
+  illustrationPerch?: string;
+  illustrationFlight?: string;
+}): { illustrationStatus: "queued" } | null {
+  const complete = Boolean(
+    input.illustrationPerch && input.illustrationFlight,
+  );
+  if (complete) return null;
+  if (input.illustrationStatus === "queued") return null;
+  return { illustrationStatus: "queued" };
+}

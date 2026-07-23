@@ -63,6 +63,11 @@ On Vercel / `.env.local` (Next):
 1. Seed anatomy for a slice: Admin → **Seed anatomy (N)** (Wikipedia → Convex; served at `CONVEX_SITE_URL/refs/anatomy/:slug`)
 2. Style placeholders live in `public/refs/style/` (replace with Koson/Yoshida prints when ready)
 3. **Generate missing (20)** runs sync Gemini Flash Image (`google/gemini-2.5-flash-image` via AI Gateway), uploads PNG, starts per-pose Workflows (mat → verify → stage)
-4. Review queue: approve pair, or **Reject + regen** (re-triggers generation)
+4. Review queue: approve pair, or **Regen perch / flight / both** (re-triggers generation; works for pending review and approved)
+5. Incomplete leftovers: Admin → defer incomplete (or leave queued) for later **manual attach** (#7)
 
-Manual attach (#7) still works for cutouts without running the pipeline.
+### About + polish (#9)
+
+- `/about` — Prevalence methodology, eBird source, illustration + AvianVisitors credits (EN + JA)
+- Site footer on collage, atlas, and about
+- Visitor chrome: paper theme, recessed season pill, collage hover tip

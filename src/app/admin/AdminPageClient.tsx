@@ -974,7 +974,6 @@ function IllustrationControls({
   const rejectIllustrations = useMutation(
     api.illustrationPipeline.rejectAndRegenerate,
   );
-  const startIllustrationRegen = useMutation(api.admin.startIllustrationRegen);
   const token = useAuthToken();
 
   const [perchFile, setPerchFile] = useState<File | null>(null);
@@ -1051,6 +1050,11 @@ function IllustrationControls({
     }
   }
 
+  const canApprove = species.illustrationStatus === "pendingReview";
+  const canRegenPose =
+    species.illustrationStatus === "pendingReview" ||
+    species.illustrationStatus === "approved";
+
   return (
     <section className="mt-6 flex flex-col gap-3 border-t border-border pt-4">
       <p className="text-sm font-medium">Illustrations (pair)</p>
@@ -1097,7 +1101,7 @@ function IllustrationControls({
         <Button
           size="sm"
           variant="secondary"
-          disabled={busy || species.illustrationStatus !== "pendingReview"}
+          disabled={busy || !canApprove}
           onClick={() => void approveIllustrations({ speciesId: species._id })}
         >
           Approve
@@ -1105,7 +1109,7 @@ function IllustrationControls({
         <Button
           size="sm"
           variant="outline"
-          disabled={busy || species.illustrationStatus !== "pendingReview"}
+          disabled={busy || !canRegenPose}
           onClick={() => void rejectPose("perch")}
         >
           Regen perch
@@ -1113,7 +1117,7 @@ function IllustrationControls({
         <Button
           size="sm"
           variant="outline"
-          disabled={busy || species.illustrationStatus !== "pendingReview"}
+          disabled={busy || !canRegenPose}
           onClick={() => void rejectPose("flight")}
         >
           Regen flight
@@ -1121,20 +1125,10 @@ function IllustrationControls({
         <Button
           size="sm"
           variant="outline"
-          disabled={busy || species.illustrationStatus !== "pendingReview"}
+          disabled={busy || !canRegenPose}
           onClick={() => void rejectPose()}
         >
           Regen both
-        </Button>
-        <Button
-          size="sm"
-          variant="destructive"
-          disabled={busy || species.illustrationStatus !== "approved"}
-          onClick={() =>
-            void startIllustrationRegen({ speciesId: species._id })
-          }
-        >
-          Start regen
         </Button>
       </div>
       {error ? <p className="text-sm text-destructive">{error}</p> : null}
