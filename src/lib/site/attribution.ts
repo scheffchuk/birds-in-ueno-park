@@ -1,10 +1,6 @@
 /** Site-wide footer + About copy (EN + JA chrome; no ZH-TW body). */
 
 export const SITE_FOOTER = {
-  prevalence:
-    "Bird size reflects seasonal Prevalence from eBird checklists at Ueno Park and Shinobazu Pond.",
-  prevalenceJa:
-    "鳥の大きさは、上野公園・不忍池の eBird チェックリストに基づく季節ごとの出現度（Prevalence）を示します。",
   credit: "Collage UI inspired by AvianVisitors",
   creditUrl: "https://github.com/Twarner491/AvianVisitors",
   creditSite: "theodore.net",
@@ -34,18 +30,9 @@ export const ABOUT_SECTIONS = [
     id: "art",
     titleEn: "Illustrations",
     titleJa: "イラストについて",
-      bodyEn:
+    bodyEn:
       "Cutouts follow a kachō-e (bird-and-flower) print style, generated with anatomy references and human review before they appear on the collage. The packing layout and collage interaction are inspired by AvianVisitors (theodore.net).",
     bodyJa:
       "切り抜きイラストは花鳥画の表現を参考にし、解剖写真を参照して生成したうえで人の確認後にコラージュへ載せています。配置と操作感は AvianVisitors（theodore.net）に着想を得ています。",
-  },
-  {
-    id: "scope",
-    titleEn: "What this is not",
-    titleJa: "このサイトにないもの",
-    bodyEn:
-      "There is no live microphone, no runtime AI chat, and no community feed in v1 — a curated static guide for visiting the park.",
-    bodyJa:
-      "v1 にライブマイク・実行時 AI チャット・コミュニティフィードはありません。公園を訪れる方向けのキュレーションされた静的ガイドです。",
   },
 ] as const;

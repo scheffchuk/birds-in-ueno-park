@@ -87,10 +87,10 @@ export function CollageView({ species }: CollageViewProps) {
       </div>
 
       <header className="flex flex-col items-center gap-1.5 px-4 pt-20 pb-3 text-center md:pt-24 md:pb-4">
-        <p className="font-heading text-sm tracking-[0.06em] text-ink-2 italic md:text-base">
+        <p className="font-heading text-sm tracking-wide text-ink-2 italic md:text-base">
           Ueno Park · Shinobazu Pond
         </p>
-        <h1 className="font-heading text-2xl font-bold tracking-[0.06em] text-ink uppercase md:text-4xl">
+        <h1 className="font-heading text-3xl tracking-tight text-ink md:text-5xl">
           Birds in Ueno
         </h1>
       </header>
@@ -160,7 +160,7 @@ export function CollageView({ species }: CollageViewProps) {
         )}
 
         <div
-          className="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-background px-3.5 py-1.5 font-heading text-[13px] tracking-wide text-ink italic shadow-[0_6px_18px_rgba(26,22,18,0.12)] transition-opacity duration-150"
+          className="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-background px-3.5 py-1.5 font-heading text-[13px] tracking-wide text-ink italic shadow-[0_2px_8px_rgba(26,22,18,0.06)] transition-opacity duration-150"
           style={{ opacity: hovered ? 1 : 0 }}
           aria-hidden={!hovered}
         >

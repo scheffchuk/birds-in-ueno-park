@@ -37,7 +37,7 @@ export function AtlasListView({ species }: AtlasListViewProps) {
             </Link>
           </div>
           <div className="flex flex-col gap-1 text-center">
-            <h1 className="font-heading text-3xl font-bold tracking-[0.06em] text-ink uppercase md:text-4xl">
+            <h1 className="font-heading text-3xl tracking-tight text-ink md:text-5xl">
               Atlas 図鑑
             </h1>
             <p className="text-sm text-ink-soft">

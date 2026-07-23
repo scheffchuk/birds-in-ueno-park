@@ -13,10 +13,10 @@ export default function AboutPage() {
           >
             ← Collage コラージュ
           </Link>
-          <p className="font-heading text-sm tracking-[0.06em] text-ink-2 italic">
+          <p className="font-heading text-sm tracking-wide text-ink-2 italic">
             Ueno Park · Shinobazu Pond
           </p>
-          <h1 className="font-heading text-3xl font-bold tracking-[0.06em] text-ink uppercase md:text-4xl">
+          <h1 className="font-heading text-3xl tracking-tight text-ink md:text-5xl">
             About について
           </h1>
         </header>

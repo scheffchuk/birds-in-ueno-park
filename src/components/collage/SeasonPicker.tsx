@@ -47,8 +47,9 @@ export function SeasonPicker({ value, onChange, className }: SeasonPickerProps) 
           value={option.id}
           aria-label={option.label}
           className={cn(
-            "rounded-full border-0 px-3 py-2 font-mono text-[10px] tracking-[0.14em] text-ink-soft uppercase shadow-none",
-            "hover:bg-transparent hover:text-ink data-[state=on]:bg-background data-[state=on]:text-ink data-[state=on]:shadow-[var(--raised)]",
+            "h-auto min-h-0 rounded-full border-0 px-3 py-1.5 font-mono text-[10px] leading-none tracking-[0.14em] text-ink-soft uppercase shadow-none",
+            "inline-flex items-center justify-center hover:bg-transparent hover:text-ink",
+            "data-[state=on]:bg-background data-[state=on]:text-ink data-[state=on]:shadow-[var(--raised)]",
           )}
         >
           <span className="hidden sm:inline">{option.label}</span>

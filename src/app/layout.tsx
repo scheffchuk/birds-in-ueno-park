@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
-import { Fraunces, Source_Sans_3 } from "next/font/google";
+import { Literata, Source_Sans_3 } from "next/font/google";
 import { ConvexAuthNextjsServerProvider } from "@convex-dev/auth/nextjs/server";
 import { Providers } from "@/components/Providers";
 import "./globals.css";
 import { cn } from "@/lib/utils";
 
-const display = Fraunces({
+const display = Literata({
   variable: "--font-display",
   subsets: ["latin"],
+  style: ["normal", "italic"],
 });
 
 const sans = Source_Sans_3({

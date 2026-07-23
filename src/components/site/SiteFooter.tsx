@@ -3,14 +3,8 @@ import { SITE_FOOTER } from "@/lib/site/attribution";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto border-t border-hairline px-6 py-8 md:px-10">
-      <div className="mx-auto flex max-w-3xl flex-col gap-3 text-center">
-        <p className="text-sm leading-relaxed text-ink-soft">
-          {SITE_FOOTER.prevalence}
-        </p>
-        <p className="text-sm leading-relaxed text-ink-soft">
-          {SITE_FOOTER.prevalenceJa}
-        </p>
+    <footer className="mt-auto px-6 py-6 md:px-10">
+      <div className="mx-auto max-w-3xl text-center">
         <p className="font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase">
           {SITE_FOOTER.credit}{" "}
           <a
