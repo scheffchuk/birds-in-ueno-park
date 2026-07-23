@@ -18,6 +18,8 @@ const EDIT_CONCURRENCY = 3;
 type Body = {
   limit?: number;
   slugs?: string[];
+  /** Limit generation to these poses (default both). */
+  poses?: Array<"perch" | "flight">;
   /** Convex Auth JWT from the admin session. */
   token: string;
 };
@@ -53,6 +55,7 @@ export async function POST(request: Request) {
     {
       limit: body.limit ?? 20,
       slugs: body.slugs,
+      poses: body.poses,
     },
   );
 

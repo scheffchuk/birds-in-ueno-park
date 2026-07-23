@@ -283,20 +283,33 @@ function IllustrationPipelinePanel({
     }
   }
 
-  async function rejectOne(speciesId: Id<"species">) {
+  async function rejectOne(
+    speciesId: Id<"species">,
+    pose?: "perch" | "flight",
+  ) {
     setBusy(true);
     setError(null);
     try {
-      const { slug } = await rejectAndRegenerate({ speciesId });
+      const { slug, poses } = await rejectAndRegenerate({
+        speciesId,
+        pose,
+      });
       if (!token) throw new Error("No auth token");
       const res = await fetch("/api/illustrations/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, slugs: [slug], limit: 1 }),
+        body: JSON.stringify({
+          token,
+          slugs: [slug],
+          limit: 1,
+          poses,
+        }),
       });
       const json = (await res.json()) as { error?: string };
       if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-      setMessage(`Rejected ${slug}; generation re-triggered`);
+      const which =
+        poses.length === 2 ? "both poses" : `${poses[0]} only`;
+      setMessage(`Rejected ${slug} (${which}); generation re-triggered`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Reject failed");
     } finally {
@@ -469,9 +482,25 @@ function IllustrationPipelinePanel({
                     size="sm"
                     variant="outline"
                     disabled={busy}
+                    onClick={() => void rejectOne(sp._id, "perch")}
+                  >
+                    Regen perch
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={busy}
+                    onClick={() => void rejectOne(sp._id, "flight")}
+                  >
+                    Regen flight
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={busy}
                     onClick={() => void rejectOne(sp._id)}
                   >
-                    Reject + regen
+                    Regen both
                   </Button>
                 </div>
               </li>
@@ -995,16 +1024,24 @@ function IllustrationControls({
     }
   }
 
-  async function rejectPair() {
+  async function rejectPose(pose?: "perch" | "flight") {
     setBusy(true);
     setError(null);
     try {
-      const { slug } = await rejectIllustrations({ speciesId: species._id });
+      const { slug, poses } = await rejectIllustrations({
+        speciesId: species._id,
+        pose,
+      });
       if (token) {
         await fetch("/api/illustrations/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, slugs: [slug], limit: 1 }),
+          body: JSON.stringify({
+            token,
+            slugs: [slug],
+            limit: 1,
+            poses,
+          }),
         });
       }
     } catch (e) {
@@ -1069,9 +1106,25 @@ function IllustrationControls({
           size="sm"
           variant="outline"
           disabled={busy || species.illustrationStatus !== "pendingReview"}
-          onClick={() => void rejectPair()}
+          onClick={() => void rejectPose("perch")}
         >
-          Reject + regen
+          Regen perch
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={busy || species.illustrationStatus !== "pendingReview"}
+          onClick={() => void rejectPose("flight")}
+        >
+          Regen flight
+        </Button>
+        <Button
+          size="sm"
+          variant="outline"
+          disabled={busy || species.illustrationStatus !== "pendingReview"}
+          onClick={() => void rejectPose()}
+        >
+          Regen both
         </Button>
         <Button
           size="sm"

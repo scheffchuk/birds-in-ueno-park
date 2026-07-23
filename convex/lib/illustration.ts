@@ -158,9 +158,26 @@ export function planFailIllustrationPose(): {
 
 /**
  * Reject review: clear art and return to generating so regen can re-submit.
+ * Omit pose to clear both; pass a pose to clear only that cutout.
  */
-export function planRejectAndRegenerate(): StagedPoseFields & {
+export function planRejectAndRegenerate(
+  pose?: IllustrationPose,
+): StagedPoseFields & {
   illustrationStatus: "generating";
 } {
-  return planStartIllustrationGeneration();
+  if (!pose) return planStartIllustrationGeneration();
+  if (pose === "perch") {
+    return {
+      illustrationStatus: "generating",
+      illustrationPerch: undefined,
+      maskPerch: undefined,
+      dimsPerch: undefined,
+    };
+  }
+  return {
+    illustrationStatus: "generating",
+    illustrationFlight: undefined,
+    maskFlight: undefined,
+    dimsFlight: undefined,
+  };
 }

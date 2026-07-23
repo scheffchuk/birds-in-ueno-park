@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   planApproveIllustrations,
   planAttachIllustrations,
+  planRejectAndRegenerate,
   planRejectIllustrations,
   planStartIllustrationRegen,
 } from "./illustration";
@@ -84,6 +85,38 @@ describe("planStartIllustrationRegen", () => {
   it("flips status to generating so collage drops the species immediately", () => {
     expect(planStartIllustrationRegen()).toEqual({
       illustrationStatus: "generating",
+    });
+  });
+});
+
+describe("planRejectAndRegenerate", () => {
+  it("clears both poses when pose omitted", () => {
+    expect(planRejectAndRegenerate()).toEqual({
+      illustrationStatus: "generating",
+      illustrationPerch: undefined,
+      illustrationFlight: undefined,
+      maskPerch: undefined,
+      maskFlight: undefined,
+      dimsPerch: undefined,
+      dimsFlight: undefined,
+    });
+  });
+
+  it("clears only perch when pose is perch", () => {
+    expect(planRejectAndRegenerate("perch")).toEqual({
+      illustrationStatus: "generating",
+      illustrationPerch: undefined,
+      maskPerch: undefined,
+      dimsPerch: undefined,
+    });
+  });
+
+  it("clears only flight when pose is flight", () => {
+    expect(planRejectAndRegenerate("flight")).toEqual({
+      illustrationStatus: "generating",
+      illustrationFlight: undefined,
+      maskFlight: undefined,
+      dimsFlight: undefined,
     });
   });
 });

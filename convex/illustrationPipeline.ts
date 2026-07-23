@@ -9,9 +9,7 @@ import {
 import { requireAdmin } from "./lib/auth";
 import {
   planFailIllustrationPose,
-  planRejectAndRegenerate,
   planStageIllustrationPose,
-  planStartIllustrationGeneration,
 } from "./lib/illustration";
 import { selectSpeciesForGeneration, explainEmptyGenerationSelection } from "./lib/selectForGeneration";
 import {
@@ -136,6 +134,8 @@ export const prepareIllustrationBatch = mutation({
   args: {
     limit: v.optional(v.number()),
     slugs: v.optional(v.array(v.string())),
+    /** Limit to these poses (default both). Used for single-pose regen. */
+    poses: v.optional(v.array(poseValidator)),
   },
     returns: v.object({
     requests: v.array(
@@ -154,6 +154,11 @@ export const prepareIllustrationBatch = mutation({
   }),
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
+
+    const posesToGenerate: IllustrationPose[] =
+      args.poses && args.poses.length > 0
+        ? [...new Set(args.poses)]
+        : ["perch", "flight"];
 
     // eslint-disable-next-line @convex-dev/no-query-collect -- Guide species set is bounded (~130)
     const all = await ctx.db.query("species").collect();
@@ -185,7 +190,7 @@ export const prepareIllustrationBatch = mutation({
     }
 
     const convexSite = convexSiteBase();
-    // Both refs must be reachable by xAI (not localhost).
+    // Both refs must be reachable by the image model (not localhost).
     const anatomyUrl = (slug: string, pose: IllustrationPose) =>
       `${convexSite}/refs/anatomy/${pose}/${slug}`;
     const styleUrl = (pose: IllustrationPose) =>
@@ -215,7 +220,6 @@ export const prepareIllustrationBatch = mutation({
       comNameEn: string;
     }> = [];
     const skipped: string[] = [];
-    const clear = planStartIllustrationGeneration();
 
     for (const c of selected) {
       const sp = candidates.find((x) => x.slug === c.slug);
@@ -225,17 +229,34 @@ export const prepareIllustrationBatch = mutation({
         continue;
       }
 
-      await ctx.db.patch(sp._id, {
-        illustrationStatus: clear.illustrationStatus,
-        illustrationPerch: undefined,
-        illustrationFlight: undefined,
-        maskPerch: undefined,
-        maskFlight: undefined,
-        dimsPerch: undefined,
-        dimsFlight: undefined,
-      });
+      // Clear only the poses we are regenerating; keep the other cutout.
+      if (posesToGenerate.length === 2) {
+        await ctx.db.patch(sp._id, {
+          illustrationStatus: "generating",
+          illustrationPerch: undefined,
+          illustrationFlight: undefined,
+          maskPerch: undefined,
+          maskFlight: undefined,
+          dimsPerch: undefined,
+          dimsFlight: undefined,
+        });
+      } else if (posesToGenerate[0] === "perch") {
+        await ctx.db.patch(sp._id, {
+          illustrationStatus: "generating",
+          illustrationPerch: undefined,
+          maskPerch: undefined,
+          dimsPerch: undefined,
+        });
+      } else {
+        await ctx.db.patch(sp._id, {
+          illustrationStatus: "generating",
+          illustrationFlight: undefined,
+          maskFlight: undefined,
+          dimsFlight: undefined,
+        });
+      }
 
-      for (const pose of ["perch", "flight"] as const) {
+      for (const pose of posesToGenerate) {
         requests.push({
           customId: formatIllustrationCustomId(sp.slug, pose),
           prompt: buildIllustrationPrompt({
@@ -533,25 +554,51 @@ export const getSpeciesForVerify = internalQuery({
   },
 });
 
-/** Reject pair and clear art so the next generate pass can re-submit. */
+/** Reject pair and clear art so the next generate pass can re-submit.
+ * Pass `pose` to clear/regenerate only that cutout; omit to clear both.
+ */
 export const rejectAndRegenerate = mutation({
-  args: { speciesId: v.id("species") },
-  returns: v.object({ slug: v.string() }),
+  args: {
+    speciesId: v.id("species"),
+    pose: v.optional(poseValidator),
+  },
+  returns: v.object({
+    slug: v.string(),
+    poses: v.array(poseValidator),
+  }),
   handler: async (ctx, args) => {
     await requireAdmin(ctx);
     const sp = await ctx.db.get(args.speciesId);
     if (!sp) throw new Error("Species not found");
-    const clear = planRejectAndRegenerate();
-    await ctx.db.patch(args.speciesId, {
-      illustrationStatus: clear.illustrationStatus,
-      illustrationPerch: undefined,
-      illustrationFlight: undefined,
-      maskPerch: undefined,
-      maskFlight: undefined,
-      dimsPerch: undefined,
-      dimsFlight: undefined,
-    });
-    return { slug: sp.slug };
+    const poses: IllustrationPose[] = args.pose
+      ? [args.pose]
+      : ["perch", "flight"];
+    if (args.pose === "perch") {
+      await ctx.db.patch(args.speciesId, {
+        illustrationStatus: "generating",
+        illustrationPerch: undefined,
+        maskPerch: undefined,
+        dimsPerch: undefined,
+      });
+    } else if (args.pose === "flight") {
+      await ctx.db.patch(args.speciesId, {
+        illustrationStatus: "generating",
+        illustrationFlight: undefined,
+        maskFlight: undefined,
+        dimsFlight: undefined,
+      });
+    } else {
+      await ctx.db.patch(args.speciesId, {
+        illustrationStatus: "generating",
+        illustrationPerch: undefined,
+        illustrationFlight: undefined,
+        maskPerch: undefined,
+        maskFlight: undefined,
+        dimsPerch: undefined,
+        dimsFlight: undefined,
+      });
+    }
+    return { slug: sp.slug, poses };
   },
 });
 
