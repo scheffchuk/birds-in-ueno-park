@@ -20,6 +20,7 @@ import type * as lib_anatomyRef from "../lib/anatomyRef.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_copyPlan from "../lib/copyPlan.js";
 import type * as lib_curation from "../lib/curation.js";
+import type * as lib_deleteReplacedStorage from "../lib/deleteReplacedStorage.js";
 import type * as lib_illustration from "../lib/illustration.js";
 import type * as lib_illustrationCustomId from "../lib/illustrationCustomId.js";
 import type * as lib_illustrationPrompt from "../lib/illustrationPrompt.js";
@@ -29,6 +30,7 @@ import type * as lib_seedPlan from "../lib/seedPlan.js";
 import type * as lib_selectForGeneration from "../lib/selectForGeneration.js";
 import type * as lib_slug from "../lib/slug.js";
 import type * as species from "../species.js";
+import type * as storageGc from "../storageGc.js";
 
 import type {
   ApiFromModules,
@@ -49,6 +51,7 @@ declare const fullApi: ApiFromModules<{
   "lib/auth": typeof lib_auth;
   "lib/copyPlan": typeof lib_copyPlan;
   "lib/curation": typeof lib_curation;
+  "lib/deleteReplacedStorage": typeof lib_deleteReplacedStorage;
   "lib/illustration": typeof lib_illustration;
   "lib/illustrationCustomId": typeof lib_illustrationCustomId;
   "lib/illustrationPrompt": typeof lib_illustrationPrompt;
@@ -58,6 +61,7 @@ declare const fullApi: ApiFromModules<{
   "lib/selectForGeneration": typeof lib_selectForGeneration;
   "lib/slug": typeof lib_slug;
   species: typeof species;
+  storageGc: typeof storageGc;
 }>;
 
 /**

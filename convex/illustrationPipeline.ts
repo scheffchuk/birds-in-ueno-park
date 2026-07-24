@@ -17,6 +17,7 @@ import {
   type IllustrationPose,
 } from "./lib/illustrationCustomId";
 import { buildIllustrationPrompt } from "./lib/illustrationPrompt";
+import { deleteReplacedStorage } from "./lib/deleteReplacedStorage";
 
 const poseValidator = v.union(v.literal("perch"), v.literal("flight"));
 
@@ -393,6 +394,7 @@ export const stageIllustrationPose = mutation({
     });
 
     if (args.pose === "perch") {
+      await deleteReplacedStorage(ctx, sp.illustrationPerch, args.storageId);
       await ctx.db.patch(sp._id, {
         illustrationPerch: args.storageId,
         maskPerch: args.mask,
@@ -400,6 +402,7 @@ export const stageIllustrationPose = mutation({
         illustrationStatus: patch.illustrationStatus,
       });
     } else {
+      await deleteReplacedStorage(ctx, sp.illustrationFlight, args.storageId);
       await ctx.db.patch(sp._id, {
         illustrationFlight: args.storageId,
         maskFlight: args.mask,
@@ -469,8 +472,10 @@ export const attachAnatomyRef = mutation({
     const sp = await ctx.db.get(args.speciesId);
     if (!sp) throw new Error("Species not found");
     if (args.pose === "flight") {
+      await deleteReplacedStorage(ctx, sp.anatomyRefFlight, args.storageId);
       await ctx.db.patch(args.speciesId, { anatomyRefFlight: args.storageId });
     } else {
+      await deleteReplacedStorage(ctx, sp.anatomyRef, args.storageId);
       await ctx.db.patch(args.speciesId, { anatomyRef: args.storageId });
     }
     return null;
@@ -522,6 +527,7 @@ async function upsertStylePrintInternal(
     .withIndex("by_key", (q) => q.eq("key", args.key))
     .unique();
   if (existing) {
+    await deleteReplacedStorage(ctx, existing.storageId, args.storageId);
     await ctx.db.patch(existing._id, {
       pose: args.pose,
       storageId: args.storageId,
@@ -729,8 +735,10 @@ export const setAnatomyRefInternal = internalMutation({
       .unique();
     if (!sp) throw new Error(`Species not found: ${args.slug}`);
     if (args.pose === "flight") {
+      await deleteReplacedStorage(ctx, sp.anatomyRefFlight, args.storageId);
       await ctx.db.patch(sp._id, { anatomyRefFlight: args.storageId });
     } else {
+      await deleteReplacedStorage(ctx, sp.anatomyRef, args.storageId);
       await ctx.db.patch(sp._id, { anatomyRef: args.storageId });
     }
     return null;
