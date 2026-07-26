@@ -10,8 +10,10 @@ export type AtlasListItem = {
   comNameEn: string;
   comNameJa: string;
   comNameZhTw: string;
-  /** Prevalence for the selected Season filter (0–100). */
+  /** Prevalence for the selected Season filter (0–100). Used for filter/sort only. */
   prevalence: number;
+  /** Perch art, else flight; omitted when neither exists. */
+  imageUrl?: string;
 };
 
 /**
@@ -27,6 +29,7 @@ export function selectForAtlas(
     if (!record.listed) continue;
     const prevalence = prevalenceForFilter(record, filter);
     if (prevalence <= 0) continue;
+    const imageUrl = record.perchUrl ?? record.flightUrl;
     rows.push({
       slug: record.slug,
       sciName: record.sciName,
@@ -34,6 +37,7 @@ export function selectForAtlas(
       comNameJa: record.comNameJa,
       comNameZhTw: record.comNameZhTw,
       prevalence,
+      ...(imageUrl ? { imageUrl } : {}),
     });
   }
   return rows.sort((a, b) => b.prevalence - a.prevalence);

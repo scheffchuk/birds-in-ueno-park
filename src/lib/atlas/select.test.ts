@@ -66,4 +66,37 @@ describe("selectForAtlas", () => {
     expect(rows[0]?.prevalence).toBe(80);
     expect(rows.some((r) => r.slug === "pending-art")).toBe(true);
   });
+
+  it("prefers perchUrl over flightUrl for imageUrl", () => {
+    const rows = selectForAtlas(
+      [
+        species({
+          slug: "both",
+          sciName: "Test both",
+          perchUrl: "https://example.com/perch.png",
+          flightUrl: "https://example.com/flight.png",
+          prevalence: { winter: 10, spring: 10, summer: 10, autumn: 10 },
+        }),
+        species({
+          slug: "flight-only",
+          sciName: "Test flight",
+          flightUrl: "https://example.com/flight-only.png",
+          prevalence: { winter: 5, spring: 5, summer: 5, autumn: 5 },
+        }),
+        species({
+          slug: "no-art",
+          sciName: "Test none",
+          prevalence: { winter: 1, spring: 1, summer: 1, autumn: 1 },
+        }),
+      ],
+      "all",
+    );
+    expect(rows.find((r) => r.slug === "both")?.imageUrl).toBe(
+      "https://example.com/perch.png",
+    );
+    expect(rows.find((r) => r.slug === "flight-only")?.imageUrl).toBe(
+      "https://example.com/flight-only.png",
+    );
+    expect(rows.find((r) => r.slug === "no-art")?.imageUrl).toBeUndefined();
+  });
 });

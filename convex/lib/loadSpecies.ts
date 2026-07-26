@@ -24,11 +24,11 @@ export type ListedSpeciesRecord = {
   spottingTipsEn?: string;
   spottingTipsJa?: string;
   spottingTipsZhTw?: string;
+  perchUrl?: string;
+  flightUrl?: string;
 };
 
 export type CollageSpeciesRecord = ListedSpeciesRecord & {
-  perchUrl?: string;
-  flightUrl?: string;
   dimsPerch?: number[];
   dimsFlight?: number[];
   maskPerch?: MaskBits;
@@ -59,7 +59,7 @@ export async function loadPrevalenceForSpecies(
 
 function baseListedFields(sp: Doc<"species">): Omit<
   ListedSpeciesRecord,
-  "prevalence"
+  "prevalence" | "perchUrl" | "flightUrl"
 > {
   return {
     slug: sp.slug,
@@ -78,6 +78,22 @@ function baseListedFields(sp: Doc<"species">): Omit<
   };
 }
 
+async function resolveIllustrationUrls(
+  ctx: QueryCtx,
+  sp: Doc<"species">,
+): Promise<{ perchUrl?: string; flightUrl?: string }> {
+  const perchUrl = sp.illustrationPerch
+    ? ((await ctx.storage.getUrl(sp.illustrationPerch)) ?? undefined)
+    : undefined;
+  const flightUrl = sp.illustrationFlight
+    ? ((await ctx.storage.getUrl(sp.illustrationFlight)) ?? undefined)
+    : undefined;
+  return {
+    ...(perchUrl ? { perchUrl } : {}),
+    ...(flightUrl ? { flightUrl } : {}),
+  };
+}
+
 export async function loadListedSpecies(
   ctx: QueryCtx,
 ): Promise<ListedSpeciesRecord[]> {
@@ -91,6 +107,7 @@ export async function loadListedSpecies(
     out.push({
       ...baseListedFields(sp),
       prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
+      ...(await resolveIllustrationUrls(ctx, sp)),
     });
   }
   return out;
@@ -107,18 +124,10 @@ export async function loadSpeciesForCollage(
 
   const out: CollageSpeciesRecord[] = [];
   for (const sp of listed) {
-    const perchUrl = sp.illustrationPerch
-      ? ((await ctx.storage.getUrl(sp.illustrationPerch)) ?? undefined)
-      : undefined;
-    const flightUrl = sp.illustrationFlight
-      ? ((await ctx.storage.getUrl(sp.illustrationFlight)) ?? undefined)
-      : undefined;
-
     out.push({
       ...baseListedFields(sp),
       prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
-      perchUrl,
-      flightUrl,
+      ...(await resolveIllustrationUrls(ctx, sp)),
       dimsPerch: sp.dimsPerch,
       dimsFlight: sp.dimsFlight,
       maskPerch: sp.maskPerch,

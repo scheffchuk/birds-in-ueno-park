@@ -5,7 +5,14 @@ import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../convex/_generated/api";
 import { selectForAtlas } from "@/lib/atlas/select";
 import { parseSeasonSearchParam } from "@/lib/collage/season";
+import { AtlasSpeciesCard } from "@/components/atlas/AtlasSpeciesCard";
 import { SiteFooter } from "@/components/site/SiteFooter";
+import {
+  Empty,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyTitle,
+} from "@/components/ui/empty";
 import { AtlasSeasonPicker } from "./AtlasSeasonPicker";
 
 type PageProps = {
@@ -26,31 +33,27 @@ async function AtlasSeasonBody({ searchParams }: PageProps) {
       </div>
 
       {rows.length === 0 ? (
-        <p className="text-center text-ink-soft">
-          No Guide species for this Season.
-        </p>
+        <Empty className="border-0 py-16">
+          <EmptyHeader>
+            <EmptyTitle className="font-heading text-xl">
+              No Guide species for this Season
+            </EmptyTitle>
+            <EmptyDescription>
+              Try another season, or browse All.
+            </EmptyDescription>
+          </EmptyHeader>
+        </Empty>
       ) : (
-        <ul className="flex flex-col">
-          {rows.map((row) => (
-            <li key={row.slug} className="border-t border-hairline">
-              <Link
-                href={`/atlas/${row.slug}`}
-                className="flex items-baseline justify-between gap-4 py-4 transition-opacity hover:opacity-70"
-              >
-                <span className="flex min-w-0 flex-col gap-0.5">
-                  <span className="font-heading text-lg leading-tight text-ink">
-                    {row.comNameEn}
-                  </span>
-                  <span className="text-sm text-ink-2">{row.comNameJa}</span>
-                  <span className="text-sm text-ink-2">{row.comNameZhTw}</span>
-                  <span className="text-xs text-ink-soft italic">
-                    {row.sciName}
-                  </span>
-                </span>
-                <span className="shrink-0 font-mono text-sm tabular-nums text-ink-soft">
-                  {row.prevalence}
-                </span>
-              </Link>
+        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+          {rows.map((row, index) => (
+            <li key={row.slug}>
+              <AtlasSpeciesCard
+                slug={row.slug}
+                comNameEn={row.comNameEn}
+                sciName={row.sciName}
+                imageUrl={row.imageUrl}
+                index={index}
+              />
             </li>
           ))}
         </ul>
@@ -72,7 +75,7 @@ export default function AtlasPage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="flex min-h-screen flex-col bg-background">
-        <div className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 px-6 py-10 md:px-8">
+        <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-10 md:px-8">
           <header className="flex flex-col gap-5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <Link
@@ -93,7 +96,7 @@ export default function AtlasPage({ searchParams }: PageProps) {
                 Atlas 図鑑
               </h1>
               <p className="text-sm text-ink-soft">
-                Guide species by Season Prevalence
+                Guide species for the selected season
               </p>
             </div>
           </header>
