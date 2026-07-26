@@ -13,6 +13,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+  seedAnatomyReferences,
+  shrinkOversizedAnatomyReferences,
+} from "@/lib/illustrations/ops";
 import { cn } from "@/lib/utils";
 
 const SEASONS = ["winter", "spring", "summer", "autumn"] as const;
@@ -148,30 +152,50 @@ function IllustrationPipelinePanel({
     }
   }
 
+  function formatSeedFailures(failures: string[]): string {
+    if (failures.length === 0) return "";
+    return ` Failures: ${failures.slice(0, 5).join(" · ")}${
+      failures.length > 5 ? ` (+${failures.length - 5} more)` : ""
+    }`;
+  }
+
+  const anatomySeedAdapters = {
+    ensure: async ({
+      slug,
+      sciName,
+      comNameEn,
+      pose,
+    }: {
+      slug: string;
+      sciName: string;
+      comNameEn: string;
+      pose: "perch" | "flight";
+    }) =>
+      pose === "flight"
+        ? ensureFlightAnatomy({ slug, sciName, comNameEn })
+        : ensureAnatomy({ slug, sciName, comNameEn }),
+    delay: (ms: number) => new Promise<void>((r) => setTimeout(r, ms)),
+  };
+
   async function seedAnatomySlice() {
     setBusy(true);
     setError(null);
     setMessage(null);
     try {
-      let ok = 0;
-      const failures: string[] = [];
-      for (const sp of missingAnatomy) {
-        const result = await ensureAnatomy({
-          slug: sp.slug,
-          sciName: sp.sciName,
-          comNameEn: sp.comNameEn,
-        });
-        if ("storageId" in result) {
-          ok += 1;
-        } else {
-          failures.push(`${sp.slug}: ${result.error}`);
-        }
-      }
-      const failNote =
-        failures.length > 0
-          ? ` Failures: ${failures.slice(0, 5).join(" · ")}${failures.length > 5 ? ` (+${failures.length - 5} more)` : ""}`
-          : "";
-      setMessage(`Anatomy seeded: ${ok} ok, ${failures.length} failed.${failNote}`);
+      const result = await seedAnatomyReferences(
+        {
+          pose: "perch",
+          species: missingAnatomy.map((sp) => ({
+            slug: sp.slug,
+            sciName: sp.sciName,
+            comNameEn: sp.comNameEn,
+          })),
+        },
+        anatomySeedAdapters,
+      );
+      setMessage(
+        `Anatomy seeded: ${result.ok} ok, ${result.failed} failed.${formatSeedFailures(result.failures)}`,
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Anatomy seed failed");
     } finally {
@@ -184,28 +208,19 @@ function IllustrationPipelinePanel({
     setError(null);
     setMessage(null);
     try {
-      let ok = 0;
-      const failures: string[] = [];
-      for (const sp of missingFlightAnatomy) {
-        const result = await ensureFlightAnatomy({
-          slug: sp.slug,
-          sciName: sp.sciName,
-          comNameEn: sp.comNameEn,
-        });
-        if ("storageId" in result) {
-          ok += 1;
-        } else {
-          failures.push(`${sp.slug}: ${result.error}`);
-        }
-        // Pace requests — iNat/Commons rate-limit tight loops.
-        await new Promise((r) => setTimeout(r, 600));
-      }
-      const failNote =
-        failures.length > 0
-          ? ` Failures: ${failures.slice(0, 5).join(" · ")}${failures.length > 5 ? ` (+${failures.length - 5} more)` : ""}`
-          : "";
+      const result = await seedAnatomyReferences(
+        {
+          pose: "flight",
+          species: missingFlightAnatomy.map((sp) => ({
+            slug: sp.slug,
+            sciName: sp.sciName,
+            comNameEn: sp.comNameEn,
+          })),
+        },
+        anatomySeedAdapters,
+      );
       setMessage(
-        `Flight anatomy seeded: ${ok} ok, ${failures.length} failed.${failNote}`,
+        `Flight anatomy seeded: ${result.ok} ok, ${result.failed} failed.${formatSeedFailures(result.failures)}`,
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Flight anatomy seed failed");
@@ -219,7 +234,12 @@ function IllustrationPipelinePanel({
     setError(null);
     setMessage(null);
     try {
-      const result = await shrinkAnatomy({ limit: 80 });
+      const result = await shrinkOversizedAnatomyReferences(
+        { limit: 80 },
+        {
+          shrink: (input) => shrinkAnatomy({ limit: input.limit }),
+        },
+      );
       setMessage(
         `Anatomy shrink: checked ${result.checked}, shrunk ${result.shrunk}, ok-size ${result.skipped}${
           result.errors.length

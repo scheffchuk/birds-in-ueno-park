@@ -66,6 +66,48 @@ export type IllustrationRejectRegenAdapters = IllustrationGenerateAdapters & {
   }>;
 };
 
+export type AnatomySeedSpecies = {
+  slug: string;
+  sciName: string;
+  comNameEn: string;
+};
+
+export type SeedAnatomyReferencesInput = {
+  pose: IllustrationPose;
+  species: AnatomySeedSpecies[];
+};
+
+export type SeedAnatomyReferencesResult = {
+  ok: number;
+  failed: number;
+  failures: string[];
+};
+
+export type IllustrationAnatomySeedAdapters = {
+  ensure: (
+    input: AnatomySeedSpecies & { pose: IllustrationPose },
+  ) => Promise<{ storageId: string; source: string } | { error: string }>;
+  /** Injectable wait between ensure calls (flight rate-limit pacing). */
+  delay: (ms: number) => Promise<void>;
+};
+
+export type ShrinkOversizedAnatomyReferencesInput = {
+  limit?: number;
+};
+
+export type ShrinkOversizedAnatomyReferencesResult = {
+  checked: number;
+  shrunk: number;
+  skipped: number;
+  errors: string[];
+};
+
+export type IllustrationAnatomyShrinkAdapters = {
+  shrink: (
+    input: ShrinkOversizedAnatomyReferencesInput,
+  ) => Promise<ShrinkOversizedAnatomyReferencesResult>;
+};
+
 /**
  * Admin-triggered sync Gemini generate for missing / selected / single-pose slices.
  * Callers get started/failed/skipped; Gemini + storage are substitutable adapters.
@@ -144,4 +186,44 @@ export async function rejectAndRegenerateIllustrations(
     { slugs: [slug], poses, limit: 1 },
     adapters,
   );
+}
+
+/** Pace iNat/Commons flight fetches so tight loops do not rate-limit. */
+const FLIGHT_ANATOMY_PACE_MS = 600;
+
+/**
+ * Seed pose-matched Anatomy references for a Guide species slice.
+ * Admin readiness buttons call this instead of owning the multi-species loop.
+ */
+export async function seedAnatomyReferences(
+  input: SeedAnatomyReferencesInput,
+  adapters: IllustrationAnatomySeedAdapters,
+): Promise<SeedAnatomyReferencesResult> {
+  let ok = 0;
+  const failures: string[] = [];
+
+  for (let i = 0; i < input.species.length; i += 1) {
+    const sp = input.species[i]!;
+    const result = await adapters.ensure({ ...sp, pose: input.pose });
+    if ("storageId" in result) {
+      ok += 1;
+    } else {
+      failures.push(`${sp.slug}: ${result.error}`);
+    }
+    if (input.pose === "flight" && i < input.species.length - 1) {
+      await adapters.delay(FLIGHT_ANATOMY_PACE_MS);
+    }
+  }
+
+  return { ok, failed: failures.length, failures };
+}
+
+/**
+ * Re-encode oversized Anatomy references so generate can fetch them reliably.
+ */
+export async function shrinkOversizedAnatomyReferences(
+  input: ShrinkOversizedAnatomyReferencesInput,
+  adapters: IllustrationAnatomyShrinkAdapters,
+): Promise<ShrinkOversizedAnatomyReferencesResult> {
+  return adapters.shrink(input);
 }

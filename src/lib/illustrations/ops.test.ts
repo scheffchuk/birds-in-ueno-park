@@ -2,9 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import {
   generateIllustrations,
   rejectAndRegenerateIllustrations,
+  seedAnatomyReferences,
+  shrinkOversizedAnatomyReferences,
   type IllustrationGenerateAdapters,
   type IllustrationPose,
   type IllustrationRejectRegenAdapters,
+  type IllustrationAnatomySeedAdapters,
+  type IllustrationAnatomyShrinkAdapters,
   type PreparedGenerateRequest,
 } from "./ops";
 
@@ -287,5 +291,125 @@ describe("rejectAndRegenerateIllustrations", () => {
 
     expect(adapters.prepareInputs).toEqual([]);
     expect(adapters.startedWorkflows).toEqual([]);
+  });
+});
+
+function stubAnatomySeedAdapters(
+  overrides: Partial<IllustrationAnatomySeedAdapters> = {},
+): IllustrationAnatomySeedAdapters & {
+  ensureCalls: Array<{ slug: string; pose: IllustrationPose }>;
+} {
+  const ensureCalls: Array<{ slug: string; pose: IllustrationPose }> = [];
+  return {
+    ensureCalls,
+    ensure: vi.fn(async (input) => {
+      ensureCalls.push({ slug: input.slug, pose: input.pose });
+      return { storageId: `stor-${input.slug}`, source: "stub" };
+    }),
+    delay: vi.fn(async () => {}),
+    ...overrides,
+  };
+}
+
+describe("seedAnatomyReferences", () => {
+  it("reports ok and failed counts for a perch Anatomy reference slice", async () => {
+    const adapters = stubAnatomySeedAdapters({
+      ensure: async (input) => {
+        adapters.ensureCalls.push({ slug: input.slug, pose: input.pose });
+        if (input.slug === "suzume") return { error: "no photo" };
+        return { storageId: "stor-mejiro", source: "wikipedia" };
+      },
+    });
+
+    const result = await seedAnatomyReferences(
+      {
+        pose: "perch",
+        species: [
+          {
+            slug: "mejiro",
+            sciName: "Zosterops japonicus",
+            comNameEn: "Japanese White-eye",
+          },
+          {
+            slug: "suzume",
+            sciName: "Passer montanus",
+            comNameEn: "Eurasian Tree Sparrow",
+          },
+        ],
+      },
+      adapters,
+    );
+
+    expect(result).toEqual({
+      ok: 1,
+      failed: 1,
+      failures: ["suzume: no photo"],
+    });
+    expect(adapters.ensureCalls).toEqual([
+      { slug: "mejiro", pose: "perch" },
+      { slug: "suzume", pose: "perch" },
+    ]);
+    expect(adapters.delay).not.toHaveBeenCalled();
+  });
+
+  it("paces between flight Anatomy reference ensures", async () => {
+    const delayMs: number[] = [];
+    const adapters = stubAnatomySeedAdapters({
+      delay: async (ms) => {
+        delayMs.push(ms);
+      },
+    });
+
+    const result = await seedAnatomyReferences(
+      {
+        pose: "flight",
+        species: [
+          {
+            slug: "mejiro",
+            sciName: "Zosterops japonicus",
+            comNameEn: "Japanese White-eye",
+          },
+          {
+            slug: "suzume",
+            sciName: "Passer montanus",
+            comNameEn: "Eurasian Tree Sparrow",
+          },
+        ],
+      },
+      adapters,
+    );
+
+    expect(result).toEqual({ ok: 2, failed: 0, failures: [] });
+    expect(adapters.ensureCalls).toEqual([
+      { slug: "mejiro", pose: "flight" },
+      { slug: "suzume", pose: "flight" },
+    ]);
+    expect(delayMs).toEqual([600]);
+  });
+});
+
+describe("shrinkOversizedAnatomyReferences", () => {
+  it("returns checked/shrunk/skipped counts from the shrink adapter", async () => {
+    const adapters: IllustrationAnatomyShrinkAdapters = {
+      shrink: vi.fn(async ({ limit }) => ({
+        checked: limit ?? 80,
+        shrunk: 3,
+        skipped: 5,
+        errors: ["mejiro/perch: missing blob"],
+      })),
+    };
+
+    const result = await shrinkOversizedAnatomyReferences(
+      { limit: 80 },
+      adapters,
+    );
+
+    expect(result).toEqual({
+      checked: 80,
+      shrunk: 3,
+      skipped: 5,
+      errors: ["mejiro/perch: missing blob"],
+    });
+    expect(adapters.shrink).toHaveBeenCalledWith({ limit: 80 });
   });
 });
