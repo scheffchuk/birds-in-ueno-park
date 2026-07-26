@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
-import { fetchQuery } from "convex/nextjs";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { cache } from "react";
-import { api } from "../../../../convex/_generated/api";
+import { loadListedSpecies } from "@/lib/atlas/load-listed-species";
 import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
-
-const loadListedSpecies = cache(async (slug: string) => {
-  return await fetchQuery(api.species.getSpecies, { slug });
-});
 
 export async function generateMetadata({
   params,
@@ -28,14 +23,32 @@ export async function generateMetadata({
   };
 }
 
-export default async function AtlasSpeciesPage({ params }: PageProps) {
+async function AtlasSpeciesBody({ params }: PageProps) {
   const { slug } = await params;
   const species = await loadListedSpecies(slug);
   if (!species) notFound();
 
+  return <AtlasDetailView species={species} />;
+}
+
+function AtlasDetailFallback() {
+  return (
+    <div className="flex min-h-screen flex-col bg-background">
+      <div className="mx-auto flex w-full max-w-2xl flex-1 items-center justify-center px-6 py-10">
+        <p className="font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase">
+          Loading species…
+        </p>
+      </div>
+    </div>
+  );
+}
+
+export default function AtlasSpeciesPage({ params }: PageProps) {
   return (
     <main className="min-h-screen bg-background text-foreground">
-      <AtlasDetailView species={species} />
+      <Suspense fallback={<AtlasDetailFallback />}>
+        <AtlasSpeciesBody params={params} />
+      </Suspense>
     </main>
   );
 }

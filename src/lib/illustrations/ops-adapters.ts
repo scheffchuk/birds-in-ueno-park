@@ -1,3 +1,4 @@
+import { revalidateTag } from "next/cache";
 import { start } from "workflow/api";
 import { processIllustrationPose } from "../../../workflows/generate-illustration-pose";
 import type { Id } from "../../../convex/_generated/dataModel";
@@ -20,6 +21,13 @@ function authedPipelineClient(token: string): PipelineHttpClient {
   const client = pipelineClient();
   client.setAuth(token);
   return client;
+}
+
+/** Background Cache Components tag bust (stale-while-revalidate). */
+function revalidateAtlasTags(tags: string[]): void {
+  for (const tag of tags) {
+    revalidateTag(tag, "max");
+  }
 }
 
 /** Wire Convex anatomy ensure actions for the seed-anatomy HTTP entrypoint. */
@@ -71,6 +79,7 @@ export function createIllustrationGenerateAdapters(
     failPose: async ({ slug, reason }) => {
       await storage.failPose({ slug, reason });
     },
+    revalidateTags: revalidateAtlasTags,
   };
 }
 

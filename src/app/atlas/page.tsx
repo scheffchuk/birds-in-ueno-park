@@ -1,4 +1,6 @@
+import { Suspense } from "react";
 import Link from "next/link";
+import { connection } from "next/server";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../convex/_generated/api";
 import { selectForAtlas } from "@/lib/atlas/select";
@@ -10,12 +12,65 @@ type PageProps = {
   searchParams: Promise<{ season?: string | string[] }>;
 };
 
-export default async function AtlasPage({ searchParams }: PageProps) {
+async function AtlasSeasonBody({ searchParams }: PageProps) {
+  await connection();
   const { season: seasonParam } = await searchParams;
   const season = parseSeasonSearchParam(seasonParam);
   const species = await fetchQuery(api.species.listAtlas);
   const rows = selectForAtlas(species, season);
 
+  return (
+    <>
+      <div className="flex justify-center">
+        <AtlasSeasonPicker value={season} />
+      </div>
+
+      {rows.length === 0 ? (
+        <p className="text-center text-ink-soft">
+          No Guide species for this Season.
+        </p>
+      ) : (
+        <ul className="flex flex-col">
+          {rows.map((row) => (
+            <li key={row.slug} className="border-t border-hairline">
+              <Link
+                href={`/atlas/${row.slug}`}
+                className="flex items-baseline justify-between gap-4 py-4 transition-opacity hover:opacity-70"
+              >
+                <span className="flex min-w-0 flex-col gap-0.5">
+                  <span className="font-heading text-lg leading-tight text-ink">
+                    {row.comNameEn}
+                  </span>
+                  <span className="text-sm text-ink-2">{row.comNameJa}</span>
+                  <span className="text-sm text-ink-2">{row.comNameZhTw}</span>
+                  <span className="text-xs text-ink-soft italic">
+                    {row.sciName}
+                  </span>
+                </span>
+                <span className="shrink-0 font-mono text-sm tabular-nums text-ink-soft">
+                  {row.prevalence}
+                </span>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
+  );
+}
+
+function AtlasListFallback() {
+  return (
+    <>
+      <div className="flex h-10 justify-center" aria-hidden />
+      <p className="text-center font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase">
+        Loading Guide species…
+      </p>
+    </>
+  );
+}
+
+export default function AtlasPage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="flex min-h-screen flex-col bg-background">
@@ -43,41 +98,11 @@ export default async function AtlasPage({ searchParams }: PageProps) {
                 Guide species by Season Prevalence
               </p>
             </div>
-            <div className="flex justify-center">
-              <AtlasSeasonPicker value={season} />
-            </div>
           </header>
 
-          {rows.length === 0 ? (
-            <p className="text-center text-ink-soft">
-              No Guide species for this Season.
-            </p>
-          ) : (
-            <ul className="flex flex-col">
-              {rows.map((row) => (
-                <li key={row.slug} className="border-t border-hairline">
-                  <Link
-                    href={`/atlas/${row.slug}`}
-                    className="flex items-baseline justify-between gap-4 py-4 transition-opacity hover:opacity-70"
-                  >
-                    <span className="flex min-w-0 flex-col gap-0.5">
-                      <span className="font-heading text-lg leading-tight text-ink">
-                        {row.comNameEn}
-                      </span>
-                      <span className="text-sm text-ink-2">{row.comNameJa}</span>
-                      <span className="text-sm text-ink-2">{row.comNameZhTw}</span>
-                      <span className="text-xs text-ink-soft italic">
-                        {row.sciName}
-                      </span>
-                    </span>
-                    <span className="shrink-0 font-mono text-sm tabular-nums text-ink-soft">
-                      {row.prevalence}
-                    </span>
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+          <Suspense fallback={<AtlasListFallback />}>
+            <AtlasSeasonBody searchParams={searchParams} />
+          </Suspense>
         </div>
         <SiteFooter />
       </div>
