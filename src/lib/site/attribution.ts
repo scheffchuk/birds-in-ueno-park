@@ -1,10 +1,13 @@
 /** Site-wide footer + About copy (EN + JA chrome; no ZH-TW body). */
 
 export const SITE_FOOTER = {
-  credit: "Collage UI inspired by AvianVisitors",
+  credit: "Inspired by",
+  creditName: "AvianVisitors",
   creditUrl: "https://github.com/Twarner491/AvianVisitors",
   creditSite: "theodore.net",
   creditSiteUrl: "https://theodore.net",
+  author: "ScheffChuk",
+  authorUrl: "https://scheff.dev",
 } as const;
 
 export const ABOUT_SECTIONS = [
