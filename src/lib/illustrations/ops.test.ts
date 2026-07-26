@@ -1,7 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import {
   generateIllustrations,
+  rejectAndRegenerateIllustrations,
   type IllustrationGenerateAdapters,
+  type IllustrationPose,
+  type IllustrationRejectRegenAdapters,
   type PreparedGenerateRequest,
 } from "./ops";
 
@@ -161,5 +164,128 @@ describe("generateIllustrations", () => {
     });
     expect(adapters.failPoseCalls.map((c) => c.slug)).toEqual(["mejiro"]);
     expect(adapters.startedWorkflows).toEqual(["suzume:perch"]);
+  });
+});
+
+function stubRejectRegenAdapters(
+  overrides: Partial<IllustrationRejectRegenAdapters> = {},
+): IllustrationRejectRegenAdapters & {
+  rejectCalls: Array<{ speciesId: string; pose?: "perch" | "flight" }>;
+  prepareInputs: Array<{
+    slugs?: string[];
+    poses?: Array<"perch" | "flight">;
+    limit?: number;
+  }>;
+  startedWorkflows: string[];
+} {
+  const rejectCalls: Array<{
+    speciesId: string;
+    pose?: "perch" | "flight";
+  }> = [];
+  const prepareInputs: Array<{
+    slugs?: string[];
+    poses?: Array<"perch" | "flight">;
+    limit?: number;
+  }> = [];
+  const startedWorkflows: string[] = [];
+  return {
+    rejectCalls,
+    prepareInputs,
+    startedWorkflows,
+    reject: vi.fn(async (input) => {
+      rejectCalls.push(input);
+      const poses: IllustrationPose[] = input.pose
+        ? [input.pose]
+        : ["perch", "flight"];
+      return { slug: "mejiro", poses };
+    }),
+    prepare: vi.fn(async (input) => {
+      prepareInputs.push(input);
+      const poses: IllustrationPose[] = input.poses ?? ["perch", "flight"];
+      return {
+        requests: poses.map((pose) =>
+          sampleRequest({
+            customId: `mejiro:${pose}`,
+            pose,
+            slug: "mejiro",
+          }),
+        ),
+        skipped: [],
+      };
+    }),
+    edit: vi.fn(async () => ({ pngBytes: Buffer.from("png") })),
+    uploadPng: vi.fn(async () => "https://storage.example/interim.png"),
+    startWorkflow: vi.fn(async (input) => {
+      startedWorkflows.push(input.customId);
+    }),
+    failPose: vi.fn(async () => {}),
+    ...overrides,
+  };
+}
+
+describe("rejectAndRegenerateIllustrations", () => {
+  it("rejects the pair then regenerates both poses via generate", async () => {
+    const adapters = stubRejectRegenAdapters();
+
+    const result = await rejectAndRegenerateIllustrations(
+      { speciesId: "species-mejiro" },
+      adapters,
+    );
+
+    expect(adapters.rejectCalls).toEqual([{ speciesId: "species-mejiro" }]);
+    expect(adapters.prepareInputs).toEqual([
+      { slugs: ["mejiro"], poses: ["perch", "flight"], limit: 1 },
+    ]);
+    expect(result).toMatchObject({
+      ok: true,
+      mode: "gemini",
+      started: 2,
+      failed: 0,
+      requestCount: 2,
+    });
+    expect(adapters.startedWorkflows.sort()).toEqual([
+      "mejiro:flight",
+      "mejiro:perch",
+    ]);
+  });
+
+  it("rejects a single pose then regenerates only that pose", async () => {
+    const adapters = stubRejectRegenAdapters();
+
+    const result = await rejectAndRegenerateIllustrations(
+      { speciesId: "species-mejiro", pose: "flight" },
+      adapters,
+    );
+
+    expect(adapters.rejectCalls).toEqual([
+      { speciesId: "species-mejiro", pose: "flight" },
+    ]);
+    expect(adapters.prepareInputs).toEqual([
+      { slugs: ["mejiro"], poses: ["flight"], limit: 1 },
+    ]);
+    expect(result).toMatchObject({
+      started: 1,
+      failed: 0,
+      requestCount: 1,
+    });
+    expect(adapters.startedWorkflows).toEqual(["mejiro:flight"]);
+  });
+
+  it("does not generate when reject fails", async () => {
+    const adapters = stubRejectRegenAdapters({
+      reject: async () => {
+        throw new Error("Species not found");
+      },
+    });
+
+    await expect(
+      rejectAndRegenerateIllustrations(
+        { speciesId: "missing" },
+        adapters,
+      ),
+    ).rejects.toThrow("Species not found");
+
+    expect(adapters.prepareInputs).toEqual([]);
+    expect(adapters.startedWorkflows).toEqual([]);
   });
 });

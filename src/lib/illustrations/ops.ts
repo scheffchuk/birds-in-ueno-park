@@ -54,6 +54,18 @@ export type IllustrationGenerateAdapters = {
   failPose: (input: { slug: string; reason: string }) => Promise<void>;
 };
 
+export type RejectAndRegenerateInput = {
+  speciesId: string;
+  pose?: IllustrationPose;
+};
+
+export type IllustrationRejectRegenAdapters = IllustrationGenerateAdapters & {
+  reject: (input: RejectAndRegenerateInput) => Promise<{
+    slug: string;
+    poses: IllustrationPose[];
+  }>;
+};
+
 /**
  * Admin-triggered sync Gemini generate for missing / selected / single-pose slices.
  * Callers get started/failed/skipped; Gemini + storage are substitutable adapters.
@@ -117,4 +129,19 @@ export async function generateIllustrations(
     failed,
     skipped: prepared.skipped,
   };
+}
+
+/**
+ * Flip Illustration status / clear art, then regenerate through the same
+ * generate path (pair or single pose). Regen cannot drift from generate.
+ */
+export async function rejectAndRegenerateIllustrations(
+  input: RejectAndRegenerateInput,
+  adapters: IllustrationRejectRegenAdapters,
+): Promise<GenerateIllustrationsResult> {
+  const { slug, poses } = await adapters.reject(input);
+  return generateIllustrations(
+    { slugs: [slug], poses, limit: 1 },
+    adapters,
+  );
 }

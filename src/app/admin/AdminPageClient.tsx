@@ -99,9 +99,6 @@ function IllustrationPipelinePanel({
     api.illustrationAnatomy.shrinkOversizedAnatomyRefs,
   );
   const approveIllustrations = useMutation(api.admin.approveIllustrations);
-  const rejectAndRegenerate = useMutation(
-    api.illustrationPipeline.rejectAndRegenerate,
-  );
   const resetApprovedWithoutCutouts = useMutation(
     api.illustrationPipeline.resetApprovedWithoutCutouts,
   );
@@ -257,29 +254,29 @@ function IllustrationPipelinePanel({
     speciesId: Id<"species">,
     pose?: "perch" | "flight",
   ) {
+    if (!token) {
+      setError("No auth token");
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
-      const { slug, poses } = await rejectAndRegenerate({
-        speciesId,
-        pose,
-      });
-      if (!token) throw new Error("No auth token");
-      const res = await fetch("/api/illustrations/generate", {
+      const res = await fetch("/api/illustrations/reject-and-regenerate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          token,
-          slugs: [slug],
-          limit: 1,
-          poses,
-        }),
+        body: JSON.stringify({ token, speciesId, pose }),
       });
-      const json = (await res.json()) as { error?: string };
+      const json = (await res.json()) as {
+        error?: string;
+        started?: number;
+        failed?: number;
+        requestCount?: number;
+      };
       if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-      const which =
-        poses.length === 2 ? "both poses" : `${poses[0]} only`;
-      setMessage(`Rejected ${slug} (${which}); generation re-triggered`);
+      const which = pose ? `${pose} only` : "both poses";
+      setMessage(
+        `Rejected (${which}); Gemini regenerate: ${json.started ?? 0} started, ${json.failed ?? 0} failed of ${json.requestCount ?? 0}.`,
+      );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Reject failed");
     } finally {
@@ -946,9 +943,6 @@ function IllustrationControls({
   const generateUploadUrl = useMutation(api.admin.generateUploadUrl);
   const attachIllustrations = useMutation(api.admin.attachIllustrations);
   const approveIllustrations = useMutation(api.admin.approveIllustrations);
-  const rejectIllustrations = useMutation(
-    api.illustrationPipeline.rejectAndRegenerate,
-  );
   const token = useAuthToken();
 
   const [perchFile, setPerchFile] = useState<File | null>(null);
@@ -999,25 +993,24 @@ function IllustrationControls({
   }
 
   async function rejectPose(pose?: "perch" | "flight") {
+    if (!token) {
+      setError("No auth token");
+      return;
+    }
     setBusy(true);
     setError(null);
     try {
-      const { slug, poses } = await rejectIllustrations({
-        speciesId: species._id,
-        pose,
+      const res = await fetch("/api/illustrations/reject-and-regenerate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          token,
+          speciesId: species._id,
+          pose,
+        }),
       });
-      if (token) {
-        await fetch("/api/illustrations/generate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            token,
-            slugs: [slug],
-            limit: 1,
-            poses,
-          }),
-        });
-      }
+      const json = (await res.json()) as { error?: string };
+      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Reject failed");
     } finally {

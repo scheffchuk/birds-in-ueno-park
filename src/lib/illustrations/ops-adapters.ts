@@ -2,19 +2,29 @@ import { start } from "workflow/api";
 import { processIllustrationPose } from "../../../workflows/generate-illustration-pose";
 import type { Id } from "../../../convex/_generated/dataModel";
 import { geminiImageEdit } from "./gemini-image-edit";
-import type { IllustrationGenerateAdapters } from "./ops";
+import type {
+  IllustrationGenerateAdapters,
+  IllustrationRejectRegenAdapters,
+} from "./ops";
 import {
   api,
   pipelineClient,
   pipelineSecret,
 } from "./pipeline-client";
 
+type PipelineHttpClient = ReturnType<typeof pipelineClient>;
+
+function authedPipelineClient(token: string): PipelineHttpClient {
+  const client = pipelineClient();
+  client.setAuth(token);
+  return client;
+}
+
 /** Wire real Convex / Gemini / Workflow adapters for the generate HTTP entrypoint. */
 export function createIllustrationGenerateAdapters(
   token: string,
+  client: PipelineHttpClient = authedPipelineClient(token),
 ): IllustrationGenerateAdapters {
-  const client = pipelineClient();
-  client.setAuth(token);
   const secret = pipelineSecret();
 
   return {
@@ -37,6 +47,21 @@ export function createIllustrationGenerateAdapters(
         reason,
       });
     },
+  };
+}
+
+/** Generate adapters plus Convex reject for reject-and-regenerate ops. */
+export function createIllustrationRejectRegenAdapters(
+  token: string,
+): IllustrationRejectRegenAdapters {
+  const client = authedPipelineClient(token);
+  return {
+    ...createIllustrationGenerateAdapters(token, client),
+    reject: async (input) =>
+      client.mutation(api.illustrationPipeline.rejectAndRegenerate, {
+        speciesId: input.speciesId as Id<"species">,
+        pose: input.pose,
+      }),
   };
 }
 
