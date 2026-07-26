@@ -6,7 +6,7 @@ import {
   planRejectAndRegenerate,
   planRejectIllustrations,
   planStartIllustrationRegen,
-} from "./illustration";
+} from "../../../convex/lib/illustration";
 
 describe("planAttachIllustrations", () => {
   it("stages both poses as pendingReview with mask and dims", () => {

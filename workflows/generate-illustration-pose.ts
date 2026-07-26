@@ -18,7 +18,7 @@ export async function processIllustrationPose(input: PoseWorkflowInput) {
   const processed = await cropAndMask(matted);
 
   const { parseIllustrationCustomId } = await import(
-    "../src/lib/admin/illustration-custom-id"
+    "../convex/lib/illustrationCustomId"
   );
   const { pose } = parseIllustrationCustomId(input.customId);
 
@@ -269,6 +269,19 @@ If there are no anatomy problems, set anatomyIssues to an empty string (not the 
   }
 }
 
+async function pipelineStorage() {
+  const { pipelineClient, pipelineSecret } = await import(
+    "../src/lib/illustrations/pipeline-client"
+  );
+  const { createPipelineStorage } = await import(
+    "../src/lib/illustrations/pipeline-storage"
+  );
+  return createPipelineStorage({
+    client: pipelineClient(),
+    secret: pipelineSecret(),
+  });
+}
+
 async function stagePose(input: {
   customId: string;
   pngBytes: Buffer;
@@ -277,39 +290,15 @@ async function stagePose(input: {
 }): Promise<void> {
   "use step";
   const { parseIllustrationCustomId } = await import(
-    "../src/lib/admin/illustration-custom-id"
+    "../convex/lib/illustrationCustomId"
   );
-  const { ConvexHttpClient } = await import("convex/browser");
-  const { api } = await import("../convex/_generated/api");
-
-  const secret = process.env.ILLUSTRATION_PIPELINE_SECRET;
-  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!secret || !convexUrl) {
-    throw new Error("ILLUSTRATION_PIPELINE_SECRET and NEXT_PUBLIC_CONVEX_URL required");
-  }
 
   const { slug, pose } = parseIllustrationCustomId(input.customId);
-  const client = new ConvexHttpClient(convexUrl);
-
-  const uploadUrl = await client.mutation(
-    api.illustrationPipeline.generatePipelineUploadUrl,
-    { secret },
-  );
-  const uploadRes = await fetch(uploadUrl, {
-    method: "POST",
-    headers: { "Content-Type": "image/png" },
-    body: new Uint8Array(input.pngBytes),
-  });
-  if (!uploadRes.ok) {
-    throw new Error(`Convex upload failed: ${uploadRes.status}`);
-  }
-  const { storageId } = (await uploadRes.json()) as { storageId: string };
-
-  await client.mutation(api.illustrationPipeline.stageIllustrationPose, {
-    secret,
+  const storage = await pipelineStorage();
+  await storage.stagePose({
     slug,
     pose,
-    storageId: storageId as never,
+    pngBytes: input.pngBytes,
     mask: input.mask,
     dims: input.dims,
   });
@@ -317,21 +306,17 @@ async function stagePose(input: {
 
 async function failSpecies(customId: string, reason?: string): Promise<void> {
   "use step";
+  if (
+    !process.env.ILLUSTRATION_PIPELINE_SECRET ||
+    !process.env.NEXT_PUBLIC_CONVEX_URL
+  ) {
+    return;
+  }
+
   const { parseIllustrationCustomId } = await import(
-    "../src/lib/admin/illustration-custom-id"
+    "../convex/lib/illustrationCustomId"
   );
-  const { ConvexHttpClient } = await import("convex/browser");
-  const { api } = await import("../convex/_generated/api");
-
-  const secret = process.env.ILLUSTRATION_PIPELINE_SECRET;
-  const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!secret || !convexUrl) return;
-
   const { slug } = parseIllustrationCustomId(customId);
-  const client = new ConvexHttpClient(convexUrl);
-  await client.mutation(api.illustrationPipeline.failIllustrationPose, {
-    secret,
-    slug,
-    reason,
-  });
+  const storage = await pipelineStorage();
+  await storage.failPose({ slug, reason });
 }

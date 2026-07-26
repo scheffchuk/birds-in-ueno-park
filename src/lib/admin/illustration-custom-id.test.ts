@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   formatIllustrationCustomId,
   parseIllustrationCustomId,
-} from "./illustration-custom-id";
+} from "../../../convex/lib/illustrationCustomId";
 
 describe("formatIllustrationCustomId", () => {
   it("joins slug and pose with a colon", () => {

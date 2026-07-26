@@ -3,7 +3,7 @@ import {
   planFailIllustrationPose,
   planStageIllustrationPose,
   planStartIllustrationGeneration,
-} from "./illustration";
+} from "../../../convex/lib/illustration";
 
 describe("planStartIllustrationGeneration", () => {
   it("clears staged art and flips to generating", () => {
