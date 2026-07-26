@@ -1,7 +1,6 @@
 import { api } from "@/lib/illustrations/pipeline-client";
 import { requireAdminPipelineClient } from "@/lib/illustrations/require-admin";
 
-export const runtime = "nodejs";
 export const maxDuration = 300;
 
 type Body = {

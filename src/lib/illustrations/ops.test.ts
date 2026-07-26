@@ -31,12 +31,15 @@ function stubAdapters(
 ): IllustrationGenerateAdapters & {
   failPoseCalls: Array<{ slug: string; reason: string }>;
   startedWorkflows: string[];
+  revalidatedTags: string[];
 } {
   const failPoseCalls: Array<{ slug: string; reason: string }> = [];
   const startedWorkflows: string[] = [];
+  const revalidatedTags: string[] = [];
   return {
     failPoseCalls,
     startedWorkflows,
+    revalidatedTags,
     prepare: vi.fn(async () => ({
       requests: [sampleRequest()],
       skipped: [] as string[],
@@ -48,6 +51,9 @@ function stubAdapters(
     }),
     failPose: vi.fn(async (input) => {
       failPoseCalls.push(input);
+    }),
+    revalidateTags: vi.fn(async (tags) => {
+      revalidatedTags.push(...tags);
     }),
     ...overrides,
   };
@@ -76,6 +82,7 @@ describe("generateIllustrations", () => {
       message: "No Guide species with pose-matched Anatomy references",
     });
     expect(adapters.edit).not.toHaveBeenCalled();
+    expect(adapters.revalidatedTags).toEqual([]);
   });
 
   it("starts Workflow for each successful Gemini edit", async () => {
@@ -110,6 +117,7 @@ describe("generateIllustrations", () => {
       "mejiro:flight",
       "mejiro:perch",
     ]);
+    expect(adapters.revalidatedTags).toEqual(["species:mejiro"]);
   });
 
   it("marks failed closed when Gemini edit throws", async () => {
@@ -127,6 +135,7 @@ describe("generateIllustrations", () => {
       { slug: "mejiro", reason: "gateway timeout" },
     ]);
     expect(adapters.startedWorkflows).toEqual([]);
+    expect(adapters.revalidatedTags).toEqual([]);
   });
 
   it("counts mixed started and failed across a slice", async () => {
@@ -166,6 +175,41 @@ describe("generateIllustrations", () => {
     });
     expect(adapters.failPoseCalls.map((c) => c.slug)).toEqual(["mejiro"]);
     expect(adapters.startedWorkflows).toEqual(["suzume:perch"]);
+    expect(adapters.revalidatedTags).toEqual(["species:suzume"]);
+  });
+
+  it("busts each successful Slug once when a slice spans multiple species", async () => {
+    const adapters = stubAdapters({
+      prepare: async () => ({
+        requests: [
+          sampleRequest({
+            customId: "mejiro:perch",
+            slug: "mejiro",
+            pose: "perch",
+          }),
+          sampleRequest({
+            customId: "mejiro:flight",
+            slug: "mejiro",
+            pose: "flight",
+          }),
+          sampleRequest({
+            customId: "suzume:perch",
+            slug: "suzume",
+            pose: "perch",
+            sciName: "Passer montanus",
+            comNameEn: "Eurasian Tree Sparrow",
+          }),
+        ],
+        skipped: [],
+      }),
+    });
+
+    await generateIllustrations({ limit: 3 }, adapters);
+
+    expect(adapters.revalidatedTags.sort()).toEqual([
+      "species:mejiro",
+      "species:suzume",
+    ]);
   });
 });
 
@@ -179,6 +223,7 @@ function stubRejectRegenAdapters(
     limit?: number;
   }>;
   startedWorkflows: string[];
+  revalidatedTags: string[];
 } {
   const rejectCalls: Array<{
     speciesId: string;
@@ -190,10 +235,12 @@ function stubRejectRegenAdapters(
     limit?: number;
   }> = [];
   const startedWorkflows: string[] = [];
+  const revalidatedTags: string[] = [];
   return {
     rejectCalls,
     prepareInputs,
     startedWorkflows,
+    revalidatedTags,
     reject: vi.fn(async (input) => {
       rejectCalls.push(input);
       const poses: IllustrationPose[] = input.pose
@@ -221,6 +268,9 @@ function stubRejectRegenAdapters(
       startedWorkflows.push(input.customId);
     }),
     failPose: vi.fn(async () => {}),
+    revalidateTags: vi.fn(async (tags) => {
+      revalidatedTags.push(...tags);
+    }),
     ...overrides,
   };
 }
@@ -249,6 +299,7 @@ describe("rejectAndRegenerateIllustrations", () => {
       "mejiro:flight",
       "mejiro:perch",
     ]);
+    expect(adapters.revalidatedTags).toEqual(["species:mejiro"]);
   });
 
   it("rejects a single pose then regenerates only that pose", async () => {
@@ -271,6 +322,7 @@ describe("rejectAndRegenerateIllustrations", () => {
       requestCount: 1,
     });
     expect(adapters.startedWorkflows).toEqual(["mejiro:flight"]);
+    expect(adapters.revalidatedTags).toEqual(["species:mejiro"]);
   });
 
   it("does not generate when reject fails", async () => {
@@ -289,6 +341,24 @@ describe("rejectAndRegenerateIllustrations", () => {
 
     expect(adapters.prepareInputs).toEqual([]);
     expect(adapters.startedWorkflows).toEqual([]);
+    expect(adapters.revalidatedTags).toEqual([]);
+  });
+
+  it("does not bust Atlas tags when regenerate slice fails entirely", async () => {
+    const adapters = stubRejectRegenAdapters({
+      edit: async () => {
+        throw new Error("gateway timeout");
+      },
+    });
+
+    const result = await rejectAndRegenerateIllustrations(
+      { speciesId: "species-mejiro", pose: "flight" },
+      adapters,
+    );
+
+    expect(result.started).toBe(0);
+    expect(result.failed).toBe(1);
+    expect(adapters.revalidatedTags).toEqual([]);
   });
 });
 

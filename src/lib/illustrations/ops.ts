@@ -1,3 +1,4 @@
+import { speciesCacheTag } from "@/lib/atlas/cache-tags";
 import { mapPool } from "./map-pool";
 
 export const GEMINI_ILLUSTRATION_MODEL = "google/gemini-2.5-flash-image";
@@ -52,6 +53,8 @@ export type IllustrationGenerateAdapters = {
     comNameEn: string;
   }) => Promise<void>;
   failPose: (input: { slug: string; reason: string }) => Promise<void>;
+  /** Bust Atlas Cache Components tags after visitor-facing generate success. */
+  revalidateTags: (tags: string[]) => void | Promise<void>;
 };
 
 export type RejectAndRegenerateInput = {
@@ -118,6 +121,7 @@ export async function generateIllustrations(
 
   let started = 0;
   let failed = 0;
+  const succeededSlugs = new Set<string>();
 
   await mapPool(requests, EDIT_CONCURRENCY, async (r) => {
     try {
@@ -133,6 +137,7 @@ export async function generateIllustrations(
         comNameEn: r.comNameEn,
       });
       started += 1;
+      succeededSlugs.add(r.slug);
     } catch (err) {
       failed += 1;
       const reason =
@@ -144,6 +149,12 @@ export async function generateIllustrations(
       await adapters.failPose({ slug: r.slug, reason });
     }
   });
+
+  if (succeededSlugs.size > 0) {
+    await adapters.revalidateTags(
+      [...succeededSlugs].map((slug) => speciesCacheTag(slug)),
+    );
+  }
 
   return {
     ok: true,
