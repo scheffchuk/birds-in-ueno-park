@@ -8,6 +8,7 @@ import {
 } from "./_generated/server";
 import { requireAdmin } from "./lib/auth";
 import {
+  planClearForGeneration,
   planFailIllustrationPose,
   planStageIllustrationPose,
 } from "./lib/illustration";
@@ -231,31 +232,9 @@ export const prepareIllustrationGenerate = mutation({
       }
 
       // Clear only the poses we are regenerating; keep the other cutout.
-      if (posesToGenerate.length === 2) {
-        await ctx.db.patch(sp._id, {
-          illustrationStatus: "generating",
-          illustrationPerch: undefined,
-          illustrationFlight: undefined,
-          maskPerch: undefined,
-          maskFlight: undefined,
-          dimsPerch: undefined,
-          dimsFlight: undefined,
-        });
-      } else if (posesToGenerate[0] === "perch") {
-        await ctx.db.patch(sp._id, {
-          illustrationStatus: "generating",
-          illustrationPerch: undefined,
-          maskPerch: undefined,
-          dimsPerch: undefined,
-        });
-      } else {
-        await ctx.db.patch(sp._id, {
-          illustrationStatus: "generating",
-          illustrationFlight: undefined,
-          maskFlight: undefined,
-          dimsFlight: undefined,
-        });
-      }
+      const clearPose =
+        posesToGenerate.length === 2 ? undefined : posesToGenerate[0];
+      await ctx.db.patch(sp._id, planClearForGeneration(clearPose));
 
       for (const pose of posesToGenerate) {
         requests.push({
@@ -504,31 +483,7 @@ export const rejectAndRegenerate = mutation({
     const poses: IllustrationPose[] = args.pose
       ? [args.pose]
       : ["perch", "flight"];
-    if (args.pose === "perch") {
-      await ctx.db.patch(args.speciesId, {
-        illustrationStatus: "generating",
-        illustrationPerch: undefined,
-        maskPerch: undefined,
-        dimsPerch: undefined,
-      });
-    } else if (args.pose === "flight") {
-      await ctx.db.patch(args.speciesId, {
-        illustrationStatus: "generating",
-        illustrationFlight: undefined,
-        maskFlight: undefined,
-        dimsFlight: undefined,
-      });
-    } else {
-      await ctx.db.patch(args.speciesId, {
-        illustrationStatus: "generating",
-        illustrationPerch: undefined,
-        illustrationFlight: undefined,
-        maskPerch: undefined,
-        maskFlight: undefined,
-        dimsPerch: undefined,
-        dimsFlight: undefined,
-      });
-    }
+    await ctx.db.patch(args.speciesId, planClearForGeneration(args.pose));
     return { slug: sp.slug, poses };
   },
 });

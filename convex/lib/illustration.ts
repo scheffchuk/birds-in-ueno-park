@@ -92,21 +92,6 @@ export type StagedPoseFields = {
   dimsFlight?: number[];
 };
 
-/** Clear cutouts and flip to generating before a generate job. */
-export function planStartIllustrationGeneration(): StagedPoseFields & {
-  illustrationStatus: "generating";
-} {
-  return {
-    illustrationStatus: "generating",
-    illustrationPerch: undefined,
-    illustrationFlight: undefined,
-    maskPerch: undefined,
-    maskFlight: undefined,
-    dimsPerch: undefined,
-    dimsFlight: undefined,
-  };
-}
-
 /**
  * Stage one verified pose. pendingReview only when both poses are present.
  */
@@ -156,16 +141,35 @@ export function planFailIllustrationPose(): {
   return { illustrationStatus: "failed" };
 }
 
+/** Patch that clears selected art fields (undefined = delete) and enters generating. */
+export type ClearForGenerationPlan = {
+  illustrationStatus: "generating";
+  illustrationPerch?: undefined;
+  illustrationFlight?: undefined;
+  maskPerch?: undefined;
+  maskFlight?: undefined;
+  dimsPerch?: undefined;
+  dimsFlight?: undefined;
+};
+
 /**
- * Reject review: clear art and return to generating so regen can re-submit.
+ * Clear cutouts/masks/dims and enter generating before a generate job.
  * Omit pose to clear both; pass a pose to clear only that cutout.
  */
-export function planRejectAndRegenerate(
+export function planClearForGeneration(
   pose?: IllustrationPose,
-): StagedPoseFields & {
-  illustrationStatus: "generating";
-} {
-  if (!pose) return planStartIllustrationGeneration();
+): ClearForGenerationPlan {
+  if (!pose) {
+    return {
+      illustrationStatus: "generating",
+      illustrationPerch: undefined,
+      illustrationFlight: undefined,
+      maskPerch: undefined,
+      maskFlight: undefined,
+      dimsPerch: undefined,
+      dimsFlight: undefined,
+    };
+  }
   if (pose === "perch") {
     return {
       illustrationStatus: "generating",

@@ -2,22 +2,7 @@ import { describe, expect, it } from "vitest";
 import {
   planFailIllustrationPose,
   planStageIllustrationPose,
-  planStartIllustrationGeneration,
 } from "../../../convex/lib/illustration";
-
-describe("planStartIllustrationGeneration", () => {
-  it("clears staged art and flips to generating", () => {
-    expect(planStartIllustrationGeneration()).toEqual({
-      illustrationStatus: "generating",
-      illustrationPerch: undefined,
-      illustrationFlight: undefined,
-      maskPerch: undefined,
-      maskFlight: undefined,
-      dimsPerch: undefined,
-      dimsFlight: undefined,
-    });
-  });
-});
 
 describe("planStageIllustrationPose", () => {
   it("keeps generating when only one pose is staged", () => {

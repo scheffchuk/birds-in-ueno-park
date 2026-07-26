@@ -2,8 +2,8 @@ import { describe, expect, it } from "vitest";
 import {
   planApproveIllustrations,
   planAttachIllustrations,
+  planClearForGeneration,
   planDeferIncompleteIllustrations,
-  planRejectAndRegenerate,
   planRejectIllustrations,
   planStartIllustrationRegen,
 } from "../../../convex/lib/illustration";
@@ -90,9 +90,9 @@ describe("planStartIllustrationRegen", () => {
   });
 });
 
-describe("planRejectAndRegenerate", () => {
+describe("planClearForGeneration", () => {
   it("clears both poses when pose omitted", () => {
-    expect(planRejectAndRegenerate()).toEqual({
+    expect(planClearForGeneration()).toEqual({
       illustrationStatus: "generating",
       illustrationPerch: undefined,
       illustrationFlight: undefined,
@@ -104,7 +104,7 @@ describe("planRejectAndRegenerate", () => {
   });
 
   it("clears only perch when pose is perch", () => {
-    expect(planRejectAndRegenerate("perch")).toEqual({
+    expect(planClearForGeneration("perch")).toEqual({
       illustrationStatus: "generating",
       illustrationPerch: undefined,
       maskPerch: undefined,
@@ -113,7 +113,7 @@ describe("planRejectAndRegenerate", () => {
   });
 
   it("clears only flight when pose is flight", () => {
-    expect(planRejectAndRegenerate("flight")).toEqual({
+    expect(planClearForGeneration("flight")).toEqual({
       illustrationStatus: "generating",
       illustrationFlight: undefined,
       maskFlight: undefined,
