@@ -5,11 +5,13 @@ import { ConvexReactClient } from "convex/react";
 import type { ReactNode } from "react";
 
 const url = process.env.NEXT_PUBLIC_CONVEX_URL;
+if (!url) {
+  throw new Error("NEXT_PUBLIC_CONVEX_URL is not set");
+}
 
-const client = url ? new ConvexReactClient(url) : null;
+const client = new ConvexReactClient(url);
 
 export function Providers({ children }: { children: ReactNode }) {
-  if (!client) return children;
   return (
     <ConvexAuthNextjsProvider client={client}>{children}</ConvexAuthNextjsProvider>
   );
