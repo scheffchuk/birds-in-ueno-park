@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { SITE_FOOTER } from "@/lib/site/attribution";
 
 export function SiteFooter() {
@@ -13,7 +12,7 @@ export function SiteFooter() {
             rel="noopener noreferrer"
             className="underline decoration-hairline underline-offset-4 transition-colors hover:text-ink"
           >
-            github
+            {SITE_FOOTER.creditName}
           </a>
           {" · "}
           <a
@@ -25,12 +24,15 @@ export function SiteFooter() {
             {SITE_FOOTER.creditSite}
           </a>
           {" · "}
-          <Link
-            href="/about"
+          Created by{" "}
+          <a
+            href={SITE_FOOTER.authorUrl}
+            target="_blank"
+            rel="noopener noreferrer"
             className="underline decoration-hairline underline-offset-4 transition-colors hover:text-ink"
           >
-            About について
-          </Link>
+            {SITE_FOOTER.author}
+          </a>
         </p>
       </div>
     </footer>

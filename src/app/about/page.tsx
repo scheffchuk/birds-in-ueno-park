@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { ABOUT_SECTIONS, SITE_FOOTER } from "@/lib/site/attribution";
+import { ABOUT_SECTIONS } from "@/lib/site/attribution";
 import { SiteFooter } from "@/components/site/SiteFooter";
 
 export default function AboutPage() {
@@ -37,26 +37,6 @@ export default function AboutPage() {
             </p>
           </section>
         ))}
-
-        <p className="border-t border-hairline pt-8 text-center font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase">
-          <a
-            href={SITE_FOOTER.creditUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-hairline underline-offset-4 hover:text-ink"
-          >
-            {SITE_FOOTER.credit}
-          </a>
-          {" · "}
-          <a
-            href={SITE_FOOTER.creditSiteUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline decoration-hairline underline-offset-4 hover:text-ink"
-          >
-            {SITE_FOOTER.creditSite}
-          </a>
-        </p>
       </article>
       <SiteFooter />
     </main>
