@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import Link from "next/link";
+import { connection } from "next/server";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../convex/_generated/api";
 import { selectForAtlas } from "@/lib/atlas/select";
@@ -12,6 +13,7 @@ type PageProps = {
 };
 
 async function AtlasSeasonBody({ searchParams }: PageProps) {
+  await connection();
   const { season: seasonParam } = await searchParams;
   const season = parseSeasonSearchParam(seasonParam);
   const species = await fetchQuery(api.species.listAtlas);
