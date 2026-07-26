@@ -1,6 +1,6 @@
 /**
  * Upload public/refs/style/{perch,flight}.jpg into Convex stylePrints
- * so Batchwork can fetch them at CONVEX_SITE_URL/refs/style/:key
+ * so Gemini generate can fetch them at CONVEX_SITE_URL/refs/style/:key
  *
  * Usage: pnpm seed:style-refs
  * Needs: NEXT_PUBLIC_CONVEX_URL + ILLUSTRATION_PIPELINE_SECRET in .env.local

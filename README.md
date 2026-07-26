@@ -55,18 +55,7 @@ On Vercel / `.env.local` (Next):
 3. `FAL_KEY` — BiRefNet matting (cream-key fallback if exhausted)
 4. `AI_GATEWAY_API_KEY` — species copy + **illustration generate** (`google/gemini-2.5-flash-image`)
 5. `ILLUSTRATION_PIPELINE_SECRET` — same as Convex
-6. `CRON_SECRET` — protect `/api/cron/illustration-batches` (local poll; not a Vercel Cron on Hobby)
-7. `SITE_URL` / `NEXT_PUBLIC_SITE_URL` — public base for `/refs/style/{perch,flight}.jpg`
-
-Vercel Hobby only allows **daily** crons, so minute polling is **not** in `vercel.json`. Locally (with `pnpm dev`):
-
-```bash
-pnpm cron:illustration-batches
-# or every minute:
-watch -n 60 pnpm cron:illustration-batches
-```
-
-On production Hobby, use Admin **poll batches** (same work) or upgrade to Pro and restore a Vercel Cron.
+6. `SITE_URL` / `NEXT_PUBLIC_SITE_URL` — public base for `/refs/style/{perch,flight}.jpg`
 
 ### Illustration pipeline (#8)
 

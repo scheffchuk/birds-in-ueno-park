@@ -13,7 +13,7 @@
 - [ ] Port apt.js bitmask collage packing to TypeScript React component with season picker
 - [ ] Build atlas list + species detail pages (trilingual bird data, EN+JA chrome)
 - [ ] Build `/about` (Prevalence methodology, eBird source, illustration + AvianVisitors credits)
-- [ ] Build asset-generation: Batchwork + xAI edit bulk generate → durable post-steps (fal matting, sharp mask, AI verify, Convex upload)
+- [ ] Build asset-generation: sync Gemini Flash Image generate → durable post-steps (fal matting, sharp mask, AI verify, Convex upload)
 - [ ] Offline script to generate trilingual descriptions and spotting tips via xAI (EN / JA / ZH-TW) at seed time
 - [ ] Convex Auth-protected admin UI with field-level provenance (curated vs seeded)
 - [ ] Port AvianVisitors visual design (cream ground, typography, tooltips) — light only, no dark mode
@@ -33,17 +33,16 @@ flowchart LR
     copyGen[xAI copy generator] --> db
   end
 
-  subgraph genBatch [Generate - Batchwork + xAI]
-    trigger[Admin: Generate] --> batchJob[batch.images.edit grok-imagine-image-quality]
-    batchJob --> webhook[Batchwork onComplete]
+  subgraph genSync [Generate - sync Gemini]
+    trigger[Admin: Generate] --> gemini[Gemini Flash Image via AI Gateway]
+    gemini --> uploadPng[Upload PNG to Convex]
   end
 
-  subgraph postWorkflow [Post-steps - Vercel Workflow per result]
-    webhook --> download[Step: download signed URL]
-    download --> matStep[Step: fal.ai BiRefNet matting + crop]
+  subgraph postWorkflow [Post-steps - Vercel Workflow per pose]
+    uploadPng --> matStep[Step: fal.ai BiRefNet matting + crop]
     matStep --> maskStep[Step: sharp mask + dims]
     maskStep --> verifyStep[Step: AI verify]
-    verifyStep --> uploadStep[Step: Convex upload pendingReview]
+    verifyStep --> stageStep[Step: stage cutout → pendingReview]
   end
 
   subgraph runtime [Runtime - Vercel + Convex]
@@ -69,12 +68,12 @@ flowchart LR
 | Collage sizing | **Prevalence**: one 0–100 value per species per season, drives both membership and size |
 | Prevalence source | eBird histogram TSV download (one-time, manual) from Ueno hotspots; weeks → Seasons via **max** weekly frequency (not mean); meteorological boundaries (Dec–Feb / Mar–May / Jun–Aug / Sep–Nov) |
 | Hotspots | Merge **L920322** (Ueno Park) + Shinobazu Pond hotspot, max frequency per species per week |
-| Illustrations | **Batchwork** `batch.images.edit()` + xAI `grok-imagine-image-quality` (refs as URLs); **Vercel Workflow** for post-steps only — see [ADR-0003](docs/adr/0003-asset-generation-via-vercel-workflow.md) |
+| Illustrations | Sync **Gemini Flash Image** via AI Gateway; **Vercel Workflow** for post-steps only — see [ADR-0003](docs/adr/0003-asset-generation-via-vercel-workflow.md) |
 | Illustration storage | **Convex file storage** for cutouts; mask bits + dims stored per species doc, written by the workflow — see [ADR-0002](docs/adr/0002-illustrations-in-convex-storage.md) |
 | Background removal | Hosted BiRefNet via fal.ai (AI SDK provider) — cream ground kept, matting is a retryable API step |
-| Generation references | Anatomy + Koson/Yoshida style prints; anti-refs dropped; passed into xAI edit as **stable public HTTPS URLs** (not short-lived Convex signed URLs) |
+| Generation references | Anatomy + Koson/Yoshida style prints; anti-refs dropped; passed into Gemini edit as **stable public HTTPS URLs** (not short-lived Convex signed URLs) |
 | Quality gate | AI verify in post-Workflow via **xAI vision** (AI SDK; retry once per pose, then species `failed` — fails closed) + human approval post-run |
-| Batch shape | Batchwork job for generate; **per-pose** Vercel Workflow on each result (download ASAP); species → `pendingReview` only when **both** poses succeed; **approve/reject the pair**; regen flips to `generating` immediately |
+| Generate shape | Sync Gemini for generate (small concurrent pool); **per-pose** Vercel Workflow after upload; species → `pendingReview` only when **both** poses succeed; **approve/reject the pair**; regen flips to `generating` immediately |
 | UI scope | Collage + Atlas + **`/about`** (methodology + credits); **`/` = Collage**, `/atlas` = catalog |
 | Top filter | Seasons; **default = current Season in `Asia/Tokyo`**, plus All-year tab (Prevalence = seasonal max) |
 | Language | Bird data trilingual EN / JA / ZH-TW; UI chrome bilingual EN + JA |
@@ -136,8 +135,8 @@ birds-in-ueno/
 - Convex Auth (**GitHub OAuth**); gate admin mutations with env allowlist of GitHub user id(s)
 - ESLint with `@convex-dev/eslint-plugin`
 - `next.config` `images.remotePatterns` for Convex storage URLs
-- Workflow DevKit: `workflow` package + `withWorkflow` in `next.config`; AI SDK + `@ai-sdk/xai` + `batchwork` + fal provider
-- Env vars: `XAI_API_KEY`, `FAL_KEY`, Batchwork webhook secret, Convex/Vercel keys (no eBird API key — histogram is a manual download; no Gemini key)
+- Workflow DevKit: `workflow` package + `withWorkflow` in `next.config`; AI SDK + `@ai-sdk/xai` + fal provider
+- Env vars: `XAI_API_KEY`, `FAL_KEY`, `AI_GATEWAY_API_KEY`, Convex/Vercel keys (no eBird API key — histogram is a manual download)
 
 ---
 
@@ -223,23 +222,23 @@ Re-seeding is safe to run anytime: the provenance rule guarantees hand-edits sur
 
 ---
 
-## Phase 4 — Asset generation (Batchwork + xAI generate, durable post-steps)
+## Phase 4 — Asset generation (sync Gemini generate, durable post-steps)
 
-Cream-ground kachō-e generation: **Batchwork** `batch.images.edit()` with **xAI `grok-imagine-image-quality`**. Post-processing runs as a **Vercel Workflow** per result. See [ADR-0003](docs/adr/0003-asset-generation-via-vercel-workflow.md).
+Cream-ground kachō-e generation: sync **Gemini Flash Image** (`google/gemini-2.5-flash-image` via AI Gateway). Post-processing runs as a **Vercel Workflow** per pose. See [ADR-0003](docs/adr/0003-asset-generation-via-vercel-workflow.md).
 
-**Generate (bulk):**
+**Generate:**
 
-- Admin submits one Batchwork job (all missing poses, or a validation slice)
-- Model: `grok-imagine-image-quality` via `batch.images.edit()`
-- `customId` = `{slug}:{pose}`; `images` = anatomy URL + style-print URL (**stable public HTTPS**, not short-lived Convex signed URLs — e.g. app route or public CDN mirroring Convex ref bytes)
-- Prompt: ported [`prompt.template.md`](temp/avian/scripts/prompt.template.md), reworded for xAI multi-image edit
-- On completion (Batchwork webhook/poller): **download promptly** (xAI signed URLs expire ~1h)
+- Admin triggers sync Gemini for a missing-pose slice (default 20 species; optional slug/pose filters)
+- Model: `google/gemini-2.5-flash-image` via AI Gateway; small concurrent pool
+- `customId` = `{slug}:{pose}`; `images` = anatomy URL + style-print URL (**stable public HTTPS**, not short-lived Convex signed URLs)
+- Prompt: ported [`prompt.template.md`](temp/avian/scripts/prompt.template.md), adapted for multi-image edit
+- On each successful PNG: upload to Convex storage, then start the per-pose Workflow
 
-**Post-steps** (Vercel Workflow per succeeded `customId`, started from Batchwork `onComplete`; download ASAP for URL TTL):
+**Post-steps** (Vercel Workflow per pose):
 
 | Step | Implementation |
 |------|----------------|
-| Ingest | Fetch batch result URL → buffer |
+| Ingest | Fetch Convex storage URL → buffer |
 | Matting + crop | fal.ai BiRefNet; sharp crop + 2% margin |
 | Mask + dims | sharp → 1-bit mask + dims on species doc (that pose) |
 | AI verify | xAI vision via AI SDK (`generateObject`); fail → species `failed` (fails closed) |
@@ -247,7 +246,7 @@ Cream-ground kachō-e generation: **Batchwork** `batch.images.edit()` with **xAI
 
 **Approval**: approve/reject the pair as one; regen flips to `generating` immediately.
 
-**References** (stored in Convex; **served via stable public HTTPS** for Batchwork/xAI): anatomy (Wikipedia + admin override) + ~10 Koson/Yoshida style prints by genus/pose. Anti-refs dropped for v1. Visitor-facing cutouts stay private Convex storage.
+**References** (stored in Convex; **served via stable public HTTPS** for Gemini): anatomy (Wikipedia + admin override) + ~10 Koson/Yoshida style prints by genus/pose. Anti-refs dropped for v1. Visitor-facing cutouts stay private Convex storage.
 
 **Copy** stays offline at seed time (`scripts/generate-copy.ts`) via **xAI** chat (AI SDK); re-seed skips `curatedFields`.
 
@@ -356,9 +355,9 @@ No BirdNET-Pi, no PHP, no SQLite, no Raspberry Pi.
 
 | Risk | Mitigation |
 |------|------------|
-| ~130 xAI images + batch turnaround | Batchwork discount; validate style on 20-species slice; download results before ~1h URL TTL |
+| ~130 Gemini images + Workflow post-steps | Validate style on 20-species slice; keep generate pool small |
 | xAI kachō-e / JA·ZH-TW copy quality | Prompt + ref re-tune on validation slice; curatedFields for hand fixes; human pendingReview |
-| Batchwork / xAI API shape changes | Isolate generate + verify behind thin wrappers; pin model ids |
+| Gemini / fal / xAI API shape changes | Isolate generate + verify behind thin wrappers; pin model ids |
 | fal.ai matting quality differs from local BiRefNet | Same underlying model; verify step + human review catch regressions; margin/crop params tunable |
 | Workflow local dev friction | `npx workflow web` dashboard + Vitest workflow plugin for step tests |
 | Collage port complexity | Pure TS packing module with unit tests against known layouts |
@@ -378,7 +377,7 @@ No BirdNET-Pi, no PHP, no SQLite, no Raspberry Pi.
 4. Season picker + Convex query wired up
 5. Atlas pages (text-only first)
 6. Admin UI with provenance + illustration status grid
-7. Asset generation workflow — 20-species validation slice, then remainder in batches (admin must exist first to trigger/review)
+7. Asset generation workflow — 20-species validation slice, then remainder via admin Generate slices (admin must exist first to trigger/review)
 8. Polish styling to match AvianVisitors fidelity
 9. Deploy
 

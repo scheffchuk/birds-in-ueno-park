@@ -58,7 +58,7 @@ export default defineSchema({
     .index("by_season", ["season"])
     .index("by_species_and_season", ["speciesId", "season"]),
 
-  /** Style-print refs served at /refs/style/:key (public HTTPS for Batchwork). */
+  /** Style-print refs served at /refs/style/:key (public HTTPS for generate). */
   stylePrints: defineTable({
     key: v.string(),
     pose: v.union(v.literal("perch"), v.literal("flight")),
@@ -66,27 +66,4 @@ export default defineSchema({
   })
     .index("by_key", ["key"])
     .index("by_pose", ["pose"]),
-
-  /** Open Batchwork jobs awaiting cron poll → pose workflows. */
-  illustrationBatches: defineTable({
-    provider: v.string(),
-    batchId: v.string(),
-    status: v.union(
-      v.literal("open"),
-      v.literal("delivered"),
-      v.literal("failed"),
-    ),
-    createdAt: v.number(),
-    requests: v.array(
-      v.object({
-        customId: v.string(),
-        slug: v.string(),
-        pose: v.union(v.literal("perch"), v.literal("flight")),
-        sciName: v.string(),
-        comNameEn: v.string(),
-      }),
-    ),
-  })
-    .index("by_status", ["status"])
-    .index("by_batch", ["provider", "batchId"]),
 });

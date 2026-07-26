@@ -14,7 +14,7 @@ const nextConfig: NextConfig = {
       },
     ],
   },
-  serverExternalPackages: ["sharp", "@fal-ai/client", "batchwork"],
+  serverExternalPackages: ["sharp", "@fal-ai/client"],
 };
 
 export default withWorkflow(nextConfig);

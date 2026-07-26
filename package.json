@@ -11,8 +11,7 @@
     "typecheck": "tsc --noEmit",
     "seed:histogram": "tsx --env-file=.env.local scripts/seed-histogram.ts",
     "seed:copy": "tsx --env-file=.env.local scripts/generate-copy.ts",
-    "seed:style-refs": "tsx --env-file=.env.local scripts/seed-style-refs.ts",
-    "cron:illustration-batches": "tsx --env-file=.env.local scripts/poll-illustration-batches.ts"
+    "seed:style-refs": "tsx --env-file=.env.local scripts/seed-style-refs.ts"
   },
   "dependencies": {
     "@ai-sdk/gateway": "^4.0.23",
@@ -22,7 +21,6 @@
     "@convex-dev/auth": "^0.0.94",
     "@fal-ai/client": "^1.10.1",
     "ai": "^7.0.31",
-    "batchwork": "^1.3.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "convex": "^1.42.3",

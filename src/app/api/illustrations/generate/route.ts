@@ -6,7 +6,7 @@ import {
   pipelineSecret,
 } from "@/lib/illustrations/pipeline-client";
 import { geminiImageEdit } from "@/lib/illustrations/gemini-image-edit";
-import { mapPool } from "@/lib/illustrations/xai-sync-edit";
+import { mapPool } from "@/lib/illustrations/map-pool";
 import type { Id } from "../../../../../convex/_generated/dataModel";
 
 export const runtime = "nodejs";
@@ -51,7 +51,7 @@ export async function POST(request: Request) {
   }
 
   const prepared = await client.mutation(
-    api.illustrationPipeline.prepareIllustrationBatch,
+    api.illustrationPipeline.prepareIllustrationGenerate,
     {
       limit: body.limit ?? 20,
       slugs: body.slugs,

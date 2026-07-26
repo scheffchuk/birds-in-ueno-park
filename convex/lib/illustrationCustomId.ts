@@ -2,7 +2,7 @@ export type IllustrationPose = "perch" | "flight";
 
 const POSES = new Set<IllustrationPose>(["perch", "flight"]);
 
-/** Batchwork customId: `{slug}:{pose}`. */
+/** Pose workflow customId: `{slug}:{pose}`. */
 export function formatIllustrationCustomId(
   slug: string,
   pose: IllustrationPose,

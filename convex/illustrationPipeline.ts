@@ -128,10 +128,10 @@ export const listPendingReview = query({
 });
 
 /**
- * Mark selected species generating and return Batchwork edit requests
+ * Mark selected species generating and return Gemini edit requests
  * (stable public HTTPS anatomy + style URLs).
  */
-export const prepareIllustrationBatch = mutation({
+export const prepareIllustrationGenerate = mutation({
   args: {
     limit: v.optional(v.number()),
     slugs: v.optional(v.array(v.string())),
@@ -279,81 +279,6 @@ export const prepareIllustrationBatch = mutation({
     }
 
     return { requests, skipped };
-  },
-});
-
-export const recordIllustrationBatch = mutation({
-  args: {
-    secret: v.string(),
-    provider: v.string(),
-    batchId: v.string(),
-    requests: v.array(
-      v.object({
-        customId: v.string(),
-        slug: v.string(),
-        pose: poseValidator,
-        sciName: v.string(),
-        comNameEn: v.string(),
-      }),
-    ),
-  },
-  returns: v.id("illustrationBatches"),
-  handler: async (ctx, args) => {
-    requirePipelineSecret(args.secret);
-    return await ctx.db.insert("illustrationBatches", {
-      provider: args.provider,
-      batchId: args.batchId,
-      status: "open",
-      createdAt: Date.now(),
-      requests: args.requests,
-    });
-  },
-});
-
-export const listOpenIllustrationBatches = query({
-  args: { secret: v.string() },
-  returns: v.array(
-    v.object({
-      _id: v.id("illustrationBatches"),
-      provider: v.string(),
-      batchId: v.string(),
-      requests: v.array(
-        v.object({
-          customId: v.string(),
-          slug: v.string(),
-          pose: poseValidator,
-          sciName: v.string(),
-          comNameEn: v.string(),
-        }),
-      ),
-    }),
-  ),
-  handler: async (ctx, args) => {
-    requirePipelineSecret(args.secret);
-    const open = await ctx.db
-      .query("illustrationBatches")
-      .withIndex("by_status", (q) => q.eq("status", "open"))
-      .collect();
-    return open.map((j) => ({
-      _id: j._id,
-      provider: j.provider,
-      batchId: j.batchId,
-      requests: j.requests,
-    }));
-  },
-});
-
-export const markIllustrationBatchDelivered = mutation({
-  args: {
-    secret: v.string(),
-    batchDocId: v.id("illustrationBatches"),
-    status: v.union(v.literal("delivered"), v.literal("failed")),
-  },
-  returns: v.null(),
-  handler: async (ctx, args) => {
-    requirePipelineSecret(args.secret);
-    await ctx.db.patch(args.batchDocId, { status: args.status });
-    return null;
   },
 });
 

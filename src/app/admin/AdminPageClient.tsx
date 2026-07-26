@@ -237,39 +237,6 @@ function IllustrationPipelinePanel({
     }
   }
 
-  async function pollBatches() {
-    if (!token) {
-      setError("No auth token");
-      return;
-    }
-    setBusy(true);
-    setError(null);
-    setMessage(null);
-    try {
-      const res = await fetch("/api/illustrations/poll-batches", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token }),
-      });
-      const json = (await res.json()) as {
-        error?: string;
-        processed?: number;
-        results?: Array<{ batchId: string; status: string }>;
-      };
-      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
-      const detail = (json.results ?? [])
-        .map((r) => `${r.batchId}: ${r.status}`)
-        .join(" · ");
-      setMessage(
-        `Polled ${json.processed ?? 0} batch(es). ${detail || "None open."}`,
-      );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Poll failed");
-    } finally {
-      setBusy(false);
-    }
-  }
-
   async function resetBogusApproved() {
     setBusy(true);
     setError(null);
@@ -362,15 +329,6 @@ function IllustrationPipelinePanel({
             onClick={() => void resetBogusApproved()}
           >
             Reset approved w/o art
-          </Button>
-          <Button
-            size="sm"
-            variant="outline"
-            disabled={busy || !token}
-            onClick={() => void pollBatches()}
-            title="Drain leftover Batchwork jobs only; Generate uses sync Gemini"
-          >
-            Poll leftover batches
           </Button>
           <Button
             size="sm"

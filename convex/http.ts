@@ -70,7 +70,7 @@ http.route({
   }),
 });
 
-/** Stable public style-print ref for Batchwork. */
+/** Stable public style-print ref for Gemini generate. */
 http.route({
   pathPrefix: "/refs/style/",
   method: "GET",
