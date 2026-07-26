@@ -118,7 +118,7 @@ export const listForCollage = query({
 
 /**
  * Listed Guide species for the Atlas (includes species awaiting art).
- * Client filters/sorts by Season via selectForAtlas.
+ * Atlas list page filters/sorts by Season via selectForAtlas.
  */
 export const listAtlas = query({
   args: {},
