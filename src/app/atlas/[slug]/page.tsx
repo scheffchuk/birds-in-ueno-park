@@ -1,47 +1,41 @@
-"use client";
-
-import { useQuery } from "convex/react";
+import type { Metadata } from "next";
+import { fetchQuery } from "convex/nextjs";
 import { notFound } from "next/navigation";
-import { use } from "react";
+import { cache } from "react";
 import { api } from "../../../../convex/_generated/api";
-import { findListedBySlug } from "@/lib/atlas/find";
 import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
-import { FIXTURE_SPECIES } from "@/lib/fixtures/guide-species";
-
-const hasConvex = Boolean(process.env.NEXT_PUBLIC_CONVEX_URL);
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-function DetailFromFixtures({ slug }: { slug: string }) {
-  const species = findListedBySlug(FIXTURE_SPECIES, slug);
-  if (!species) notFound();
-  return <AtlasDetailView species={species} />;
-}
+const loadListedSpecies = cache(async (slug: string) => {
+  return await fetchQuery(api.species.getSpecies, { slug });
+});
 
-function DetailFromConvex({ slug }: { slug: string }) {
-  const species = useQuery(api.species.getSpecies, { slug });
-  if (species === undefined) {
-    return (
-      <div className="mx-auto max-w-2xl px-6 py-10 text-muted-foreground">
-        Loading…
-      </div>
-    );
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const species = await loadListedSpecies(slug);
+  if (!species) {
+    return { title: "Not found" };
   }
-  if (species === null) notFound();
-  return <AtlasDetailView species={species} />;
+  const description = species.descriptionEn?.trim();
+  return {
+    title: `${species.comNameEn} · ${species.comNameJa}`,
+    ...(description ? { description } : {}),
+  };
 }
 
-export default function AtlasSpeciesPage({ params }: PageProps) {
-  const { slug } = use(params);
+export default async function AtlasSpeciesPage({ params }: PageProps) {
+  const { slug } = await params;
+  const species = await loadListedSpecies(slug);
+  if (!species) notFound();
+
   return (
     <main className="min-h-screen bg-background text-foreground">
-      {hasConvex ? (
-        <DetailFromConvex slug={slug} />
-      ) : (
-        <DetailFromFixtures slug={slug} />
-      )}
+      <AtlasDetailView species={species} />
     </main>
   );
 }
