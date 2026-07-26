@@ -62,10 +62,8 @@ async function AtlasSeasonBody({ searchParams }: PageProps) {
 function AtlasListFallback() {
   return (
     <>
-      <div className="flex h-10 justify-center" aria-hidden />
-      <p className="text-center font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase">
-        Loading Guide species…
-      </p>
+      <div className="h-10" aria-hidden />
+      <div className="min-h-[50vh]" aria-hidden />
     </>
   );
 }

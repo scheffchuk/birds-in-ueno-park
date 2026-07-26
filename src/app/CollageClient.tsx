@@ -19,9 +19,5 @@ export function CollageClient({ preloaded }: CollageClientProps) {
 
 function CollageBody({ preloaded }: CollageClientProps) {
   const species = usePreloadedQuery(preloaded);
-  return (
-    <main className="flex min-h-screen flex-col bg-background">
-      <CollageView species={species} />
-    </main>
-  );
+  return <CollageView species={species} />;
 }
