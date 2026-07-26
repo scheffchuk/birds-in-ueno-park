@@ -2,7 +2,7 @@
 
 import { useAuthActions } from "@convex-dev/auth/react";
 import { useAuthToken } from "@convex-dev/auth/react";
-import { useAction, useConvexAuth, useMutation, useQuery } from "convex/react";
+import { useConvexAuth, useMutation, useQuery } from "convex/react";
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
@@ -13,10 +13,6 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  seedAnatomyReferences,
-  shrinkOversizedAnatomyReferences,
-} from "@/lib/illustrations/ops";
 import { cn } from "@/lib/utils";
 
 const SEASONS = ["winter", "spring", "summer", "autumn"] as const;
@@ -93,15 +89,6 @@ function IllustrationPipelinePanel({
   const summary = useQuery(api.illustrationPipeline.illustrationStatusSummary);
   const pending = useQuery(api.illustrationPipeline.listPendingReview);
   const token = useAuthToken();
-  const ensureAnatomy = useAction(
-    api.illustrationAnatomy.ensureAnatomyFromWikipedia,
-  );
-  const ensureFlightAnatomy = useAction(
-    api.illustrationAnatomy.ensureFlightAnatomyFromCommons,
-  );
-  const shrinkAnatomy = useAction(
-    api.illustrationAnatomy.shrinkOversizedAnatomyRefs,
-  );
   const approveIllustrations = useMutation(api.admin.approveIllustrations);
   const resetApprovedWithoutCutouts = useMutation(
     api.illustrationPipeline.resetApprovedWithoutCutouts,
@@ -159,91 +146,78 @@ function IllustrationPipelinePanel({
     }`;
   }
 
-  const anatomySeedAdapters = {
-    ensure: async ({
-      slug,
-      sciName,
-      comNameEn,
-      pose,
-    }: {
-      slug: string;
-      sciName: string;
-      comNameEn: string;
-      pose: "perch" | "flight";
-    }) =>
-      pose === "flight"
-        ? ensureFlightAnatomy({ slug, sciName, comNameEn })
-        : ensureAnatomy({ slug, sciName, comNameEn }),
-    delay: (ms: number) => new Promise<void>((r) => setTimeout(r, ms)),
-  };
-
-  async function seedAnatomySlice() {
-    setBusy(true);
-    setError(null);
-    setMessage(null);
-    try {
-      const result = await seedAnatomyReferences(
-        {
-          pose: "perch",
-          species: missingAnatomy.map((sp) => ({
-            slug: sp.slug,
-            sciName: sp.sciName,
-            comNameEn: sp.comNameEn,
-          })),
-        },
-        anatomySeedAdapters,
-      );
-      setMessage(
-        `Anatomy seeded: ${result.ok} ok, ${result.failed} failed.${formatSeedFailures(result.failures)}`,
-      );
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Anatomy seed failed");
-    } finally {
-      setBusy(false);
+  async function seedAnatomySlice(pose: "perch" | "flight") {
+    if (!token) {
+      setError("No auth token");
+      return;
     }
-  }
-
-  async function seedFlightAnatomySlice() {
+    const species = (pose === "perch" ? missingAnatomy : missingFlightAnatomy).map(
+      (sp) => ({
+        slug: sp.slug,
+        sciName: sp.sciName,
+        comNameEn: sp.comNameEn,
+      }),
+    );
     setBusy(true);
     setError(null);
     setMessage(null);
     try {
-      const result = await seedAnatomyReferences(
-        {
-          pose: "flight",
-          species: missingFlightAnatomy.map((sp) => ({
-            slug: sp.slug,
-            sciName: sp.sciName,
-            comNameEn: sp.comNameEn,
-          })),
-        },
-        anatomySeedAdapters,
-      );
+      const res = await fetch("/api/illustrations/seed-anatomy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, pose, species }),
+      });
+      const json = (await res.json()) as {
+        error?: string;
+        ok?: number;
+        failed?: number;
+        failures?: string[];
+      };
+      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+      const label = pose === "perch" ? "Anatomy seeded" : "Flight anatomy seeded";
       setMessage(
-        `Flight anatomy seeded: ${result.ok} ok, ${result.failed} failed.${formatSeedFailures(result.failures)}`,
+        `${label}: ${json.ok ?? 0} ok, ${json.failed ?? 0} failed.${formatSeedFailures(json.failures ?? [])}`,
       );
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Flight anatomy seed failed");
+      setError(
+        e instanceof Error
+          ? e.message
+          : pose === "perch"
+            ? "Anatomy seed failed"
+            : "Flight anatomy seed failed",
+      );
     } finally {
       setBusy(false);
     }
   }
 
   async function shrinkOversizedAnatomy() {
+    if (!token) {
+      setError("No auth token");
+      return;
+    }
     setBusy(true);
     setError(null);
     setMessage(null);
     try {
-      const result = await shrinkOversizedAnatomyReferences(
-        { limit: 80 },
-        {
-          shrink: (input) => shrinkAnatomy({ limit: input.limit }),
-        },
-      );
+      const res = await fetch("/api/illustrations/shrink-anatomy", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, limit: 80 }),
+      });
+      const json = (await res.json()) as {
+        error?: string;
+        checked?: number;
+        shrunk?: number;
+        skipped?: number;
+        errors?: string[];
+      };
+      if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
+      const errors = json.errors ?? [];
       setMessage(
-        `Anatomy shrink: checked ${result.checked}, shrunk ${result.shrunk}, ok-size ${result.skipped}${
-          result.errors.length
-            ? `. Errors: ${result.errors.slice(0, 3).join(" · ")}`
+        `Anatomy shrink: checked ${json.checked ?? 0}, shrunk ${json.shrunk ?? 0}, ok-size ${json.skipped ?? 0}${
+          errors.length
+            ? `. Errors: ${errors.slice(0, 3).join(" · ")}`
             : ""
         }`,
       );
@@ -319,7 +293,7 @@ function IllustrationPipelinePanel({
             size="sm"
             variant="outline"
             disabled={busy || missingAnatomy.length === 0}
-            onClick={() => void seedAnatomySlice()}
+            onClick={() => void seedAnatomySlice("perch")}
           >
             Seed anatomy ({missingAnatomy.length})
           </Button>
@@ -327,7 +301,7 @@ function IllustrationPipelinePanel({
             size="sm"
             variant="outline"
             disabled={busy || missingFlightAnatomy.length === 0}
-            onClick={() => void seedFlightAnatomySlice()}
+            onClick={() => void seedAnatomySlice("flight")}
           >
             Seed flight anatomy ({missingFlightAnatomy.length})
           </Button>

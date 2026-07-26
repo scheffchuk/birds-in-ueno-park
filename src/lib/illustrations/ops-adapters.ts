@@ -3,6 +3,7 @@ import { processIllustrationPose } from "../../../workflows/generate-illustratio
 import type { Id } from "../../../convex/_generated/dataModel";
 import { geminiImageEdit } from "./gemini-image-edit";
 import type {
+  IllustrationAnatomySeedAdapters,
   IllustrationGenerateAdapters,
   IllustrationRejectRegenAdapters,
 } from "./ops";
@@ -19,6 +20,29 @@ function authedPipelineClient(token: string): PipelineHttpClient {
   const client = pipelineClient();
   client.setAuth(token);
   return client;
+}
+
+/** Wire Convex anatomy ensure actions for the seed-anatomy HTTP entrypoint. */
+export function createIllustrationAnatomySeedAdapters(
+  token: string,
+  client: PipelineHttpClient = authedPipelineClient(token),
+): IllustrationAnatomySeedAdapters {
+  return {
+    ensure: async ({ slug, sciName, comNameEn, pose }) => {
+      const args = { slug, sciName, comNameEn };
+      if (pose === "flight") {
+        return client.action(
+          api.illustrationAnatomy.ensureFlightAnatomyFromCommons,
+          args,
+        );
+      }
+      return client.action(
+        api.illustrationAnatomy.ensureAnatomyFromWikipedia,
+        args,
+      );
+    },
+    delay: (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
+  };
 }
 
 /** Wire real Convex / Gemini / Workflow adapters for the generate HTTP entrypoint. */

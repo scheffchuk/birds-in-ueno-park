@@ -3,12 +3,10 @@ import {
   generateIllustrations,
   rejectAndRegenerateIllustrations,
   seedAnatomyReferences,
-  shrinkOversizedAnatomyReferences,
   type IllustrationGenerateAdapters,
   type IllustrationPose,
   type IllustrationRejectRegenAdapters,
   type IllustrationAnatomySeedAdapters,
-  type IllustrationAnatomyShrinkAdapters,
   type PreparedGenerateRequest,
 } from "./ops";
 
@@ -385,31 +383,5 @@ describe("seedAnatomyReferences", () => {
       { slug: "suzume", pose: "flight" },
     ]);
     expect(delayMs).toEqual([600]);
-  });
-});
-
-describe("shrinkOversizedAnatomyReferences", () => {
-  it("returns checked/shrunk/skipped counts from the shrink adapter", async () => {
-    const adapters: IllustrationAnatomyShrinkAdapters = {
-      shrink: vi.fn(async ({ limit }) => ({
-        checked: limit ?? 80,
-        shrunk: 3,
-        skipped: 5,
-        errors: ["mejiro/perch: missing blob"],
-      })),
-    };
-
-    const result = await shrinkOversizedAnatomyReferences(
-      { limit: 80 },
-      adapters,
-    );
-
-    expect(result).toEqual({
-      checked: 80,
-      shrunk: 3,
-      skipped: 5,
-      errors: ["mejiro/perch: missing blob"],
-    });
-    expect(adapters.shrink).toHaveBeenCalledWith({ limit: 80 });
   });
 });

@@ -91,23 +91,6 @@ export type IllustrationAnatomySeedAdapters = {
   delay: (ms: number) => Promise<void>;
 };
 
-export type ShrinkOversizedAnatomyReferencesInput = {
-  limit?: number;
-};
-
-export type ShrinkOversizedAnatomyReferencesResult = {
-  checked: number;
-  shrunk: number;
-  skipped: number;
-  errors: string[];
-};
-
-export type IllustrationAnatomyShrinkAdapters = {
-  shrink: (
-    input: ShrinkOversizedAnatomyReferencesInput,
-  ) => Promise<ShrinkOversizedAnatomyReferencesResult>;
-};
-
 /**
  * Admin-triggered sync Gemini generate for missing / selected / single-pose slices.
  * Callers get started/failed/skipped; Gemini + storage are substitutable adapters.
@@ -216,14 +199,4 @@ export async function seedAnatomyReferences(
   }
 
   return { ok, failed: failures.length, failures };
-}
-
-/**
- * Re-encode oversized Anatomy references so generate can fetch them reliably.
- */
-export async function shrinkOversizedAnatomyReferences(
-  input: ShrinkOversizedAnatomyReferencesInput,
-  adapters: IllustrationAnatomyShrinkAdapters,
-): Promise<ShrinkOversizedAnatomyReferencesResult> {
-  return adapters.shrink(input);
 }

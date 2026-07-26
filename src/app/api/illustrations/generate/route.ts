@@ -3,10 +3,7 @@ import {
   generateIllustrations,
   type IllustrationPose,
 } from "@/lib/illustrations/ops";
-import {
-  api,
-  pipelineClient,
-} from "@/lib/illustrations/pipeline-client";
+import { requireAdminPipelineClient } from "@/lib/illustrations/require-admin";
 
 export const runtime = "nodejs";
 export const maxDuration = 300;
@@ -62,13 +59,8 @@ export async function POST(request: Request) {
     return Response.json({ error: "token required" }, { status: 401 });
   }
 
-  const client = pipelineClient();
-  client.setAuth(body.token);
-
-  const isAdmin = await client.query(api.admin.viewerIsAdmin, {});
-  if (!isAdmin) {
-    return Response.json({ error: "Unauthorized" }, { status: 403 });
-  }
+  const auth = await requireAdminPipelineClient(body.token);
+  if (!auth.ok) return auth.response;
 
   if (!process.env.AI_GATEWAY_API_KEY) {
     return Response.json(
