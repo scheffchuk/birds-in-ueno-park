@@ -133,14 +133,16 @@ function IllustrationPipelinePanel({
       const json = (await res.json()) as {
         error?: string;
         requestCount?: number;
-        batchId?: string | null;
+        started?: number;
+        failed?: number;
         skipped?: string[];
         message?: string;
+        model?: string;
       };
       if (!res.ok) throw new Error(json.error ?? `HTTP ${res.status}`);
       setMessage(
         json.message ??
-          `Submitted ${json.requestCount ?? 0} pose requests (batch ${json.batchId ?? "none"}). Skipped: ${(json.skipped ?? []).join(", ") || "none"}.`,
+          `Gemini generate: ${json.started ?? 0} started, ${json.failed ?? 0} failed of ${json.requestCount ?? 0} (${json.model ?? "gemini"}). Skipped: ${(json.skipped ?? []).join(", ") || "none"}.`,
       );
     } catch (e) {
       setError(e instanceof Error ? e.message : "Generate failed");
@@ -324,7 +326,8 @@ function IllustrationPipelinePanel({
         <div>
           <h2 className="font-display text-xl">Illustration pipeline</h2>
           <p className="text-sm text-muted-foreground">
-            Sync Gemini Flash Image → Workflow mat/verify → pendingReview
+            Sync Gemini Flash Image (AI Gateway) → Workflow mat/verify →
+            pendingReview
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -365,8 +368,9 @@ function IllustrationPipelinePanel({
             variant="outline"
             disabled={busy || !token}
             onClick={() => void pollBatches()}
+            title="Drain leftover Batchwork jobs only; Generate uses sync Gemini"
           >
-            Poll batches
+            Poll leftover batches
           </Button>
           <Button
             size="sm"
