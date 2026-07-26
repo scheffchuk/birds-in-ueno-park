@@ -1,4 +1,4 @@
-import type { Season } from "./types";
+import type { Season, SeasonFilter } from "./types";
 
 /** Current meteorological Season in Asia/Tokyo (not the visitor's local TZ). */
 export function currentTokyoSeason(nowMs: number = Date.now()): Season {
@@ -12,4 +12,26 @@ export function currentTokyoSeason(nowMs: number = Date.now()): Season {
   if (month <= 5) return "spring";
   if (month <= 8) return "summer";
   return "autumn";
+}
+
+const SEASON_FILTERS: ReadonlySet<string> = new Set([
+  "winter",
+  "spring",
+  "summer",
+  "autumn",
+  "all",
+]);
+
+function isSeasonFilter(value: string): value is SeasonFilter {
+  return SEASON_FILTERS.has(value);
+}
+
+/** Atlas list `?season=` → Season filter; missing/invalid → Tokyo meteorological Season. */
+export function parseSeasonSearchParam(
+  value: string | string[] | undefined,
+  nowMs: number = Date.now(),
+): SeasonFilter {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (typeof raw === "string" && isSeasonFilter(raw)) return raw;
+  return currentTokyoSeason(nowMs);
 }

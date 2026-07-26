@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { currentTokyoSeason } from "./season";
+import { currentTokyoSeason, parseSeasonSearchParam } from "./season";
 
 describe("currentTokyoSeason", () => {
   it("maps meteorological months in Asia/Tokyo", () => {
@@ -16,5 +16,34 @@ describe("currentTokyoSeason", () => {
   it("uses Tokyo date near UTC month boundaries", () => {
     // 2026-02-28 16:00 UTC = 2026-03-01 01:00 JST → spring
     expect(currentTokyoSeason(Date.UTC(2026, 1, 28, 16))).toBe("spring");
+  });
+});
+
+describe("parseSeasonSearchParam", () => {
+  const midSummerUtc = Date.UTC(2026, 6, 20, 0); // → summer in Tokyo
+
+  it("returns a valid Season filter as-is", () => {
+    expect(parseSeasonSearchParam("winter")).toBe("winter");
+    expect(parseSeasonSearchParam("spring")).toBe("spring");
+    expect(parseSeasonSearchParam("summer")).toBe("summer");
+    expect(parseSeasonSearchParam("autumn")).toBe("autumn");
+    expect(parseSeasonSearchParam("all")).toBe("all");
+  });
+
+  it("falls back to Tokyo meteorological Season when missing", () => {
+    expect(parseSeasonSearchParam(undefined, midSummerUtc)).toBe("summer");
+  });
+
+  it("falls back to Tokyo meteorological Season when invalid", () => {
+    expect(parseSeasonSearchParam("fall", midSummerUtc)).toBe("summer");
+    expect(parseSeasonSearchParam("", midSummerUtc)).toBe("summer");
+    expect(parseSeasonSearchParam("WINTER", midSummerUtc)).toBe("summer");
+  });
+
+  it("uses the first value when the param is an array", () => {
+    expect(parseSeasonSearchParam(["autumn", "winter"], midSummerUtc)).toBe(
+      "autumn",
+    );
+    expect(parseSeasonSearchParam(["nope"], midSummerUtc)).toBe("summer");
   });
 });
