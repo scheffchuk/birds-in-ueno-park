@@ -14,6 +14,7 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { cn } from "@/lib/utils";
 import { SeasonPicker } from "./SeasonPicker";
 
 type CollageViewProps = {
@@ -29,6 +30,21 @@ function poseUrl(tile: PackedBird): string | undefined {
   if (preferFlight && tile.flightUrl) return tile.flightUrl;
   if (tile.perchUrl) return tile.perchUrl;
   return tile.flightUrl;
+}
+
+/** Largest illustrated tile — collage LCP candidate. */
+function largestTileSlug(placed: PackedBird[]): string | null {
+  let best: PackedBird | null = null;
+  let bestArea = 0;
+  for (const tile of placed) {
+    if (!poseUrl(tile)) continue;
+    const area = tile.width * tile.height;
+    if (area > bestArea) {
+      bestArea = area;
+      best = tile;
+    }
+  }
+  return best?.slug ?? null;
 }
 
 export function CollageView({ species }: CollageViewProps) {
@@ -60,6 +76,7 @@ export function CollageView({ species }: CollageViewProps) {
 
   const birds = selectForCollage(species, season);
   const showEmpty = birds.length === 0 || (layoutReady && placed.length === 0);
+  const lcpSlug = largestTileSlug(placed);
 
   return (
     <>
@@ -97,18 +114,26 @@ export function CollageView({ species }: CollageViewProps) {
         ) : (
           placed.map((tile, index) => {
             const src = poseUrl(tile);
-            const delay = Math.min(index * 28, 420);
+            const isLcp = tile.slug === lcpSlug;
+            const delay = isLcp ? 0 : Math.min(index * 28, 420);
             return (
               <Link
                 key={tile.slug}
                 href={`/atlas/${tile.slug}`}
-                className="collage-tile-enter absolute transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]"
+                className={cn(
+                  "absolute transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]",
+                  !isLcp && "collage-tile-enter",
+                )}
                 style={{
                   left: tile.x,
                   top: tile.y,
                   width: tile.width,
                   height: tile.height,
-                  animation: `collage-tile-in 420ms cubic-bezier(.2,.7,.3,1) ${delay}ms backwards`,
+                  ...(!isLcp
+                    ? {
+                        animation: `collage-tile-in 420ms cubic-bezier(.2,.7,.3,1) ${delay}ms backwards`,
+                      }
+                    : {}),
                 }}
                 onMouseEnter={() => setHovered(tile)}
                 onFocus={() => setHovered(tile)}
@@ -120,7 +145,8 @@ export function CollageView({ species }: CollageViewProps) {
                     fill
                     sizes={`${Math.ceil(tile.width)}px`}
                     className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
-                    unoptimized
+                    fetchPriority={isLcp ? "high" : "auto"}
+                    loading={isLcp ? "eager" : "lazy"}
                   />
                 ) : (
                   <PlaceholderSilhouette
