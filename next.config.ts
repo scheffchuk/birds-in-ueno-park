@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
       {
         protocol: "https",
         hostname: "*.convex.cloud",
+        pathname: "/api/storage/**",
       },
       {
         protocol: "https",
