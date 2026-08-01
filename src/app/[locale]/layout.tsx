@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
 import { getMessages, setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -13,7 +14,18 @@ export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
 }
 
-export default async function LocaleLayout({ children, params }: Props) {
+function LocaleLayoutFallback() {
+  return (
+    <div className="flex min-h-screen flex-col bg-background" aria-hidden>
+      <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-10 md:px-8">
+        <div className="mx-auto h-10 w-48" />
+        <div className="min-h-[50vh]" />
+      </div>
+    </div>
+  );
+}
+
+async function LocaleProviders({ children, params }: Props) {
   const { locale } = await params;
   if (!hasLocale(routing.locales, locale)) {
     notFound();
@@ -27,5 +39,13 @@ export default async function LocaleLayout({ children, params }: Props) {
       <HtmlLang locale={locale as AppLocale} />
       {children}
     </NextIntlClientProvider>
+  );
+}
+
+export default function LocaleLayout({ children, params }: Props) {
+  return (
+    <Suspense fallback={<LocaleLayoutFallback />}>
+      <LocaleProviders params={params}>{children}</LocaleProviders>
+    </Suspense>
   );
 }
