@@ -29,7 +29,7 @@ async function AboutBody({ params }: PageProps) {
   return (
     <article className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-12 px-6 py-12 md:px-8">
       <header className="flex flex-col gap-4 text-center">
-        <div className="flex flex-wrap items-center justify-center gap-3">
+        <div className="flex w-full flex-wrap items-center justify-between gap-3">
           <Link
             href="/"
             className="font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase transition-colors hover:text-ink"

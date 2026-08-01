@@ -52,15 +52,7 @@ async function AtlasChrome({ params }: Pick<PageProps, "params">) {
         >
           ← {tNav("backToCollage")}
         </Link>
-        <div className="flex items-center gap-3">
-          <Link
-            href="/about"
-            className="font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase transition-colors hover:text-ink"
-          >
-            {tNav("about")}
-          </Link>
-          <LocaleSwitcher />
-        </div>
+        <LocaleSwitcher />
       </div>
       <div className="flex flex-col gap-1 text-center">
         <h1 className="font-heading text-3xl tracking-tight text-ink md:text-5xl">
