@@ -33,13 +33,13 @@ async function HomeChrome({ params }: PageProps) {
         <div className="flex items-center gap-2">
           <Link
             href="/atlas"
-            className="rounded-full bg-background px-3.5 py-2 font-mono text-[10px] tracking-[0.18em] text-ink uppercase shadow-(--raised) transition-transform hover:-translate-y-px"
+            className="inline-flex h-8 items-center rounded-full bg-background px-3.5 font-mono text-[10px] leading-none tracking-[0.18em] text-ink uppercase shadow-(--raised) transition-transform hover:-translate-y-px"
           >
             {tNav("atlas")}
           </Link>
           <Link
             href="/about"
-            className="rounded-full bg-background px-3.5 py-2 font-mono text-[10px] tracking-[0.18em] text-ink uppercase shadow-(--raised) transition-transform hover:-translate-y-px"
+            className="inline-flex h-8 items-center rounded-full bg-background px-3.5 font-mono text-[10px] leading-none tracking-[0.18em] text-ink uppercase shadow-(--raised) transition-transform hover:-translate-y-px"
           >
             {tNav("about")}
           </Link>
