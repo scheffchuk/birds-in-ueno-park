@@ -43,3 +43,7 @@ _Avoid_: gallery, directory, species index
 **Listed**:
 Whether a Guide species appears on the public collage and atlas. Unlisted species stay in the database (restorable) but are omitted from visitor queries. Soft-hide replaces hard delete. Owner-controlled — re-seed never changes it.
 _Avoid_: deleted, archived, active, published
+
+**Locale**:
+The visitor's primary language among EN, JA, and ZH-TW. Drives UI chrome and which long-form species fields (description, spotting tips) are shown as primary. Other common names stay visible so the guide remains trilingual in identity; Locale does not hide cross-language names. JA is the default when browser language negotiation does not match EN, JA, or ZH-TW. Empty long-form fields fall back to EN only — never to a third Locale. On species pages the Locale common name is the headline; the other two common names follow as secondary lines (EN first among those when Locale is not EN); scientific name stays last.
+_Avoid_: language preference, i18n mode, active language

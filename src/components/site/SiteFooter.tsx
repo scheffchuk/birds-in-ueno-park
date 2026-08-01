@@ -1,11 +1,16 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import { SITE_FOOTER } from "@/lib/site/attribution";
 
 export function SiteFooter() {
+  const t = useTranslations("Footer");
+
   return (
     <footer className="mt-auto px-6 py-6 md:px-10">
       <div className="mx-auto max-w-3xl text-center">
         <p className="font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase">
-          {SITE_FOOTER.credit}{" "}
+          {t("credit")}{" "}
           <a
             href={SITE_FOOTER.creditUrl}
             target="_blank"
@@ -24,7 +29,7 @@ export function SiteFooter() {
             {SITE_FOOTER.creditSite}
           </a>
           {" · "}
-          Created by{" "}
+          {t("createdBy")}{" "}
           <a
             href={SITE_FOOTER.authorUrl}
             target="_blank"

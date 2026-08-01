@@ -1,11 +1,9 @@
+"use client";
+
+import { useTranslations } from "next-intl";
 import type { Season, SeasonalPrevalence } from "@/lib/collage/types";
 
-const BARS: { season: Season; label: string }[] = [
-  { season: "winter", label: "Winter 冬" },
-  { season: "spring", label: "Spring 春" },
-  { season: "summer", label: "Summer 夏" },
-  { season: "autumn", label: "Autumn 秋" },
-];
+const SEASONS: Season[] = ["winter", "spring", "summer", "autumn"];
 
 type PrevalenceChartProps = {
   prevalence: SeasonalPrevalence;
@@ -13,14 +11,18 @@ type PrevalenceChartProps = {
 
 /** Four-bar Season Prevalence chart (0–100). */
 export function PrevalenceChart({ prevalence }: PrevalenceChartProps) {
+  const t = useTranslations("Season");
+  const tDetail = useTranslations("AtlasDetail");
+
   return (
     <div
       className="grid grid-cols-4 items-end gap-3 border-t border-hairline pt-4"
       role="img"
-      aria-label="Season Prevalence"
+      aria-label={tDetail("prevalence")}
     >
-      {BARS.map(({ season, label }) => {
+      {SEASONS.map((season) => {
         const value = prevalence[season];
+        const label = t(season);
         const heightPct = Math.max(value, value > 0 ? 4 : 0);
         return (
           <div key={season} className="flex flex-col items-center gap-2">

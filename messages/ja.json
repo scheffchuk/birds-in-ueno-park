@@ -1,0 +1,84 @@
+{
+  "Meta": {
+    "title": "上野の鳥たち",
+    "description": "上野公園・不忍池の案内図鑑。季節ごとの出現度でコラージュの大きさが変わります。"
+  },
+  "Nav": {
+    "atlas": "図鑑",
+    "about": "について",
+    "collage": "コラージュ",
+    "backToAtlas": "図鑑",
+    "backToCollage": "コラージュ"
+  },
+  "Home": {
+    "place": "上野公園 · 不忍池",
+    "title": "上野の鳥たち"
+  },
+  "Atlas": {
+    "title": "図鑑",
+    "subtitle": "選んだ季節の案内種",
+    "emptyTitle": "この季節に該当する案内種はありません",
+    "emptyDescription": "別の季節を試すか、「通年」を選んでください。"
+  },
+  "AtlasDetail": {
+    "about": "概要",
+    "spottingTips": "観察のヒント",
+    "prevalence": "季節ごとの出現度",
+    "viewOnEbird": "eBird で見る",
+    "perched": "止まり",
+    "flight": "飛翔",
+    "illustrations": "イラスト",
+    "altPerched": "{name}（止まり）",
+    "altFlight": "{name}（飛翔）",
+    "notFound": "見つかりません"
+  },
+  "Collage": {
+    "ariaLabel": "鳥のコラージュ",
+    "emptyTitle": "この季節のイラストは準備中です",
+    "emptyDescription": "しばらくしてから見るか、図鑑をご覧ください。",
+    "browseAtlas": "図鑑を見る"
+  },
+  "Season": {
+    "winter": "冬",
+    "spring": "春",
+    "summer": "夏",
+    "autumn": "秋",
+    "all": "通年",
+    "ariaLabel": "季節",
+    "short": {
+      "winter": "冬",
+      "spring": "春",
+      "summer": "夏",
+      "autumn": "秋",
+      "all": "通年"
+    }
+  },
+  "Footer": {
+    "credit": "着想元",
+    "createdBy": "制作"
+  },
+  "LocaleSwitcher": {
+    "label": "言語",
+    "ja": "日本語",
+    "en": "English",
+    "zh-TW": "繁體中文"
+  },
+  "About": {
+    "title": "について",
+    "place": "上野公園 · 不忍池",
+    "sections": {
+      "collage": {
+        "title": "コラージュについて",
+        "body": "各鳥の大きさは Prevalence（出現度）— 選んだ季節に上野公園・不忍池の eBird チェックリストでその種がどのくらい記録されるか — を表します。冬・春・夏・秋は Asia/Tokyo の暦に従います。「通年」は各種の季節最大値を使います。"
+      },
+      "data": {
+        "title": "データについて",
+        "body": "Prevalence は、この場所向けに整理した eBird ヒストグラムから算出しています。図鑑の種リストは固定で、渡り時期などは管理画面で手調整できます。各種ページから eBird の種ページへリンクしています。"
+      },
+      "art": {
+        "title": "イラストについて",
+        "body": "切り抜きイラストは花鳥画の表現を参考にし、解剖写真を参照して生成したうえで人の確認後にコラージュへ載せています。配置と操作感は AvianVisitors（theodore.net）に着想を得ています。"
+      }
+    }
+  }
+}

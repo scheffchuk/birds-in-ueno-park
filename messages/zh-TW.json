@@ -1,0 +1,84 @@
+{
+  "Meta": {
+    "title": "上野的鳥",
+    "description": "上野公園與不忍池的精選鳥類導覽——依季節出現度決定拼貼大小。"
+  },
+  "Nav": {
+    "atlas": "圖鑑",
+    "about": "關於",
+    "collage": "拼貼",
+    "backToAtlas": "圖鑑",
+    "backToCollage": "拼貼"
+  },
+  "Home": {
+    "place": "上野公園 · 不忍池",
+    "title": "上野的鳥"
+  },
+  "Atlas": {
+    "title": "圖鑑",
+    "subtitle": "所選季節的導覽物種",
+    "emptyTitle": "此季節沒有導覽物種",
+    "emptyDescription": "試試其他季節，或瀏覽全年。"
+  },
+  "AtlasDetail": {
+    "about": "簡介",
+    "spottingTips": "觀察提示",
+    "prevalence": "各季節出現度",
+    "viewOnEbird": "在 eBird 查看",
+    "perched": "棲息",
+    "flight": "飛行",
+    "illustrations": "插圖",
+    "altPerched": "{name}（棲息）",
+    "altFlight": "{name}（飛行）",
+    "notFound": "找不到"
+  },
+  "Collage": {
+    "ariaLabel": "鳥類拼貼",
+    "emptyTitle": "此季節的插圖仍在準備中",
+    "emptyDescription": "請稍後再看，或先瀏覽圖鑑。",
+    "browseAtlas": "瀏覽圖鑑"
+  },
+  "Season": {
+    "winter": "冬",
+    "spring": "春",
+    "summer": "夏",
+    "autumn": "秋",
+    "all": "全年",
+    "ariaLabel": "季節",
+    "short": {
+      "winter": "冬",
+      "spring": "春",
+      "summer": "夏",
+      "autumn": "秋",
+      "all": "全年"
+    }
+  },
+  "Footer": {
+    "credit": "靈感來自",
+    "createdBy": "製作"
+  },
+  "LocaleSwitcher": {
+    "label": "語言",
+    "ja": "日本語",
+    "en": "English",
+    "zh-TW": "繁體中文"
+  },
+  "About": {
+    "title": "關於",
+    "place": "上野公園 · 不忍池",
+    "sections": {
+      "collage": {
+        "title": "拼貼說明",
+        "body": "每隻鳥的大小依 Prevalence（出現度）而定——也就是該物種在所選季節於上野公園與不忍池的 eBird 清單中被記錄的頻率。冬、春、夏、秋依 Asia/Tokyo 曆法；「全年」則取各物種的季節最高值。"
+      },
+      "data": {
+        "title": "資料來源",
+        "body": "出現度來自為此站整理的 eBird 直方圖匯出。導覽物種清單固定；遷徙週期等可在管理介面手動調整。圖鑑頁面會連到 eBird 的完整物種頁。"
+      },
+      "art": {
+        "title": "插圖",
+        "body": "剪影插圖參考花鳥畫風格，並以解剖參考圖生成、經人工審核後才出現在拼貼中。排版與互動靈感來自 AvianVisitors（theodore.net）。"
+      }
+    }
+  }
+}

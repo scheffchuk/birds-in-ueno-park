@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "@/i18n/navigation";
 import { SeasonPicker } from "@/components/collage/SeasonPicker";
 import type { SeasonFilter } from "@/lib/collage/types";
 

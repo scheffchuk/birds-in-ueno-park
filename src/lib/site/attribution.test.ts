@@ -1,5 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { ABOUT_SECTIONS, SITE_FOOTER } from "./attribution";
+import en from "../../../messages/en.json";
+import ja from "../../../messages/ja.json";
+import zhTw from "../../../messages/zh-TW.json";
+import { SITE_FOOTER } from "./attribution";
 
 describe("site attribution", () => {
   it("footer credits AvianVisitors, theodore.net, and author", () => {
@@ -11,15 +14,14 @@ describe("site attribution", () => {
     expect(SITE_FOOTER.authorUrl).toMatch(/scheff\.dev/);
   });
 
-  it("about sections are EN+JA only with required topics", () => {
-    const ids = ABOUT_SECTIONS.map((s) => s.id);
-    expect(ids).toEqual(["collage", "data", "art"]);
-    for (const section of ABOUT_SECTIONS) {
-      expect(section.titleEn.length).toBeGreaterThan(0);
-      expect(section.titleJa.length).toBeGreaterThan(0);
-      expect(section.bodyEn.length).toBeGreaterThan(40);
-      expect(section.bodyJa.length).toBeGreaterThan(40);
-      expect(JSON.stringify(section)).not.toMatch(/繁體|ZH-TW|ZhTw/i);
+  it("about message catalogs cover collage, data, and art in all Locales", () => {
+    for (const catalog of [en, ja, zhTw]) {
+      const sections = catalog.About.sections;
+      expect(Object.keys(sections)).toEqual(["collage", "data", "art"]);
+      for (const section of Object.values(sections)) {
+        expect(section.title.length).toBeGreaterThan(0);
+        expect(section.body.length).toBeGreaterThan(40);
+      }
     }
   });
 });

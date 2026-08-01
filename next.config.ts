@@ -1,5 +1,8 @@
 import { withWorkflow } from "workflow/next";
 import type { NextConfig } from "next";
+import createNextIntlPlugin from "next-intl/plugin";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const nextConfig: NextConfig = {
   cacheComponents: true,
@@ -20,4 +23,4 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["sharp", "@fal-ai/client"],
 };
 
-export default withWorkflow(nextConfig);
+export default withWorkflow(withNextIntl(nextConfig));

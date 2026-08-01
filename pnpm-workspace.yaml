@@ -1,4 +1,5 @@
 allowBuilds:
+  "@parcel/watcher": false
   "@swc/core": true
   cbor-extract: true
   esbuild: true

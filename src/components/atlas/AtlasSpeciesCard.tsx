@@ -1,5 +1,4 @@
 import Image from "next/image";
-import Link from "next/link";
 import {
   Card,
   CardDescription,
@@ -7,11 +6,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
+import { Link } from "@/i18n/navigation";
 import { cn } from "@/lib/utils";
 
 type AtlasSpeciesCardProps = {
   slug: string;
-  comNameEn: string;
+  comName: string;
   sciName: string;
   imageUrl?: string;
   index: number;
@@ -19,7 +19,7 @@ type AtlasSpeciesCardProps = {
 
 export function AtlasSpeciesCard({
   slug,
-  comNameEn,
+  comName,
   sciName,
   imageUrl,
   index,
@@ -36,16 +36,13 @@ export function AtlasSpeciesCard({
       )}
       style={{ animationDelay: `${delayMs}ms` }}
     >
-      <Card
-        size="sm"
-        className="h-full ring-1 ring-hairline shadow-none"
-      >
+      <Card size="sm" className="h-full ring-1 ring-hairline shadow-none">
         <div className="px-(--card-spacing) pt-(--card-spacing)">
           <div className="relative aspect-square w-full overflow-hidden">
             {imageUrl ? (
               <Image
                 src={imageUrl}
-                alt={comNameEn}
+                alt={comName}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
                 unoptimized
@@ -62,7 +59,7 @@ export function AtlasSpeciesCard({
         <Separator className="mx-auto w-[90%] self-center bg-hairline opacity-50 data-horizontal:w-[90%]" />
         <CardHeader className="gap-0.5">
           <CardTitle className="line-clamp-2 text-sm leading-snug text-ink">
-            {comNameEn}
+            {comName}
           </CardTitle>
           <CardDescription className="truncate text-xs text-ink-soft italic">
             {sciName}

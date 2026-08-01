@@ -1,7 +1,7 @@
 "use client";
 
 import { usePreloadedQuery, type Preloaded } from "convex/react";
-import { api } from "../../convex/_generated/api";
+import { api } from "../../../convex/_generated/api";
 import { CollageView } from "@/components/collage/CollageView";
 import { ConvexClientProvider } from "@/components/Providers";
 

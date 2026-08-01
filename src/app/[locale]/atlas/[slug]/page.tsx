@@ -1,0 +1,75 @@
+import type { Metadata } from "next";
+import { Suspense } from "react";
+import { notFound } from "next/navigation";
+import { getTranslations, setRequestLocale } from "next-intl/server";
+import { loadListedSpecies } from "@/lib/atlas/load-listed-species";
+import { longFormForLocale, nameStackForLocale } from "@/lib/locale/species";
+import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
+import { SiteFooter } from "@/components/site/SiteFooter";
+import { Link } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
+
+type PageProps = {
+  params: Promise<{ locale: string; slug: string }>;
+};
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { locale: localeParam, slug } = await params;
+  const locale = localeParam as AppLocale;
+  const t = await getTranslations({ locale, namespace: "AtlasDetail" });
+  const species = await loadListedSpecies(slug);
+  if (!species) {
+    return { title: t("notFound") };
+  }
+  const stack = nameStackForLocale(species, locale);
+  const description = longFormForLocale(species, "description", locale);
+  return {
+    title: `${stack.primary} · ${stack.secondary[0] ?? stack.scientific}`,
+    ...(description ? { description } : {}),
+  };
+}
+
+async function AtlasSpeciesChrome({ params }: PageProps) {
+  const { locale } = await params;
+  setRequestLocale(locale);
+  const tNav = await getTranslations("Nav");
+
+  return (
+    <Link
+      href="/atlas"
+      className="self-start font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase transition-colors hover:text-ink"
+    >
+      ← {tNav("backToAtlas")}
+    </Link>
+  );
+}
+
+async function AtlasSpeciesBody({ params }: PageProps) {
+  const { locale: localeParam, slug } = await params;
+  const locale = localeParam as AppLocale;
+  setRequestLocale(locale);
+  const species = await loadListedSpecies(slug);
+  if (!species) notFound();
+
+  return <AtlasDetailView species={species} locale={locale} />;
+}
+
+export default function AtlasSpeciesPage({ params }: PageProps) {
+  return (
+    <main className="min-h-screen bg-background text-foreground">
+      <div className="flex min-h-screen flex-col bg-background">
+        <article className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-5 px-6 py-10 md:px-8">
+          <Suspense fallback={<div className="h-4" aria-hidden />}>
+            <AtlasSpeciesChrome params={params} />
+          </Suspense>
+          <Suspense fallback={<div className="min-h-[60vh]" aria-hidden />}>
+            <AtlasSpeciesBody params={params} />
+          </Suspense>
+        </article>
+        <SiteFooter />
+      </div>
+    </main>
+  );
+}

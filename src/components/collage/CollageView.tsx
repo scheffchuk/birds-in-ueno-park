@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { packCollage } from "@/lib/collage/pack";
 import { selectForCollage } from "@/lib/collage/select";
 import { currentTokyoSeason } from "@/lib/collage/season";
 import type { PackedBird, SeasonFilter, SpeciesRecord } from "@/lib/collage/types";
+import { commonNameForLocale } from "@/lib/locale/species";
 import {
   Empty,
   EmptyContent,
@@ -14,6 +15,8 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { Link } from "@/i18n/navigation";
+import type { AppLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { SeasonPicker } from "./SeasonPicker";
 
@@ -48,6 +51,8 @@ function largestTileSlug(placed: PackedBird[]): string | null {
 }
 
 export function CollageView({ species }: CollageViewProps) {
+  const t = useTranslations("Collage");
+  const locale = useLocale() as AppLocale;
   const [season, setSeason] = useState<SeasonFilter>(() =>
     currentTokyoSeason(),
   );
@@ -77,6 +82,7 @@ export function CollageView({ species }: CollageViewProps) {
   const birds = selectForCollage(species, season);
   const showEmpty = birds.length === 0 || (layoutReady && placed.length === 0);
   const lcpSlug = largestTileSlug(placed);
+  const hoverName = hovered ? commonNameForLocale(hovered, locale) : null;
 
   return (
     <>
@@ -89,25 +95,23 @@ export function CollageView({ species }: CollageViewProps) {
       <div
         ref={stageRef}
         className="absolute inset-0 overflow-hidden"
-        aria-label="Bird collage"
+        aria-label={t("ariaLabel")}
         onMouseLeave={() => setHovered(null)}
       >
         {showEmpty ? (
           <Empty className="absolute inset-0 border-0">
             <EmptyHeader>
               <EmptyTitle className="font-heading text-xl">
-                Illustrations for this season are still being prepared
+                {t("emptyTitle")}
               </EmptyTitle>
-              <EmptyDescription>
-                この季節のイラストは準備中です
-              </EmptyDescription>
+              <EmptyDescription>{t("emptyDescription")}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
               <Link
                 href="/atlas"
                 className="rounded-full bg-background px-4 py-2 font-mono text-[10px] tracking-[0.18em] text-ink uppercase shadow-[var(--raised)]"
               >
-                Browse the Atlas 図鑑を見る
+                {t("browseAtlas")}
               </Link>
             </EmptyContent>
           </Empty>
@@ -116,6 +120,7 @@ export function CollageView({ species }: CollageViewProps) {
             const src = poseUrl(tile);
             const isLcp = tile.slug === lcpSlug;
             const delay = isLcp ? 0 : Math.min(index * 28, 420);
+            const name = commonNameForLocale(tile, locale);
             return (
               <Link
                 key={tile.slug}
@@ -141,7 +146,7 @@ export function CollageView({ species }: CollageViewProps) {
                 {src ? (
                   <Image
                     src={src}
-                    alt={tile.comNameEn}
+                    alt={name}
                     fill
                     sizes={`${Math.ceil(tile.width)}px`}
                     className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
@@ -150,7 +155,7 @@ export function CollageView({ species }: CollageViewProps) {
                   />
                 ) : (
                   <PlaceholderSilhouette
-                    label={tile.comNameEn}
+                    label={name}
                     prevalence={tile.prevalence}
                   />
                 )}
@@ -164,11 +169,8 @@ export function CollageView({ species }: CollageViewProps) {
           style={{ opacity: hovered ? 1 : 0 }}
           aria-hidden={!hovered}
         >
-          {hovered ? (
-            <span>
-              <span className="font-semibold not-italic">{hovered.comNameEn}</span>
-              <span className="text-ink-soft"> · {hovered.comNameJa}</span>
-            </span>
+          {hoverName ? (
+            <span className="font-semibold not-italic">{hoverName}</span>
           ) : null}
         </div>
       </div>

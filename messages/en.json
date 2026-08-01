@@ -1,0 +1,84 @@
+{
+  "Meta": {
+    "title": "Birds in Ueno",
+    "description": "A curated bird guide for Ueno Park and Shinobazu Pond — collage sized by seasonal Prevalence."
+  },
+  "Nav": {
+    "atlas": "Atlas",
+    "about": "About",
+    "collage": "Collage",
+    "backToAtlas": "Atlas",
+    "backToCollage": "Collage"
+  },
+  "Home": {
+    "place": "Ueno Park · Shinobazu Pond",
+    "title": "Birds in Ueno"
+  },
+  "Atlas": {
+    "title": "Atlas",
+    "subtitle": "Guide species for the selected season",
+    "emptyTitle": "No Guide species for this Season",
+    "emptyDescription": "Try another season, or browse All."
+  },
+  "AtlasDetail": {
+    "about": "About",
+    "spottingTips": "Spotting tips",
+    "prevalence": "Prevalence by Season",
+    "viewOnEbird": "View on eBird",
+    "perched": "Perched",
+    "flight": "Flight",
+    "illustrations": "Illustrations",
+    "altPerched": "{name} perched",
+    "altFlight": "{name} in flight",
+    "notFound": "Not found"
+  },
+  "Collage": {
+    "ariaLabel": "Bird collage",
+    "emptyTitle": "Illustrations for this season are still being prepared",
+    "emptyDescription": "Check back soon, or browse the Atlas.",
+    "browseAtlas": "Browse the Atlas"
+  },
+  "Season": {
+    "winter": "Winter",
+    "spring": "Spring",
+    "summer": "Summer",
+    "autumn": "Autumn",
+    "all": "All year",
+    "ariaLabel": "Season",
+    "short": {
+      "winter": "Win",
+      "spring": "Spr",
+      "summer": "Sum",
+      "autumn": "Aut",
+      "all": "All"
+    }
+  },
+  "Footer": {
+    "credit": "Inspired by",
+    "createdBy": "Created by"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "ja": "日本語",
+    "en": "English",
+    "zh-TW": "繁體中文"
+  },
+  "About": {
+    "title": "About",
+    "place": "Ueno Park · Shinobazu Pond",
+    "sections": {
+      "collage": {
+        "title": "What the collage shows",
+        "body": "Each bird is sized by Prevalence — how often that species appears on eBird checklists at Ueno Park and Shinobazu Pond in the selected Season. Winter, Spring, Summer, and Autumn follow the calendar in Asia/Tokyo. All year uses each species’ highest seasonal Prevalence."
+      },
+      "data": {
+        "title": "Data source",
+        "body": "Prevalence comes from curated eBird histogram exports for this site. The Guide is a fixed list of species; values can be hand-tuned in admin when passage weeks need care. Atlas pages link out to eBird for full species accounts."
+      },
+      "art": {
+        "title": "Illustrations",
+        "body": "Cutouts follow a kachō-e (bird-and-flower) print style, generated with anatomy references and human review before they appear on the collage. The packing layout and collage interaction are inspired by AvianVisitors (theodore.net)."
+      }
+    }
+  }
+}
