@@ -18,6 +18,9 @@ export const metadata: Metadata = {
   title: "Birds in Ueno",
   description:
     "A curated bird guide for Ueno Park and Shinobazu Pond — collage sized by seasonal Prevalence.",
+  appleWebApp: {
+    title: "Birds in Ueno",
+  },
 };
 
 export default function RootLayout({
