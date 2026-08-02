@@ -68,15 +68,15 @@
     "sections": {
       "about": {
         "title": "About",
-        "body": "I visit Ueno Park a lot, and I’ve always wondered what the names of these cute birds are — so I made this site. The idea and visual style are inspired by AvianVisitors (theodore.net)."
+        "body": "I hang around Ueno Park a lot and keep running into different birds. I’ve always wondered what those cute birds are called — so I made this site. The style and idea draw from AvianVisitors (theodore.net)."
       },
       "data": {
         "title": "Data source",
-        "body": "Prevalence comes from curated eBird histogram exports for this site. The Guide is a fixed list of species; values can be hand-tuned in admin when passage weeks need care. Atlas pages link out to eBird for full species accounts."
+        "body": "Bird data and how often they show up are compiled from records on eBird. Every atlas page links to the official eBird species page."
       },
       "art": {
         "title": "Illustrations",
-        "body": "Cutouts follow a kachō-e (bird-and-flower) print style, generated with anatomy references and human review before they appear on the collage. The packing layout and collage interaction are inspired by AvianVisitors (theodore.net)."
+        "body": "The cutouts use a bird-and-flower print style. They’re AI-generated from anatomy references and reviewed by hand. The page layout and interaction also take cues from AvianVisitors."
       }
     }
   }

@@ -61,7 +61,7 @@ async function AtlasChrome({
         <LocaleSwitcher />
       </div>
       <div className="flex flex-col gap-1 text-center">
-        <h1 className="font-heading text-3xl tracking-tight text-ink md:text-5xl">
+        <h1 className="font-heading text-[clamp(22px,2.8vw,34px)] leading-none tracking-tight text-ink">
           {t("title")}
         </h1>
         <p className="text-sm text-ink-soft">
