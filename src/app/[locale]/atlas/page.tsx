@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { loadAtlasList } from "@/lib/atlas/load-atlas-list";
 import { selectForAtlas } from "@/lib/atlas/select";
 import { parseSeasonSearchParam } from "@/lib/collage/season";
@@ -41,18 +41,31 @@ export async function generateMetadata({
   };
 }
 
-async function AtlasChrome({
-  params,
+async function AtlasSubtitle({
   searchParams,
-}: PageProps) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+}: {
+  searchParams: PageProps["searchParams"];
+}) {
   await connection();
   const { season: seasonParam } = await searchParams;
   const season = parseSeasonSearchParam(seasonParam);
   const t = await getTranslations("Atlas");
-  const tNav = await getTranslations("Nav");
   const tSeason = await getTranslations("Season");
+
+  return (
+    <p className="text-sm text-ink-soft">
+      {t("subtitle", { season: tSeason(season) })}
+    </p>
+  );
+}
+
+async function AtlasChrome({
+  searchParams,
+}: {
+  searchParams: PageProps["searchParams"];
+}) {
+  const t = await getTranslations("Atlas");
+  const tNav = await getTranslations("Nav");
 
   return (
     <header className="flex flex-col gap-5">
@@ -64,9 +77,9 @@ async function AtlasChrome({
         <h1 className="font-heading text-[clamp(22px,2.8vw,34px)] leading-none tracking-tight text-ink">
           {t("title")}
         </h1>
-        <p className="text-sm text-ink-soft">
-          {t("subtitle", { season: tSeason(season) })}
-        </p>
+        <Suspense fallback={<p className="h-5 text-sm" aria-hidden />}>
+          <AtlasSubtitle searchParams={searchParams} />
+        </Suspense>
       </div>
     </header>
   );
@@ -119,21 +132,12 @@ function AtlasListFallback() {
   return <div className="min-h-[50vh]" aria-hidden />;
 }
 
-export default function AtlasPage({ params, searchParams }: PageProps) {
+export default function AtlasPage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="flex min-h-screen flex-col bg-background">
         <div className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-8 px-6 py-10 md:px-8">
-          <Suspense
-            fallback={
-              <header className="flex flex-col gap-5">
-                <div className="h-4" aria-hidden />
-                <div className="mx-auto h-12 w-40" aria-hidden />
-              </header>
-            }
-          >
-            <AtlasChrome params={params} searchParams={searchParams} />
-          </Suspense>
+          <AtlasChrome searchParams={searchParams} />
 
           <div className="flex justify-center">
             <Suspense fallback={<div className="h-10" aria-hidden />}>
