@@ -66,9 +66,9 @@
     "title": "About",
     "place": "Ueno Park · Shinobazu Pond",
     "sections": {
-      "collage": {
-        "title": "What the collage shows",
-        "body": "Each bird is sized by Prevalence — how often that species appears on eBird checklists at Ueno Park and Shinobazu Pond in the selected Season. Winter, Spring, Summer, and Autumn follow the calendar in Asia/Tokyo. All year uses each species’ highest seasonal Prevalence."
+      "about": {
+        "title": "About",
+        "body": "I visit Ueno Park a lot, and I’ve always wondered what the names of these cute birds are — so I made this site. The idea and visual style are inspired by AvianVisitors (theodore.net)."
       },
       "data": {
         "title": "Data source",

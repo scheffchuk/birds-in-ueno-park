@@ -14,10 +14,10 @@ describe("site attribution", () => {
     expect(SITE_FOOTER.authorUrl).toMatch(/scheff\.dev/);
   });
 
-  it("about message catalogs cover collage, data, and art in all Locales", () => {
+  it("about message catalogs cover about, data, and art in all Locales", () => {
     for (const catalog of [en, ja, zhTw]) {
       const sections = catalog.About.sections;
-      expect(Object.keys(sections)).toEqual(["collage", "data", "art"]);
+      expect(Object.keys(sections)).toEqual(["about", "data", "art"]);
       for (const section of Object.values(sections)) {
         expect(section.title.length).toBeGreaterThan(0);
         expect(section.body.length).toBeGreaterThan(40);

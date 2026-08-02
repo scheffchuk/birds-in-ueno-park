@@ -66,9 +66,9 @@
     "title": "關於",
     "place": "上野公園 · 不忍池",
     "sections": {
-      "collage": {
-        "title": "拼貼說明",
-        "body": "每隻鳥的大小依 Prevalence（出現度）而定——也就是該物種在所選季節於上野公園與不忍池的 eBird 清單中被記錄的頻率。冬、春、夏、秋依 Asia/Tokyo 曆法；「全年」則取各物種的季節最高值。"
+      "about": {
+        "title": "關於",
+        "body": "我常去上野公園，一直很好奇這些可愛的鳥叫什麼名字，於是做了這個網站。構想與風格靈感來自 AvianVisitors（theodore.net）。"
       },
       "data": {
         "title": "資料來源",

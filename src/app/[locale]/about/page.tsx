@@ -5,7 +5,7 @@ import { BackLink } from "@/components/site/BackLink";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 
-const SECTION_IDS = ["collage", "data", "art"] as const;
+const SECTION_IDS = ["about", "data", "art"] as const;
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -28,17 +28,9 @@ async function AboutBody({ params }: PageProps) {
 
   return (
     <article className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-12 px-6 py-12 md:px-8">
-      <header className="flex flex-col gap-4 text-center">
-        <div className="flex w-full flex-wrap items-center justify-between gap-3">
-          <BackLink href="/" label={tNav("backToCollage")} />
-          <LocaleSwitcher />
-        </div>
-        <p className="font-heading text-sm tracking-wide text-ink-2 italic">
-          {t("place")}
-        </p>
-        <h1 className="font-heading text-3xl tracking-tight text-ink md:text-5xl">
-          {t("title")}
-        </h1>
+      <header className="flex w-full flex-wrap items-center justify-between gap-3">
+        <BackLink href="/" label={tNav("backToCollage")} />
+        <LocaleSwitcher />
       </header>
 
       {SECTION_IDS.map((id) => (
