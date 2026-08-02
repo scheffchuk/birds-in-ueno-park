@@ -39,15 +39,14 @@ async function HomeChrome({ params }: PageProps) {
         <LocaleSwitcher />
       </nav>
 
-      <header className="flex flex-col items-center gap-1.5 px-4 pt-14 pb-3 text-center md:pt-16 md:pb-4">
-        <Link
-          href="/about"
-          className="font-heading text-sm tracking-wide text-ink-2 italic transition-colors hover:text-ink md:text-base"
-        >
-          {t("place")}
-        </Link>
-        <h1 className="font-heading text-[clamp(24px,3.2vw,40px)] leading-none tracking-tight text-ink">
-          {t("title")}
+      <header className="flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
+        <h1 className="font-heading text-[clamp(22px,2.8vw,34px)] leading-none tracking-tight text-ink">
+          <Link
+            href="/about"
+            className="transition-colors hover:text-ink-2"
+          >
+            {t("title")}
+          </Link>
         </h1>
       </header>
     </>
@@ -66,9 +65,8 @@ export default function HomePage({ params }: PageProps) {
       <div className="flex min-h-0 flex-1 flex-col">
         <Suspense
           fallback={
-            <header className="flex flex-col items-center gap-1.5 px-4 pt-14 pb-3 text-center md:pt-16 md:pb-4">
-              <div className="h-5 w-48" aria-hidden />
-              <div className="h-10 w-64" aria-hidden />
+            <header className="flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
+              <div className="h-9 w-56" aria-hidden />
             </header>
           }
         >
