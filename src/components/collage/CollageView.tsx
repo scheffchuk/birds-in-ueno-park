@@ -165,7 +165,7 @@ export function CollageView({ species }: CollageViewProps) {
         )}
 
         <div
-          className="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-background px-3.5 py-1.5 font-heading text-[13px] tracking-wide text-ink italic shadow-[0_2px_8px_rgba(26,22,18,0.06)] transition-opacity duration-150"
+          className="pointer-events-none absolute bottom-3 left-1/2 z-20 -translate-x-1/2 rounded-full bg-background px-3.5 py-1.5 font-heading text-[13px] tracking-wide text-ink-2 italic shadow-[0_2px_8px_rgba(26,22,18,0.06)] transition-opacity duration-150"
           style={{ opacity: hovered ? 1 : 0 }}
           aria-hidden={!hovered}
         >

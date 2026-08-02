@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef } from "react";
-import { ChevronDownIcon } from "lucide-react";
+import { LanguagesIcon } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import { routing, type AppLocale } from "@/i18n/routing";
@@ -43,10 +43,9 @@ export function LocaleSwitcher({ className }: LocaleSwitcherProps) {
         render={
           <Button
             variant="outline"
-            size="sm"
+            size="icon"
             className={cn(
-              "h-8 rounded-full border-0 bg-paper-2 px-3 font-mono text-[10px] leading-none tracking-[0.12em] text-ink-soft uppercase shadow-(--recess)",
-              "gap-1 has-data-[icon=inline-end]:pr-3",
+              "size-8 rounded-lg border-0 bg-paper-2 text-ink-soft shadow-(--recess)",
               "hover:bg-paper-2 hover:text-ink aria-expanded:bg-paper-2 aria-expanded:text-ink",
               className,
             )}
@@ -54,8 +53,7 @@ export function LocaleSwitcher({ className }: LocaleSwitcherProps) {
         }
         aria-label={t("label")}
       >
-        {t(locale)}
-        <ChevronDownIcon data-icon="inline-end" />
+        <LanguagesIcon />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-auto min-w-36">
         <DropdownMenuGroup>

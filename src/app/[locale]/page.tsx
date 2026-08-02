@@ -32,7 +32,7 @@ async function HomeChrome({ params }: PageProps) {
       <nav className="fixed top-4 right-4 z-30 flex items-center gap-2 md:top-5 md:right-7">
         <Link
           href="/atlas"
-          className="inline-flex h-8 items-center rounded-full bg-background px-3.5 font-mono text-[10px] leading-none tracking-[0.18em] text-ink uppercase shadow-(--raised) transition-transform hover:-translate-y-px"
+          className="inline-flex h-8 items-center rounded-full bg-background px-3.5 font-mono text-[10px] leading-none tracking-[0.18em] text-ink uppercase shadow-(--raised)"
         >
           {tNav("atlas")}
         </Link>
