@@ -10,7 +10,7 @@ import {
 } from "./lib/seedPlan";
 import { planCopyUpsert } from "./lib/copyPlan";
 import {
-  loadListedSpecies,
+  loadAtlasListSpecies,
   loadPrevalenceForSpecies,
   loadSpeciesForCollage,
 } from "./lib/loadSpecies";
@@ -60,6 +60,17 @@ const speciesRecordValidator = v.object({
   spottingTipsZhTw: v.optional(v.string()),
   perchUrl: v.optional(v.string()),
   flightUrl: v.optional(v.string()),
+});
+
+const atlasListRecordValidator = v.object({
+  slug: v.string(),
+  sciName: v.string(),
+  comNameEn: v.string(),
+  comNameJa: v.string(),
+  comNameZhTw: v.string(),
+  listed: v.boolean(),
+  prevalence: prevalenceValidator,
+  imageUrl: v.optional(v.string()),
 });
 
 const collageSpeciesValidator = v.object({
@@ -117,14 +128,14 @@ export const listForCollage = query({
 });
 
 /**
- * Listed Guide species for the Atlas (includes species awaiting art).
- * Atlas list page filters/sorts by Season via selectForAtlas.
+ * Listed Guide species for the Atlas list (includes species awaiting art).
+ * One card URL (perch else flight); page filters/sorts by Season via selectForAtlas.
  */
 export const listAtlas = query({
   args: {},
-  returns: v.array(speciesRecordValidator),
+  returns: v.array(atlasListRecordValidator),
   handler: async (ctx) => {
-    return await loadListedSpecies(ctx);
+    return await loadAtlasListSpecies(ctx);
   },
 });
 

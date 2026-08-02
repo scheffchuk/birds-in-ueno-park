@@ -1,8 +1,18 @@
-import type {
-  SeasonFilter,
-  SpeciesRecord,
-} from "@/lib/collage/types";
+import type { SeasonFilter, SeasonalPrevalence } from "@/lib/collage/types";
 import { prevalenceForFilter } from "@/lib/collage/prevalence";
+
+/** Lean Listed species row from `listAtlas` (card URL already preferred). */
+export type AtlasListSource = {
+  slug: string;
+  sciName: string;
+  comNameEn: string;
+  comNameJa: string;
+  comNameZhTw: string;
+  listed: boolean;
+  prevalence: SeasonalPrevalence;
+  /** Perch art, else flight; omitted when neither exists. */
+  imageUrl?: string;
+};
 
 export type AtlasListItem = {
   slug: string;
@@ -21,7 +31,7 @@ export type AtlasListItem = {
  * Filtered by Season Prevalence > 0; sorted by Prevalence descending.
  */
 export function selectForAtlas(
-  species: SpeciesRecord[],
+  species: AtlasListSource[],
   filter: SeasonFilter,
 ): AtlasListItem[] {
   const rows: AtlasListItem[] = [];
@@ -29,7 +39,6 @@ export function selectForAtlas(
     if (!record.listed) continue;
     const prevalence = prevalenceForFilter(record, filter);
     if (prevalence <= 0) continue;
-    const imageUrl = record.perchUrl ?? record.flightUrl;
     rows.push({
       slug: record.slug,
       sciName: record.sciName,
@@ -37,7 +46,7 @@ export function selectForAtlas(
       comNameJa: record.comNameJa,
       comNameZhTw: record.comNameZhTw,
       prevalence,
-      ...(imageUrl ? { imageUrl } : {}),
+      ...(record.imageUrl ? { imageUrl: record.imageUrl } : {}),
     });
   }
   return rows.sort((a, b) => b.prevalence - a.prevalence);

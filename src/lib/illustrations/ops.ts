@@ -1,4 +1,4 @@
-import { speciesCacheTag } from "@/lib/atlas/cache-tags";
+import { GUIDE_SPECIES_TAG, speciesCacheTag } from "@/lib/atlas/cache-tags";
 import { mapPool } from "./map-pool";
 
 export const GEMINI_ILLUSTRATION_MODEL = "google/gemini-2.5-flash-image";
@@ -151,9 +151,10 @@ export async function generateIllustrations(
   });
 
   if (succeededSlugs.size > 0) {
-    await adapters.revalidateTags(
-      [...succeededSlugs].map((slug) => speciesCacheTag(slug)),
-    );
+    await adapters.revalidateTags([
+      GUIDE_SPECIES_TAG,
+      ...[...succeededSlugs].map((slug) => speciesCacheTag(slug)),
+    ]);
   }
 
   return {

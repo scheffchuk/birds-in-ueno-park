@@ -1,7 +1,7 @@
-import type { SeasonFilter, SpeciesRecord } from "./types";
+import type { SeasonFilter, SeasonalPrevalence } from "./types";
 
 export function prevalenceForFilter(
-  record: SpeciesRecord,
+  record: { prevalence: SeasonalPrevalence },
   filter: SeasonFilter,
 ): number {
   if (filter === "all") {

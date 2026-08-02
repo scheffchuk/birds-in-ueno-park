@@ -1,13 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { selectForAtlas } from "./select";
-import type { SpeciesRecord } from "@/lib/collage/types";
+import { selectForAtlas, type AtlasListSource } from "./select";
 
 function species(
-  overrides: Partial<SpeciesRecord> & Pick<SpeciesRecord, "slug" | "sciName">,
-): SpeciesRecord {
+  overrides: Partial<AtlasListSource> & Pick<AtlasListSource, "slug" | "sciName">,
+): AtlasListSource {
   return {
     listed: true,
-    illustrationStatus: "approved",
     comNameEn: overrides.sciName,
     comNameJa: overrides.sciName,
     comNameZhTw: overrides.sciName,
@@ -17,7 +15,7 @@ function species(
 }
 
 describe("selectForAtlas", () => {
-  const flock: SpeciesRecord[] = [
+  const flock: AtlasListSource[] = [
     species({
       slug: "passer-montanus",
       sciName: "Passer montanus",
@@ -34,7 +32,6 @@ describe("selectForAtlas", () => {
       slug: "pending-art",
       sciName: "Phoenicurus auroreus",
       comNameEn: "Daurian Redstart",
-      illustrationStatus: "pendingReview",
       prevalence: { winter: 55, spring: 10, summer: 0, autumn: 20 },
     }),
     species({
@@ -67,21 +64,14 @@ describe("selectForAtlas", () => {
     expect(rows.some((r) => r.slug === "pending-art")).toBe(true);
   });
 
-  it("prefers perchUrl over flightUrl for imageUrl", () => {
+  it("passes through pre-resolved card imageUrl", () => {
     const rows = selectForAtlas(
       [
         species({
-          slug: "both",
-          sciName: "Test both",
-          perchUrl: "https://example.com/perch.png",
-          flightUrl: "https://example.com/flight.png",
+          slug: "with-art",
+          sciName: "Test art",
+          imageUrl: "https://example.com/card.png",
           prevalence: { winter: 10, spring: 10, summer: 10, autumn: 10 },
-        }),
-        species({
-          slug: "flight-only",
-          sciName: "Test flight",
-          flightUrl: "https://example.com/flight-only.png",
-          prevalence: { winter: 5, spring: 5, summer: 5, autumn: 5 },
         }),
         species({
           slug: "no-art",
@@ -91,11 +81,8 @@ describe("selectForAtlas", () => {
       ],
       "all",
     );
-    expect(rows.find((r) => r.slug === "both")?.imageUrl).toBe(
-      "https://example.com/perch.png",
-    );
-    expect(rows.find((r) => r.slug === "flight-only")?.imageUrl).toBe(
-      "https://example.com/flight-only.png",
+    expect(rows.find((r) => r.slug === "with-art")?.imageUrl).toBe(
+      "https://example.com/card.png",
     );
     expect(rows.find((r) => r.slug === "no-art")?.imageUrl).toBeUndefined();
   });

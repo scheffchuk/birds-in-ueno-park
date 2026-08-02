@@ -28,6 +28,18 @@ export type ListedSpeciesRecord = {
   flightUrl?: string;
 };
 
+/** Lean Listed row for the Atlas list page (one card URL). */
+export type AtlasListSpeciesRecord = {
+  slug: string;
+  sciName: string;
+  comNameEn: string;
+  comNameJa: string;
+  comNameZhTw: string;
+  listed: true;
+  prevalence: SeasonalPrevalence;
+  imageUrl?: string;
+};
+
 export type CollageSpeciesRecord = ListedSpeciesRecord & {
   dimsPerch?: number[];
   dimsFlight?: number[];
@@ -94,6 +106,20 @@ async function resolveIllustrationUrls(
   };
 }
 
+/** Prefer perch; only resolve flight when perch is missing. */
+async function resolveCardIllustrationUrl(
+  ctx: QueryCtx,
+  sp: Doc<"species">,
+): Promise<string | undefined> {
+  if (sp.illustrationPerch) {
+    return (await ctx.storage.getUrl(sp.illustrationPerch)) ?? undefined;
+  }
+  if (sp.illustrationFlight) {
+    return (await ctx.storage.getUrl(sp.illustrationFlight)) ?? undefined;
+  }
+  return undefined;
+}
+
 export async function loadListedSpecies(
   ctx: QueryCtx,
 ): Promise<ListedSpeciesRecord[]> {
@@ -108,6 +134,32 @@ export async function loadListedSpecies(
       ...baseListedFields(sp),
       prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
       ...(await resolveIllustrationUrls(ctx, sp)),
+    });
+  }
+  return out;
+}
+
+/** Listed Guide species for Atlas list — one card URL, no copy fields. */
+export async function loadAtlasListSpecies(
+  ctx: QueryCtx,
+): Promise<AtlasListSpeciesRecord[]> {
+  const listed = await ctx.db
+    .query("species")
+    .withIndex("by_listed", (q) => q.eq("listed", true))
+    .collect();
+
+  const out: AtlasListSpeciesRecord[] = [];
+  for (const sp of listed) {
+    const imageUrl = await resolveCardIllustrationUrl(ctx, sp);
+    out.push({
+      slug: sp.slug,
+      sciName: sp.sciName,
+      comNameEn: sp.comNameEn,
+      comNameJa: sp.comNameJa,
+      comNameZhTw: sp.comNameZhTw,
+      listed: true,
+      prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
+      ...(imageUrl ? { imageUrl } : {}),
     });
   }
   return out;

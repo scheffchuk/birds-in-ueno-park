@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { fetchQuery } from "convex/nextjs";
 import { getLocale, getTranslations, setRequestLocale } from "next-intl/server";
-import { api } from "../../../../convex/_generated/api";
+import { loadAtlasList } from "@/lib/atlas/load-atlas-list";
 import { selectForAtlas } from "@/lib/atlas/select";
 import { parseSeasonSearchParam } from "@/lib/collage/season";
 import { commonNameForLocale } from "@/lib/locale/species";
@@ -72,7 +71,7 @@ async function AtlasSeasonBody({
   await connection();
   const { season: seasonParam } = await searchParams;
   const season = parseSeasonSearchParam(seasonParam);
-  const species = await fetchQuery(api.species.listAtlas);
+  const species = await loadAtlasList();
   const rows = selectForAtlas(species, season);
   const locale = (await getLocale()) as AppLocale;
   const t = await getTranslations("Atlas");

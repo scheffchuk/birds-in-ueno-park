@@ -117,7 +117,10 @@ describe("generateIllustrations", () => {
       "mejiro:flight",
       "mejiro:perch",
     ]);
-    expect(adapters.revalidatedTags).toEqual(["species:mejiro"]);
+    expect(adapters.revalidatedTags).toEqual([
+      "guide-species",
+      "species:mejiro",
+    ]);
   });
 
   it("marks failed closed when Gemini edit throws", async () => {
@@ -175,7 +178,10 @@ describe("generateIllustrations", () => {
     });
     expect(adapters.failPoseCalls.map((c) => c.slug)).toEqual(["mejiro"]);
     expect(adapters.startedWorkflows).toEqual(["suzume:perch"]);
-    expect(adapters.revalidatedTags).toEqual(["species:suzume"]);
+    expect(adapters.revalidatedTags).toEqual([
+      "guide-species",
+      "species:suzume",
+    ]);
   });
 
   it("busts each successful Slug once when a slice spans multiple species", async () => {
@@ -207,6 +213,7 @@ describe("generateIllustrations", () => {
     await generateIllustrations({ limit: 3 }, adapters);
 
     expect(adapters.revalidatedTags.sort()).toEqual([
+      "guide-species",
       "species:mejiro",
       "species:suzume",
     ]);
@@ -299,7 +306,10 @@ describe("rejectAndRegenerateIllustrations", () => {
       "mejiro:flight",
       "mejiro:perch",
     ]);
-    expect(adapters.revalidatedTags).toEqual(["species:mejiro"]);
+    expect(adapters.revalidatedTags).toEqual([
+      "guide-species",
+      "species:mejiro",
+    ]);
   });
 
   it("rejects a single pose then regenerates only that pose", async () => {
@@ -322,7 +332,10 @@ describe("rejectAndRegenerateIllustrations", () => {
       requestCount: 1,
     });
     expect(adapters.startedWorkflows).toEqual(["mejiro:flight"]);
-    expect(adapters.revalidatedTags).toEqual(["species:mejiro"]);
+    expect(adapters.revalidatedTags).toEqual([
+      "guide-species",
+      "species:mejiro",
+    ]);
   });
 
   it("does not generate when reject fails", async () => {
