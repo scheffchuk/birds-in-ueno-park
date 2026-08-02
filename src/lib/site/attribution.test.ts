@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import en from "../../../messages/en.json";
 import ja from "../../../messages/ja.json";
-import zhTw from "../../../messages/zh-TW.json";
+import zhTw from "../../../messages/zh-tw.json";
 import { SITE_FOOTER } from "./attribution";
 
 describe("site attribution", () => {

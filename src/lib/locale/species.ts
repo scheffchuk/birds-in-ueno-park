@@ -32,7 +32,7 @@ export function commonNameForLocale(
   switch (locale) {
     case "ja":
       return names.comNameJa;
-    case "zh-TW":
+    case "zh-tw":
       return names.comNameZhTw;
     case "en":
       return names.comNameEn;
@@ -48,7 +48,7 @@ function longFormField(
     switch (locale) {
       case "ja":
         return fields.descriptionJa;
-      case "zh-TW":
+      case "zh-tw":
         return fields.descriptionZhTw;
       case "en":
         return fields.descriptionEn;
@@ -57,7 +57,7 @@ function longFormField(
   switch (locale) {
     case "ja":
       return fields.spottingTipsJa;
-    case "zh-TW":
+    case "zh-tw":
       return fields.spottingTipsZhTw;
     case "en":
       return fields.spottingTipsEn;
@@ -92,7 +92,7 @@ export function nameStackForLocale(
   const all: { locale: AppLocale; name: string }[] = [
     { locale: "en", name: species.comNameEn },
     { locale: "ja", name: species.comNameJa },
-    { locale: "zh-TW", name: species.comNameZhTw },
+    { locale: "zh-tw", name: species.comNameZhTw },
   ];
   const rest = all.filter((entry) => entry.locale !== locale);
   if (locale !== "en") {

@@ -16,7 +16,7 @@ describe("commonNameForLocale", () => {
   it("returns the Locale common name", () => {
     expect(commonNameForLocale(names, "ja")).toBe("スズメ");
     expect(commonNameForLocale(names, "en")).toBe("Eurasian Tree Sparrow");
-    expect(commonNameForLocale(names, "zh-TW")).toBe("樹麻雀");
+    expect(commonNameForLocale(names, "zh-tw")).toBe("樹麻雀");
   });
 });
 
@@ -29,7 +29,7 @@ describe("longFormForLocale", () => {
 
   it("returns the Locale field when present", () => {
     expect(longFormForLocale(copy, "description", "ja")).toBe("日本語の文章");
-    expect(longFormForLocale(copy, "description", "zh-TW")).toBe("繁體中文");
+    expect(longFormForLocale(copy, "description", "zh-tw")).toBe("繁體中文");
   });
 
   it("falls back to EN only when Locale field is empty", () => {
@@ -69,7 +69,7 @@ describe("nameStackForLocale", () => {
   });
 
   it("orders ZH-TW primary with EN then JA as secondaries", () => {
-    expect(nameStackForLocale(names, "zh-TW")).toEqual({
+    expect(nameStackForLocale(names, "zh-tw")).toEqual({
       primary: "樹麻雀",
       secondary: ["Eurasian Tree Sparrow", "スズメ"],
       scientific: "Passer montanus",

@@ -1,17 +1,12 @@
 import { defineRouting } from "next-intl/routing";
 
-export const locales = ["ja", "en", "zh-TW"] as const;
+export const locales = ["ja", "en", "zh-tw"] as const;
 export type AppLocale = (typeof locales)[number];
 
 export const routing = defineRouting({
   locales,
   defaultLocale: "ja",
-  localePrefix: {
-    mode: "always",
-    prefixes: {
-      "zh-TW": "/zh-tw",
-    },
-  },
+  localePrefix: "always",
   localeDetection: true,
   localeCookie: false,
 });

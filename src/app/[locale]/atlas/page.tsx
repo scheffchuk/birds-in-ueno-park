@@ -76,47 +76,38 @@ async function AtlasSeasonBody({
   const locale = (await getLocale()) as AppLocale;
   const t = await getTranslations("Atlas");
 
-  return (
-    <>
-      <div className="flex justify-center">
-        <AtlasSeasonPicker value={season} />
-      </div>
+  if (rows.length === 0) {
+    return (
+      <Empty className="border-0 py-16">
+        <EmptyHeader>
+          <EmptyTitle className="font-heading text-xl">
+            {t("emptyTitle")}
+          </EmptyTitle>
+          <EmptyDescription>{t("emptyDescription")}</EmptyDescription>
+        </EmptyHeader>
+      </Empty>
+    );
+  }
 
-      {rows.length === 0 ? (
-        <Empty className="border-0 py-16">
-          <EmptyHeader>
-            <EmptyTitle className="font-heading text-xl">
-              {t("emptyTitle")}
-            </EmptyTitle>
-            <EmptyDescription>{t("emptyDescription")}</EmptyDescription>
-          </EmptyHeader>
-        </Empty>
-      ) : (
-        <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
-          {rows.map((row, index) => (
-            <li key={row.slug}>
-              <AtlasSpeciesCard
-                slug={row.slug}
-                comName={commonNameForLocale(row, locale)}
-                sciName={row.sciName}
-                imageUrl={row.imageUrl}
-                index={index}
-              />
-            </li>
-          ))}
-        </ul>
-      )}
-    </>
+  return (
+    <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
+      {rows.map((row, index) => (
+        <li key={row.slug}>
+          <AtlasSpeciesCard
+            slug={row.slug}
+            comName={commonNameForLocale(row, locale)}
+            sciName={row.sciName}
+            imageUrl={row.imageUrl}
+            index={index}
+          />
+        </li>
+      ))}
+    </ul>
   );
 }
 
 function AtlasListFallback() {
-  return (
-    <>
-      <div className="h-10" aria-hidden />
-      <div className="min-h-[50vh]" aria-hidden />
-    </>
-  );
+  return <div className="min-h-[50vh]" aria-hidden />;
 }
 
 export default function AtlasPage({ params, searchParams }: PageProps) {
@@ -134,6 +125,12 @@ export default function AtlasPage({ params, searchParams }: PageProps) {
           >
             <AtlasChrome params={params} />
           </Suspense>
+
+          <div className="flex justify-center">
+            <Suspense fallback={<div className="h-10" aria-hidden />}>
+              <AtlasSeasonPicker />
+            </Suspense>
+          </div>
 
           <Suspense fallback={<AtlasListFallback />}>
             <AtlasSeasonBody searchParams={searchParams} />

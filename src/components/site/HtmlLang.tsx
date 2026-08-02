@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import type { AppLocale } from "@/i18n/routing";
 
 function toHtmlLang(locale: AppLocale): string {
-  if (locale === "zh-TW") return "zh-Hant-TW";
+  if (locale === "zh-tw") return "zh-Hant-TW";
   return locale;
 }
 
