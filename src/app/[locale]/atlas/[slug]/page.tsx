@@ -5,8 +5,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { loadListedSpecies } from "@/lib/atlas/load-listed-species";
 import { longFormForLocale, nameStackForLocale } from "@/lib/locale/species";
 import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
+import { BackLink } from "@/components/site/BackLink";
 import { SiteFooter } from "@/components/site/SiteFooter";
-import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 
 type PageProps = {
@@ -37,12 +37,11 @@ async function AtlasSpeciesChrome({ params }: PageProps) {
   const tNav = await getTranslations("Nav");
 
   return (
-    <Link
+    <BackLink
       href="/atlas"
-      className="self-start font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase transition-colors hover:text-ink"
-    >
-      ← {tNav("backToAtlas")}
-    </Link>
+      label={tNav("backToAtlas")}
+      className="self-start"
+    />
   );
 }
 

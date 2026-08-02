@@ -7,6 +7,7 @@ import { selectForAtlas } from "@/lib/atlas/select";
 import { parseSeasonSearchParam } from "@/lib/collage/season";
 import { commonNameForLocale } from "@/lib/locale/species";
 import { AtlasSpeciesCard } from "@/components/atlas/AtlasSpeciesCard";
+import { BackLink } from "@/components/site/BackLink";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import {
@@ -15,7 +16,6 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { AtlasSeasonPicker } from "./AtlasSeasonPicker";
 
@@ -45,12 +45,7 @@ async function AtlasChrome({ params }: Pick<PageProps, "params">) {
   return (
     <header className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <Link
-          href="/"
-          className="font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase transition-colors hover:text-ink"
-        >
-          ← {tNav("backToCollage")}
-        </Link>
+        <BackLink href="/" label={tNav("backToCollage")} />
         <LocaleSwitcher />
       </div>
       <div className="flex flex-col gap-1 text-center">

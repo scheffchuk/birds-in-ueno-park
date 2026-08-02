@@ -7,7 +7,7 @@ import {
   nameStackForLocale,
 } from "@/lib/locale/species";
 import { PrevalenceChart } from "@/components/atlas/PrevalenceChart";
-import { Link } from "@/i18n/navigation";
+import { BackLink } from "@/components/site/BackLink";
 import type { AppLocale } from "@/i18n/routing";
 
 type AtlasDetailViewProps = {
@@ -119,12 +119,7 @@ export async function AtlasDetailView({
         </a>
       </p>
 
-      <Link
-        href="/"
-        className="font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase transition-colors hover:text-ink"
-      >
-        ← {tNav("backToCollage")}
-      </Link>
+      <BackLink href="/" label={tNav("backToCollage")} />
     </div>
   );
 }
