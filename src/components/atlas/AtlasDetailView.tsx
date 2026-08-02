@@ -58,7 +58,6 @@ export async function AtlasDetailView({
                   fill
                   sizes="320px"
                   className="object-contain"
-                  unoptimized
                   priority
                 />
               </div>
@@ -76,7 +75,6 @@ export async function AtlasDetailView({
                   fill
                   sizes="320px"
                   className="object-contain"
-                  unoptimized
                 />
               </div>
               <figcaption className="font-mono text-[10px] tracking-[0.14em] text-ink-soft uppercase">

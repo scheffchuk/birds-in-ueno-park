@@ -44,8 +44,8 @@ export function AtlasSpeciesCard({
                 src={imageUrl}
                 alt={comName}
                 fill
-                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-                unoptimized
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 288px"
+                priority={index === 0}
                 className="object-contain"
               />
             ) : (
