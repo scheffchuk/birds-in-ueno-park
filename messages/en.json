@@ -15,7 +15,7 @@
   },
   "Atlas": {
     "title": "Atlas",
-    "subtitle": "Guide species for the selected season",
+    "subtitle": "Birds you can see in {season}",
     "emptyTitle": "No Guide species for this Season",
     "emptyDescription": "Try another season, or browse All."
   },

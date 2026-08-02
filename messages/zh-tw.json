@@ -15,7 +15,7 @@
   },
   "Atlas": {
     "title": "圖鑑",
-    "subtitle": "所選季節的導覽物種",
+    "subtitle": "在{season}能見到的鳥",
     "emptyTitle": "此季節沒有導覽物種",
     "emptyDescription": "試試其他季節，或瀏覽全年。"
   },
@@ -38,10 +38,10 @@
     "browseAtlas": "瀏覽圖鑑"
   },
   "Season": {
-    "winter": "冬",
-    "spring": "春",
-    "summer": "夏",
-    "autumn": "秋",
+    "winter": "冬天",
+    "spring": "春天",
+    "summer": "夏天",
+    "autumn": "秋天",
     "all": "全年",
     "ariaLabel": "季節",
     "short": {

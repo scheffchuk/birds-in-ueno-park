@@ -15,7 +15,7 @@
   },
   "Atlas": {
     "title": "図鑑",
-    "subtitle": "選んだ季節の案内種",
+    "subtitle": "{season}に見られる鳥",
     "emptyTitle": "この季節に該当する案内種はありません",
     "emptyDescription": "別の季節を試すか、「通年」を選んでください。"
   },

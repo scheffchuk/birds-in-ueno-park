@@ -26,21 +26,33 @@ type PageProps = {
 
 export async function generateMetadata({
   params,
-}: Pick<PageProps, "params">): Promise<Metadata> {
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  await connection();
   const { locale } = await params;
+  const { season: seasonParam } = await searchParams;
+  const season = parseSeasonSearchParam(seasonParam);
   const tMeta = await getTranslations({ locale, namespace: "Meta" });
   const t = await getTranslations({ locale, namespace: "Atlas" });
+  const tSeason = await getTranslations({ locale, namespace: "Season" });
   return {
     title: `${t("title")} · ${tMeta("title")}`,
-    description: t("subtitle"),
+    description: t("subtitle", { season: tSeason(season) }),
   };
 }
 
-async function AtlasChrome({ params }: Pick<PageProps, "params">) {
+async function AtlasChrome({
+  params,
+  searchParams,
+}: PageProps) {
   const { locale } = await params;
   setRequestLocale(locale);
+  await connection();
+  const { season: seasonParam } = await searchParams;
+  const season = parseSeasonSearchParam(seasonParam);
   const t = await getTranslations("Atlas");
   const tNav = await getTranslations("Nav");
+  const tSeason = await getTranslations("Season");
 
   return (
     <header className="flex flex-col gap-5">
@@ -52,7 +64,9 @@ async function AtlasChrome({ params }: Pick<PageProps, "params">) {
         <h1 className="font-heading text-3xl tracking-tight text-ink md:text-5xl">
           {t("title")}
         </h1>
-        <p className="text-sm text-ink-soft">{t("subtitle")}</p>
+        <p className="text-sm text-ink-soft">
+          {t("subtitle", { season: tSeason(season) })}
+        </p>
       </div>
     </header>
   );
@@ -118,7 +132,7 @@ export default function AtlasPage({ params, searchParams }: PageProps) {
               </header>
             }
           >
-            <AtlasChrome params={params} />
+            <AtlasChrome params={params} searchParams={searchParams} />
           </Suspense>
 
           <div className="flex justify-center">
