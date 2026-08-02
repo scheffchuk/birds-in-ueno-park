@@ -45,7 +45,8 @@ export function AtlasSpeciesCard({
                 alt={comName}
                 fill
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 288px"
-                priority={index === 0}
+                loading={index < 4 ? "eager" : "lazy"}
+                fetchPriority={index === 0 ? "high" : "auto"}
                 className="object-contain"
               />
             ) : (

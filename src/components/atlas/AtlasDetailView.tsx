@@ -58,7 +58,8 @@ export async function AtlasDetailView({
                   fill
                   sizes="320px"
                   className="object-contain"
-                  priority
+                  loading="eager"
+                  fetchPriority="high"
                 />
               </div>
               <figcaption className="font-mono text-[10px] tracking-[0.14em] text-ink-soft uppercase">
@@ -75,6 +76,8 @@ export async function AtlasDetailView({
                   fill
                   sizes="320px"
                   className="object-contain"
+                  loading="eager"
+                  fetchPriority={species.perchUrl ? "auto" : "high"}
                 />
               </div>
               <figcaption className="font-mono text-[10px] tracking-[0.14em] text-ink-soft uppercase">

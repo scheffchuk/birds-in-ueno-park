@@ -150,8 +150,8 @@ export function CollageView({ species }: CollageViewProps) {
                     fill
                     sizes={`${Math.ceil(tile.width)}px`}
                     className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
+                    loading="eager"
                     fetchPriority={isLcp ? "high" : "auto"}
-                    loading={isLcp ? "eager" : "lazy"}
                   />
                 ) : (
                   <PlaceholderSilhouette
