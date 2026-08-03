@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
 import { packCollage } from "@/lib/collage/pack";
+import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
 import { currentTokyoSeason } from "@/lib/collage/season";
 import type { PackedBird, SeasonFilter, SpeciesRecord } from "@/lib/collage/types";
@@ -22,25 +23,16 @@ import { SeasonPicker } from "./SeasonPicker";
 
 type CollageViewProps = {
   species: SpeciesRecord[];
+  /** Cold-path LCP Slug from the server preload; used when that tile is placed. */
+  lcpSlug?: string | null;
 };
 
-function poseUrl(tile: PackedBird): string | undefined {
-  let h = 0;
-  for (let i = 0; i < tile.slug.length; i += 1) {
-    h = (h * 31 + tile.slug.charCodeAt(i)) | 0;
-  }
-  const preferFlight = (h & 1) === 1;
-  if (preferFlight && tile.flightUrl) return tile.flightUrl;
-  if (tile.perchUrl) return tile.perchUrl;
-  return tile.flightUrl;
-}
-
-/** Largest illustrated tile — collage LCP candidate. */
+/** Largest illustrated tile — fallback when cold-path LCP is not on stage. */
 function largestTileSlug(placed: PackedBird[]): string | null {
   let best: PackedBird | null = null;
   let bestArea = 0;
   for (const tile of placed) {
-    if (!poseUrl(tile)) continue;
+    if (!collagePoseUrl(tile)) continue;
     const area = tile.width * tile.height;
     if (area > bestArea) {
       bestArea = area;
@@ -50,7 +42,20 @@ function largestTileSlug(placed: PackedBird[]): string | null {
   return best?.slug ?? null;
 }
 
-export function CollageView({ species }: CollageViewProps) {
+function resolveLcpSlug(
+  placed: PackedBird[],
+  coldLcpSlug: string | null | undefined,
+): string | null {
+  if (
+    coldLcpSlug &&
+    placed.some((tile) => tile.slug === coldLcpSlug && collagePoseUrl(tile))
+  ) {
+    return coldLcpSlug;
+  }
+  return largestTileSlug(placed);
+}
+
+export function CollageView({ species, lcpSlug: coldLcpSlug }: CollageViewProps) {
   const t = useTranslations("Collage");
   const locale = useLocale() as AppLocale;
   const [season, setSeason] = useState<SeasonFilter>(() =>
@@ -81,7 +86,7 @@ export function CollageView({ species }: CollageViewProps) {
 
   const birds = selectForCollage(species, season);
   const showEmpty = birds.length === 0 || (layoutReady && placed.length === 0);
-  const lcpSlug = largestTileSlug(placed);
+  const lcpSlug = resolveLcpSlug(placed, coldLcpSlug);
   const hoverName = hovered ? commonNameForLocale(hovered, locale) : null;
 
   return (
@@ -117,7 +122,7 @@ export function CollageView({ species }: CollageViewProps) {
           </Empty>
         ) : (
           placed.map((tile, index) => {
-            const src = poseUrl(tile);
+            const src = collagePoseUrl(tile);
             const isLcp = tile.slug === lcpSlug;
             const delay = isLcp ? 0 : Math.min(index * 28, 420);
             const name = commonNameForLocale(tile, locale);
@@ -150,7 +155,8 @@ export function CollageView({ species }: CollageViewProps) {
                     fill
                     sizes={`${Math.ceil(tile.width)}px`}
                     className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
-                    loading="eager"
+                    priority={isLcp}
+                    loading={isLcp ? undefined : "eager"}
                     fetchPriority={isLcp ? "high" : "auto"}
                   />
                 ) : (

@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
+import { getImageProps } from "next/image";
 import { Suspense } from "react";
 import { connection } from "next/server";
-import { preloadQuery } from "convex/nextjs";
+import { preloadQuery, preloadedQueryResult } from "convex/nextjs";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { api } from "../../../convex/_generated/api";
 import { CollageClient } from "./CollageClient";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { Link } from "@/i18n/navigation";
+import { pickCollageLcpCandidate } from "@/lib/collage/lcp";
+import { currentTokyoSeason } from "@/lib/collage/season";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -53,10 +56,42 @@ async function HomeChrome({ params }: PageProps) {
   );
 }
 
+function CollageLcpPreload({ imageUrl }: { imageUrl: string }) {
+  const {
+    props: { src, srcSet, sizes },
+  } = getImageProps({
+    src: imageUrl,
+    alt: "",
+    width: 240,
+    height: 240,
+    // Approximate largest collage tile before pack measures the stage.
+    sizes: "40vw",
+  });
+
+  return (
+    <link
+      rel="preload"
+      as="image"
+      href={src}
+      imageSrcSet={srcSet}
+      imageSizes={sizes}
+      fetchPriority="high"
+    />
+  );
+}
+
 async function CollagePreload() {
   await connection();
   const preloaded = await preloadQuery(api.species.listForCollage);
-  return <CollageClient preloaded={preloaded} />;
+  const species = preloadedQueryResult(preloaded);
+  const lcp = pickCollageLcpCandidate(species, currentTokyoSeason());
+
+  return (
+    <>
+      {lcp ? <CollageLcpPreload imageUrl={lcp.imageUrl} /> : null}
+      <CollageClient preloaded={preloaded} lcpSlug={lcp?.slug ?? null} />
+    </>
+  );
 }
 
 export default function HomePage({ params }: PageProps) {
