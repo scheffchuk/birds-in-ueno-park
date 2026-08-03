@@ -1,4 +1,3 @@
-/** Deterministic perch/flight choice from Slug (same rule as collage tiles). */
 export function collagePoseUrl(bird: {
   slug: string;
   perchUrl?: string;

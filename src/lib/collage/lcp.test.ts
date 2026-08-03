@@ -46,7 +46,7 @@ describe("pickCollageLcpCandidate", () => {
     });
   });
 
-  it("breaks Prevalence ties with stable slug order", () => {
+  it("breaks Prevalence ties with stable Slug order", () => {
     const candidate = pickCollageLcpCandidate(
       [
         species({

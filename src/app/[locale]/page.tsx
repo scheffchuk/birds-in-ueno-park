@@ -9,7 +9,10 @@ import { CollageClient } from "./CollageClient";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { Link } from "@/i18n/navigation";
-import { pickCollageLcpCandidate } from "@/lib/collage/lcp";
+import {
+  COLLAGE_LCP_SIZES,
+  pickCollageLcpCandidate,
+} from "@/lib/collage/lcp";
 import { currentTokyoSeason } from "@/lib/collage/season";
 
 type PageProps = {
@@ -64,8 +67,7 @@ function CollageLcpPreload({ imageUrl }: { imageUrl: string }) {
     alt: "",
     width: 240,
     height: 240,
-    // Approximate largest collage tile before pack measures the stage.
-    sizes: "40vw",
+    sizes: COLLAGE_LCP_SIZES,
   });
 
   return (

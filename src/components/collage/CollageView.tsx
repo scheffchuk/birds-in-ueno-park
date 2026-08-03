@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import { COLLAGE_LCP_SIZES } from "@/lib/collage/lcp";
 import { packCollage } from "@/lib/collage/pack";
 import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
@@ -23,11 +24,9 @@ import { SeasonPicker } from "./SeasonPicker";
 
 type CollageViewProps = {
   species: SpeciesRecord[];
-  /** Cold-path LCP Slug from the server preload; used when that tile is placed. */
   lcpSlug?: string | null;
 };
 
-/** Largest illustrated tile — fallback when cold-path LCP is not on stage. */
 function largestTileSlug(placed: PackedBird[]): string | null {
   let best: PackedBird | null = null;
   let bestArea = 0;
@@ -153,11 +152,17 @@ export function CollageView({ species, lcpSlug: coldLcpSlug }: CollageViewProps)
                     src={src}
                     alt={name}
                     fill
-                    sizes={`${Math.ceil(tile.width)}px`}
+                    sizes={
+                      isLcp ? COLLAGE_LCP_SIZES : `${Math.ceil(tile.width)}px`
+                    }
                     className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
                     priority={isLcp}
-                    loading={isLcp ? undefined : "eager"}
-                    fetchPriority={isLcp ? "high" : "auto"}
+                    {...(isLcp
+                      ? { fetchPriority: "high" as const }
+                      : {
+                          loading: "eager" as const,
+                          fetchPriority: "auto" as const,
+                        })}
                   />
                 ) : (
                   <PlaceholderSilhouette

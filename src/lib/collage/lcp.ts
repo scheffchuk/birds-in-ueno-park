@@ -1,24 +1,22 @@
 import { collagePoseUrl } from "./pose";
 import { selectForCollage } from "./select";
-import type { SeasonFilter, SpeciesRecord } from "./types";
+import type { CollageBird, SeasonFilter, SpeciesRecord } from "./types";
 
 export type CollageLcpCandidate = {
   slug: string;
   imageUrl: string;
 };
 
-/**
- * Cold-path LCP bird: highest Prevalence for the Season filter among
- * collage-eligible species; ties broken by Slug ascending.
- */
+/** Shared with the preload link and the LCP tile so srcset picks match. */
+export const COLLAGE_LCP_SIZES = "40vw";
+
 export function pickCollageLcpCandidate(
   species: SpeciesRecord[],
   filter: SeasonFilter,
 ): CollageLcpCandidate | null {
   const birds = selectForCollage(species, filter);
-  let best: (typeof birds)[number] | null = null;
+  let best: CollageBird | null = null;
   for (const bird of birds) {
-    if (!collagePoseUrl(bird)) continue;
     if (
       !best ||
       bird.prevalence > best.prevalence ||
