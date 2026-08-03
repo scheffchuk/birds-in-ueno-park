@@ -7,18 +7,17 @@ import { ConvexClientProvider } from "@/components/Providers";
 
 type CollageClientProps = {
   preloaded: Preloaded<typeof api.species.listForCollage>;
-  lcpSlug?: string | null;
 };
 
-export function CollageClient({ preloaded, lcpSlug }: CollageClientProps) {
+export function CollageClient({ preloaded }: CollageClientProps) {
   return (
     <ConvexClientProvider>
-      <CollageBody preloaded={preloaded} lcpSlug={lcpSlug} />
+      <CollageBody preloaded={preloaded} />
     </ConvexClientProvider>
   );
 }
 
-function CollageBody({ preloaded, lcpSlug }: CollageClientProps) {
+function CollageBody({ preloaded }: CollageClientProps) {
   const species = usePreloadedQuery(preloaded);
-  return <CollageView species={species} lcpSlug={lcpSlug} />;
+  return <CollageView species={species} />;
 }

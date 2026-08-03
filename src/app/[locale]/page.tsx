@@ -9,10 +9,8 @@ import { CollageClient } from "./CollageClient";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { Link } from "@/i18n/navigation";
-import {
-  COLLAGE_LCP_SIZES,
-  pickCollageLcpCandidate,
-} from "@/lib/collage/lcp";
+import { collagePoseUrl } from "@/lib/collage/pose";
+import { selectForCollage } from "@/lib/collage/select";
 import { currentTokyoSeason } from "@/lib/collage/season";
 
 type PageProps = {
@@ -59,39 +57,43 @@ async function HomeChrome({ params }: PageProps) {
   );
 }
 
-function CollageLcpPreload({ imageUrl }: { imageUrl: string }) {
-  const {
-    props: { src, srcSet, sizes },
-  } = getImageProps({
-    src: imageUrl,
-    alt: "",
-    width: 240,
-    height: 240,
-    sizes: COLLAGE_LCP_SIZES,
+function CollageImagePreloads({ imageUrls }: { imageUrls: string[] }) {
+  return imageUrls.map((imageUrl) => {
+    const {
+      props: { src, srcSet, sizes },
+    } = getImageProps({
+      src: imageUrl,
+      alt: "",
+      width: 240,
+      height: 240,
+      sizes: "40vw",
+    });
+    return (
+      <link
+        key={src}
+        rel="preload"
+        as="image"
+        href={src}
+        imageSrcSet={srcSet}
+        imageSizes={sizes}
+        fetchPriority="high"
+      />
+    );
   });
-
-  return (
-    <link
-      rel="preload"
-      as="image"
-      href={src}
-      imageSrcSet={srcSet}
-      imageSizes={sizes}
-      fetchPriority="high"
-    />
-  );
 }
 
 async function CollagePreload() {
   await connection();
   const preloaded = await preloadQuery(api.species.listForCollage);
   const species = preloadedQueryResult(preloaded);
-  const lcp = pickCollageLcpCandidate(species, currentTokyoSeason());
+  const imageUrls = selectForCollage(species, currentTokyoSeason())
+    .map((bird) => collagePoseUrl(bird))
+    .filter((url): url is string => url !== undefined);
 
   return (
     <>
-      {lcp ? <CollageLcpPreload imageUrl={lcp.imageUrl} /> : null}
-      <CollageClient preloaded={preloaded} lcpSlug={lcp?.slug ?? null} />
+      <CollageImagePreloads imageUrls={imageUrls} />
+      <CollageClient preloaded={preloaded} />
     </>
   );
 }

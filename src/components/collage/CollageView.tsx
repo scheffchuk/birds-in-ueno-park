@@ -3,7 +3,6 @@
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
-import { COLLAGE_LCP_SIZES } from "@/lib/collage/lcp";
 import { packCollage } from "@/lib/collage/pack";
 import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
@@ -24,37 +23,9 @@ import { SeasonPicker } from "./SeasonPicker";
 
 type CollageViewProps = {
   species: SpeciesRecord[];
-  lcpSlug?: string | null;
 };
 
-function largestTileSlug(placed: PackedBird[]): string | null {
-  let best: PackedBird | null = null;
-  let bestArea = 0;
-  for (const tile of placed) {
-    if (!collagePoseUrl(tile)) continue;
-    const area = tile.width * tile.height;
-    if (area > bestArea) {
-      bestArea = area;
-      best = tile;
-    }
-  }
-  return best?.slug ?? null;
-}
-
-function resolveLcpSlug(
-  placed: PackedBird[],
-  coldLcpSlug: string | null | undefined,
-): string | null {
-  if (
-    coldLcpSlug &&
-    placed.some((tile) => tile.slug === coldLcpSlug && collagePoseUrl(tile))
-  ) {
-    return coldLcpSlug;
-  }
-  return largestTileSlug(placed);
-}
-
-export function CollageView({ species, lcpSlug: coldLcpSlug }: CollageViewProps) {
+export function CollageView({ species }: CollageViewProps) {
   const t = useTranslations("Collage");
   const locale = useLocale() as AppLocale;
   const [season, setSeason] = useState<SeasonFilter>(() =>
@@ -85,7 +56,6 @@ export function CollageView({ species, lcpSlug: coldLcpSlug }: CollageViewProps)
 
   const birds = selectForCollage(species, season);
   const showEmpty = birds.length === 0 || (layoutReady && placed.length === 0);
-  const lcpSlug = resolveLcpSlug(placed, coldLcpSlug);
   const hoverName = hovered ? commonNameForLocale(hovered, locale) : null;
 
   return (
@@ -122,27 +92,21 @@ export function CollageView({ species, lcpSlug: coldLcpSlug }: CollageViewProps)
         ) : (
           placed.map((tile, index) => {
             const src = collagePoseUrl(tile);
-            const isLcp = tile.slug === lcpSlug;
-            const delay = isLcp ? 0 : Math.min(index * 28, 420);
+            const delay = Math.min(index * 28, 420);
             const name = commonNameForLocale(tile, locale);
             return (
               <Link
                 key={tile.slug}
                 href={`/atlas/${tile.slug}`}
                 className={cn(
-                  "absolute transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]",
-                  !isLcp && "collage-tile-enter",
+                  "collage-tile-enter absolute transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]",
                 )}
                 style={{
                   left: tile.x,
                   top: tile.y,
                   width: tile.width,
                   height: tile.height,
-                  ...(!isLcp
-                    ? {
-                        animation: `collage-tile-in 420ms cubic-bezier(.2,.7,.3,1) ${delay}ms backwards`,
-                      }
-                    : {}),
+                  animation: `collage-tile-in 420ms cubic-bezier(.2,.7,.3,1) ${delay}ms backwards`,
                 }}
                 onMouseEnter={() => setHovered(tile)}
                 onFocus={() => setHovered(tile)}
@@ -152,17 +116,10 @@ export function CollageView({ species, lcpSlug: coldLcpSlug }: CollageViewProps)
                     src={src}
                     alt={name}
                     fill
-                    sizes={
-                      isLcp ? COLLAGE_LCP_SIZES : `${Math.ceil(tile.width)}px`
-                    }
+                    sizes="40vw"
                     className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
-                    priority={isLcp}
-                    {...(isLcp
-                      ? { fetchPriority: "high" as const }
-                      : {
-                          loading: "eager" as const,
-                          fetchPriority: "auto" as const,
-                        })}
+                    loading="eager"
+                    fetchPriority="high"
                   />
                 ) : (
                   <PlaceholderSilhouette
