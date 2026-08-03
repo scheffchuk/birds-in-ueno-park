@@ -3,6 +3,10 @@
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
+import {
+  COLLAGE_IMAGE_SIZES,
+  largestIllustratedTileSlug,
+} from "@/lib/collage/image";
 import { packCollage } from "@/lib/collage/pack";
 import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
@@ -56,6 +60,7 @@ export function CollageView({ species }: CollageViewProps) {
 
   const birds = selectForCollage(species, season);
   const showEmpty = birds.length === 0 || (layoutReady && placed.length === 0);
+  const prioritySlug = largestIllustratedTileSlug(placed);
   const hoverName = hovered ? commonNameForLocale(hovered, locale) : null;
 
   return (
@@ -92,21 +97,27 @@ export function CollageView({ species }: CollageViewProps) {
         ) : (
           placed.map((tile, index) => {
             const src = collagePoseUrl(tile);
-            const delay = Math.min(index * 28, 420);
+            const isPriority = tile.slug === prioritySlug;
+            const delay = isPriority ? 0 : Math.min(index * 28, 420);
             const name = commonNameForLocale(tile, locale);
             return (
               <Link
                 key={tile.slug}
                 href={`/atlas/${tile.slug}`}
                 className={cn(
-                  "collage-tile-enter absolute transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]",
+                  "absolute transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]",
+                  !isPriority && "collage-tile-enter",
                 )}
                 style={{
                   left: tile.x,
                   top: tile.y,
                   width: tile.width,
                   height: tile.height,
-                  animation: `collage-tile-in 420ms cubic-bezier(.2,.7,.3,1) ${delay}ms backwards`,
+                  ...(!isPriority
+                    ? {
+                        animation: `collage-tile-in 420ms cubic-bezier(.2,.7,.3,1) ${delay}ms backwards`,
+                      }
+                    : {}),
                 }}
                 onMouseEnter={() => setHovered(tile)}
                 onFocus={() => setHovered(tile)}
@@ -116,10 +127,12 @@ export function CollageView({ species }: CollageViewProps) {
                     src={src}
                     alt={name}
                     fill
-                    sizes="40vw"
+                    sizes={COLLAGE_IMAGE_SIZES}
                     className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
-                    loading="eager"
-                    fetchPriority="high"
+                    priority={isPriority}
+                    {...(isPriority
+                      ? { fetchPriority: "high" as const }
+                      : { loading: "eager" as const })}
                   />
                 ) : (
                   <PlaceholderSilhouette

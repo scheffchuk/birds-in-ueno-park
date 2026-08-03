@@ -9,6 +9,7 @@ import { CollageClient } from "./CollageClient";
 import { SiteFooter } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { Link } from "@/i18n/navigation";
+import { COLLAGE_IMAGE_SIZES } from "@/lib/collage/image";
 import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
 import { currentTokyoSeason } from "@/lib/collage/season";
@@ -64,9 +65,9 @@ function CollageImagePreloads({ imageUrls }: { imageUrls: string[] }) {
     } = getImageProps({
       src: imageUrl,
       alt: "",
-      width: 240,
-      height: 240,
-      sizes: "40vw",
+      width: 120,
+      height: 120,
+      sizes: COLLAGE_IMAGE_SIZES,
     });
     return (
       <link
@@ -76,7 +77,6 @@ function CollageImagePreloads({ imageUrls }: { imageUrls: string[] }) {
         href={src}
         imageSrcSet={srcSet}
         imageSizes={sizes}
-        fetchPriority="high"
       />
     );
   });
