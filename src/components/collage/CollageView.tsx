@@ -129,10 +129,9 @@ export function CollageView({ species }: CollageViewProps) {
                     fill
                     sizes={COLLAGE_IMAGE_SIZES}
                     className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
+                    loading="eager"
                     priority={isPriority}
-                    {...(isPriority
-                      ? { fetchPriority: "high" as const }
-                      : { loading: "eager" as const })}
+                    fetchPriority={isPriority ? "high" : "auto"}
                   />
                 ) : (
                   <PlaceholderSilhouette

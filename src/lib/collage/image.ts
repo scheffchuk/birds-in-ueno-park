@@ -1,7 +1,6 @@
 import { collagePoseUrl } from "./pose";
 import type { PackedBird } from "./types";
 
-/** Shared by collage preloads and tiles so srcset picks match. */
 export const COLLAGE_IMAGE_SIZES = "120px";
 
 export function largestIllustratedTileSlug(
