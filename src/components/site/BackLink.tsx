@@ -1,18 +1,22 @@
 import { ArrowLeftIcon } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
+import { hrefWithSeason } from "@/lib/collage/season";
+import type { SeasonFilter } from "@/lib/collage/types";
 import { cn } from "@/lib/utils";
 
 type BackLinkProps = {
   href: "/" | "/atlas";
   label: string;
+  /** When set, appends `?season=` so collage ↔ atlas keep the filter. */
+  season?: SeasonFilter;
   className?: string;
 };
 
-export function BackLink({ href, label, className }: BackLinkProps) {
+export function BackLink({ href, label, season, className }: BackLinkProps) {
   return (
     <Link
-      href={href}
+      href={hrefWithSeason(href, season)}
       aria-label={label}
       className={cn(
         buttonVariants({ variant: "ghost", size: "icon" }),

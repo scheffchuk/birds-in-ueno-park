@@ -22,16 +22,33 @@ const SEASON_FILTERS: ReadonlySet<string> = new Set([
   "all",
 ]);
 
-function isSeasonFilter(value: string): value is SeasonFilter {
+export function isSeasonFilter(value: string): value is SeasonFilter {
   return SEASON_FILTERS.has(value);
 }
 
-/** Atlas list `?season=` → Season filter; missing/invalid → Tokyo meteorological Season. */
+/** `?season=` when valid; otherwise undefined (do not invent a default). */
+export function readSeasonSearchParam(
+  value: string | string[] | undefined,
+): SeasonFilter | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  if (typeof raw === "string" && isSeasonFilter(raw)) return raw;
+  return undefined;
+}
+
+/** Atlas/collage `?season=` → Season filter; missing/invalid → Tokyo meteorological Season. */
 export function parseSeasonSearchParam(
   value: string | string[] | undefined,
   nowMs: number = Date.now(),
 ): SeasonFilter {
-  const raw = Array.isArray(value) ? value[0] : value;
-  if (typeof raw === "string" && isSeasonFilter(raw)) return raw;
-  return currentTokyoSeason(nowMs);
+  return readSeasonSearchParam(value) ?? currentTokyoSeason(nowMs);
+}
+
+type SeasonPath = "/" | "/atlas";
+
+/** Pathname, or pathname + `?season=` when a filter is present. */
+export function hrefWithSeason(
+  pathname: SeasonPath,
+  season: SeasonFilter | undefined,
+): SeasonPath | { pathname: SeasonPath; query: { season: SeasonFilter } } {
+  return season ? { pathname, query: { season } } : pathname;
 }

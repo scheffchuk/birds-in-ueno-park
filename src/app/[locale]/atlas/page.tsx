@@ -4,7 +4,10 @@ import { connection } from "next/server";
 import { getLocale, getTranslations } from "next-intl/server";
 import { loadAtlasList } from "@/lib/atlas/load-atlas-list";
 import { selectForAtlas } from "@/lib/atlas/select";
-import { parseSeasonSearchParam } from "@/lib/collage/season";
+import {
+  parseSeasonSearchParam,
+  readSeasonSearchParam,
+} from "@/lib/collage/season";
 import { commonNameForLocale } from "@/lib/locale/species";
 import { AtlasSpeciesCard } from "@/components/atlas/AtlasSpeciesCard";
 import { BackLink } from "@/components/site/BackLink";
@@ -60,6 +63,23 @@ async function AtlasSubtitle({
   );
 }
 
+async function AtlasBackToCollage({
+  searchParams,
+}: {
+  searchParams: PageProps["searchParams"];
+}) {
+  await connection();
+  const tNav = await getTranslations("Nav");
+  const { season: seasonParam } = await searchParams;
+  return (
+    <BackLink
+      href="/"
+      label={tNav("backToCollage")}
+      season={readSeasonSearchParam(seasonParam)}
+    />
+  );
+}
+
 async function AtlasChrome({
   searchParams,
 }: {
@@ -71,7 +91,13 @@ async function AtlasChrome({
   return (
     <header className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <BackLink href="/" label={tNav("backToCollage")} />
+        <Suspense
+          fallback={
+            <BackLink href="/" label={tNav("backToCollage")} />
+          }
+        >
+          <AtlasBackToCollage searchParams={searchParams} />
+        </Suspense>
         <LocaleSwitcher />
       </div>
       <div className="flex flex-col gap-1 text-center">

@@ -11,6 +11,7 @@ import { CollageClient } from "./CollageClient";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
+import { SeasonLink } from "@/components/site/SeasonLink";
 import { Link } from "@/i18n/navigation";
 import { loadMessages } from "@/i18n/load-messages";
 import { routing, type AppLocale } from "@/i18n/routing";
@@ -52,12 +53,12 @@ async function HomeChrome({ params }: PageProps) {
   return (
     <>
       <nav className="fixed top-4 right-4 z-30 flex items-center gap-2 md:top-5 md:right-7">
-        <Link
-          href="/atlas"
+        <SeasonLink
+          pathname="/atlas"
           className="inline-flex h-8 items-center rounded-full bg-background px-3.5 font-mono text-[10px] leading-none tracking-[0.18em] text-ink uppercase shadow-(--raised)"
         >
           {copy.atlas}
-        </Link>
+        </SeasonLink>
         <LocaleSwitcher />
       </nav>
 
