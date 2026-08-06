@@ -1,14 +1,19 @@
 import type { Metadata } from "next";
 import { getImageProps } from "next/image";
 import { Suspense } from "react";
+import { cacheLife } from "next/cache";
 import { connection } from "next/server";
+import { hasLocale } from "next-intl";
 import { preloadQuery, preloadedQueryResult } from "convex/nextjs";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { api } from "../../../convex/_generated/api";
 import { CollageClient } from "./CollageClient";
-import { SiteFooter } from "@/components/site/SiteFooter";
+import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
+import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { Link } from "@/i18n/navigation";
+import { loadMessages } from "@/i18n/load-messages";
+import { routing, type AppLocale } from "@/i18n/routing";
 import { COLLAGE_IMAGE_SIZES } from "@/lib/collage/image";
 import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
@@ -26,11 +31,23 @@ export async function generateMetadata({
   return { title: t("title"), description: t("description") };
 }
 
+/** Message strings only — no next-intl Link/client trees inside `use cache`. */
+async function homeChromeCopy(locale: AppLocale) {
+  "use cache";
+  cacheLife("max");
+  const messages = await loadMessages(locale);
+  return {
+    title: messages.Home.title,
+    atlas: messages.Nav.atlas,
+  };
+}
+
 async function HomeChrome({ params }: PageProps) {
   const { locale } = await params;
-  setRequestLocale(locale);
-  const t = await getTranslations("Home");
-  const tNav = await getTranslations("Nav");
+  if (!hasLocale(routing.locales, locale)) {
+    return <HomeChromeFallback />;
+  }
+  const copy = await homeChromeCopy(locale);
 
   return (
     <>
@@ -39,7 +56,7 @@ async function HomeChrome({ params }: PageProps) {
           href="/atlas"
           className="inline-flex h-8 items-center rounded-full bg-background px-3.5 font-mono text-[10px] leading-none tracking-[0.18em] text-ink uppercase shadow-(--raised)"
         >
-          {tNav("atlas")}
+          {copy.atlas}
         </Link>
         <LocaleSwitcher />
       </nav>
@@ -50,11 +67,37 @@ async function HomeChrome({ params }: PageProps) {
             href="/about"
             className="transition-colors hover:text-ink-2"
           >
-            {t("title")}
+            {copy.title}
           </Link>
         </h1>
       </header>
     </>
+  );
+}
+
+function HomeChromeFallback() {
+  return (
+    <>
+      <nav
+        className="fixed top-4 right-4 z-30 flex h-8 items-center gap-2 md:top-5 md:right-7"
+        aria-hidden
+      >
+        <div className="h-8 w-20 rounded-full bg-background shadow-(--raised)" />
+        <div className="size-8 rounded-lg bg-paper-2 shadow-(--recess)" />
+      </nav>
+      <header className="flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
+        <div className="h-9 w-56" aria-hidden />
+      </header>
+    </>
+  );
+}
+
+function CollageShellFallback() {
+  return (
+    <div
+      className="fixed top-4 left-4 z-30 h-8 w-52 max-w-[calc(100vw-8rem)] rounded-full bg-paper-2 shadow-(--recess) md:top-5 md:left-7"
+      aria-hidden
+    />
   );
 }
 
@@ -102,23 +145,19 @@ export default function HomePage({ params }: PageProps) {
   return (
     <main className="flex min-h-screen flex-col bg-background">
       <div className="flex min-h-0 flex-1 flex-col">
-        <Suspense
-          fallback={
-            <header className="flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
-              <div className="h-9 w-56" aria-hidden />
-            </header>
-          }
-        >
+        <Suspense fallback={<HomeChromeFallback />}>
           <HomeChrome params={params} />
         </Suspense>
 
         <div className="relative mx-auto min-h-[60vh] w-full max-w-325 flex-1 px-2 md:px-8">
-          <Suspense fallback={null}>
+          <Suspense fallback={<CollageShellFallback />}>
             <CollagePreload />
           </Suspense>
         </div>
 
-        <SiteFooter />
+        <Suspense fallback={<SiteFooterFallback />}>
+          <LocaleSiteFooter params={params} />
+        </Suspense>
       </div>
     </main>
   );
