@@ -61,7 +61,17 @@ export function LocaleSwitcher({ className }: LocaleSwitcherProps) {
             value={locale}
             onValueChange={(next) => {
               if (isAppLocale(next) && next !== locale) {
-                router.replace(pathname, { locale: next });
+                // Preserve query (e.g. ?season=) across Locale hops without
+                // useSearchParams — avoids an extra Suspense boundary here.
+                const query = Object.fromEntries(
+                  new URLSearchParams(window.location.search).entries(),
+                );
+                router.replace(
+                  Object.keys(query).length > 0
+                    ? { pathname, query }
+                    : pathname,
+                  { locale: next },
+                );
               }
             }}
           >

@@ -9,6 +9,7 @@ type BackLinkProps = {
   className?: string;
 };
 
+/** Plain back control. Use `SeasonLink` with `backLabel` when `?season=` should carry. */
 export function BackLink({ href, label, className }: BackLinkProps) {
   return (
     <Link

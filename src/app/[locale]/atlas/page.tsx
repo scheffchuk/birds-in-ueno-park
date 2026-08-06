@@ -7,10 +7,11 @@ import { selectForAtlas } from "@/lib/atlas/select";
 import { parseSeasonSearchParam } from "@/lib/collage/season";
 import { commonNameForLocale } from "@/lib/locale/species";
 import { AtlasSpeciesCard } from "@/components/atlas/AtlasSpeciesCard";
-import { BackLink } from "@/components/site/BackLink";
+import { SeasonFilterPicker } from "@/components/collage/SeasonFilterPicker";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
+import { SeasonLink } from "@/components/site/SeasonLink";
 import {
   Empty,
   EmptyDescription,
@@ -18,7 +19,6 @@ import {
   EmptyTitle,
 } from "@/components/ui/empty";
 import type { AppLocale } from "@/i18n/routing";
-import { AtlasSeasonPicker } from "./AtlasSeasonPicker";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -71,7 +71,9 @@ async function AtlasChrome({
   return (
     <header className="flex flex-col gap-5">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <BackLink href="/" label={tNav("backToCollage")} />
+        <Suspense fallback={<div className="size-8" aria-hidden />}>
+          <SeasonLink pathname="/" backLabel={tNav("backToCollage")} />
+        </Suspense>
         <LocaleSwitcher />
       </div>
       <div className="flex flex-col gap-1 text-center">
@@ -142,7 +144,7 @@ export default function AtlasPage({ params, searchParams }: PageProps) {
 
           <div className="flex justify-center">
             <Suspense fallback={<div className="h-10" aria-hidden />}>
-              <AtlasSeasonPicker />
+              <SeasonFilterPicker />
             </Suspense>
           </div>
 

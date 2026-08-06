@@ -10,8 +10,8 @@ import {
 import { packCollage } from "@/lib/collage/pack";
 import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
-import { currentTokyoSeason } from "@/lib/collage/season";
-import type { PackedBird, SeasonFilter, SpeciesRecord } from "@/lib/collage/types";
+import type { PackedBird, SpeciesRecord } from "@/lib/collage/types";
+import { useSeasonFilter } from "@/lib/collage/use-season-filter";
 import { commonNameForLocale } from "@/lib/locale/species";
 import {
   Empty,
@@ -20,10 +20,11 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
+import { SeasonLink } from "@/components/site/SeasonLink";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
-import { SeasonPicker } from "./SeasonPicker";
+import { SeasonFilterPicker } from "./SeasonFilterPicker";
 
 type CollageViewProps = {
   species: SpeciesRecord[];
@@ -32,9 +33,7 @@ type CollageViewProps = {
 export function CollageView({ species }: CollageViewProps) {
   const t = useTranslations("Collage");
   const locale = useLocale() as AppLocale;
-  const [season, setSeason] = useState<SeasonFilter>(() =>
-    currentTokyoSeason(),
-  );
+  const { season } = useSeasonFilter();
   const [placed, setPlaced] = useState<PackedBird[]>([]);
   const [layoutReady, setLayoutReady] = useState(false);
   const [hovered, setHovered] = useState<PackedBird | null>(null);
@@ -86,12 +85,12 @@ export function CollageView({ species }: CollageViewProps) {
               <EmptyDescription>{t("emptyDescription")}</EmptyDescription>
             </EmptyHeader>
             <EmptyContent>
-              <Link
-                href="/atlas"
+              <SeasonLink
+                pathname="/atlas"
                 className="rounded-full bg-background px-4 py-2 font-mono text-[10px] tracking-[0.18em] text-ink uppercase shadow-[var(--raised)]"
               >
                 {t("browseAtlas")}
-              </Link>
+              </SeasonLink>
             </EmptyContent>
           </Empty>
         ) : (

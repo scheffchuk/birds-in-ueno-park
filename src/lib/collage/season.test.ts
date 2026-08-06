@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { currentTokyoSeason, parseSeasonSearchParam } from "./season";
+import {
+  currentTokyoSeason,
+  hrefWithSeason,
+  parseSeasonSearchParam,
+  readSeasonSearchParam,
+} from "./season";
 
 describe("currentTokyoSeason", () => {
   it("maps meteorological months in Asia/Tokyo", () => {
@@ -16,6 +21,24 @@ describe("currentTokyoSeason", () => {
   it("uses Tokyo date near UTC month boundaries", () => {
     // 2026-02-28 16:00 UTC = 2026-03-01 01:00 JST → spring
     expect(currentTokyoSeason(Date.UTC(2026, 1, 28, 16))).toBe("spring");
+  });
+});
+
+describe("readSeasonSearchParam", () => {
+  it("returns a valid Season filter as-is", () => {
+    expect(readSeasonSearchParam("winter")).toBe("winter");
+    expect(readSeasonSearchParam("all")).toBe("all");
+  });
+
+  it("returns undefined when missing or invalid", () => {
+    expect(readSeasonSearchParam(undefined)).toBeUndefined();
+    expect(readSeasonSearchParam("fall")).toBeUndefined();
+    expect(readSeasonSearchParam("")).toBeUndefined();
+  });
+
+  it("uses the first value when the param is an array", () => {
+    expect(readSeasonSearchParam(["autumn", "winter"])).toBe("autumn");
+    expect(readSeasonSearchParam(["nope"])).toBeUndefined();
   });
 });
 
@@ -45,5 +68,19 @@ describe("parseSeasonSearchParam", () => {
       "autumn",
     );
     expect(parseSeasonSearchParam(["nope"], midSummerUtc)).toBe("summer");
+  });
+});
+
+describe("hrefWithSeason", () => {
+  it("returns the pathname alone when season is absent", () => {
+    expect(hrefWithSeason("/atlas", undefined)).toBe("/atlas");
+    expect(hrefWithSeason("/", undefined)).toBe("/");
+  });
+
+  it("attaches ?season= when present", () => {
+    expect(hrefWithSeason("/atlas", "winter")).toEqual({
+      pathname: "/atlas",
+      query: { season: "winter" },
+    });
   });
 });
