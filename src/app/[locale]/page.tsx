@@ -4,10 +4,8 @@ import { Suspense } from "react";
 import { cacheLife } from "next/cache";
 import { connection } from "next/server";
 import { hasLocale } from "next-intl";
-import { preloadQuery, preloadedQueryResult } from "convex/nextjs";
 import { getTranslations } from "next-intl/server";
-import { api } from "../../../convex/_generated/api";
-import { CollageClient } from "./CollageClient";
+import { CollageView } from "@/components/collage/CollageView";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
@@ -16,9 +14,11 @@ import { Link } from "@/i18n/navigation";
 import { loadMessages } from "@/i18n/load-messages";
 import { routing, type AppLocale } from "@/i18n/routing";
 import { COLLAGE_IMAGE_SIZES } from "@/lib/collage/image";
+import { loadForCollage } from "@/lib/collage/load-for-collage";
 import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
 import { currentTokyoSeason } from "@/lib/collage/season";
+import type { SpeciesRecord } from "@/lib/collage/types";
 
 type PageProps = {
   params: Promise<{ locale: string }>;
@@ -126,18 +126,29 @@ function CollageImagePreloads({ imageUrls }: { imageUrls: string[] }) {
   });
 }
 
-async function CollagePreload() {
+/** Tokyo Season uses wall-clock time — keep outside the cached species fetch. */
+async function CollageSeasonImagePreloads({
+  species,
+}: {
+  species: SpeciesRecord[];
+}) {
   await connection();
-  const preloaded = await preloadQuery(api.species.listForCollage);
-  const species = preloadedQueryResult(preloaded);
   const imageUrls = selectForCollage(species, currentTokyoSeason())
     .map((bird) => collagePoseUrl(bird))
     .filter((url): url is string => url !== undefined);
 
+  return <CollageImagePreloads imageUrls={imageUrls} />;
+}
+
+async function CollageSection() {
+  const species = await loadForCollage();
+
   return (
     <>
-      <CollageImagePreloads imageUrls={imageUrls} />
-      <CollageClient preloaded={preloaded} />
+      <Suspense fallback={null}>
+        <CollageSeasonImagePreloads species={species} />
+      </Suspense>
+      <CollageView species={species} />
     </>
   );
 }
@@ -152,7 +163,7 @@ export default function HomePage({ params }: PageProps) {
 
         <div className="relative mx-auto min-h-[60vh] w-full max-w-325 flex-1 px-2 md:px-8">
           <Suspense fallback={<CollageShellFallback />}>
-            <CollagePreload />
+            <CollageSection />
           </Suspense>
         </div>
 
