@@ -2,6 +2,7 @@
 
 import { useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
+import { isSeasonFilter } from "@/lib/collage/season";
 import type { SeasonFilter } from "@/lib/collage/types";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
@@ -13,10 +14,6 @@ const SEASON_IDS: SeasonFilter[] = [
   "autumn",
   "all",
 ];
-
-function isSeasonFilter(value: string): value is SeasonFilter {
-  return SEASON_IDS.includes(value as SeasonFilter);
-}
 
 type SeasonPickerProps = {
   value: SeasonFilter;

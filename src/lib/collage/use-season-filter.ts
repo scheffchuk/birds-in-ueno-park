@@ -9,10 +9,7 @@ import {
 import type { SeasonFilter } from "@/lib/collage/types";
 
 /** Resolved Season filter from `?season=` (defaults to Tokyo meteorological Season). */
-export function useSeasonFilter(): [
-  SeasonFilter,
-  (next: SeasonFilter) => void,
-] {
+export function useSeasonFilter() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -21,10 +18,11 @@ export function useSeasonFilter(): [
   );
 
   function setSeason(next: SeasonFilter) {
-    router.replace({ pathname, query: { season: next } });
+    const query = Object.fromEntries(searchParams.entries());
+    router.replace({ pathname, query: { ...query, season: next } });
   }
 
-  return [season, setSeason];
+  return { season, setSeason };
 }
 
 /** Present `?season=` only — undefined when missing/invalid (for carrying on nav links). */

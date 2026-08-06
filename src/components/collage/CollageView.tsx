@@ -24,7 +24,7 @@ import { SeasonLink } from "@/components/site/SeasonLink";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
-import { SeasonPicker } from "./SeasonPicker";
+import { SeasonFilterPicker } from "./SeasonFilterPicker";
 
 type CollageViewProps = {
   species: SpeciesRecord[];
@@ -33,7 +33,7 @@ type CollageViewProps = {
 export function CollageView({ species }: CollageViewProps) {
   const t = useTranslations("Collage");
   const locale = useLocale() as AppLocale;
-  const [season, setSeason] = useSeasonFilter();
+  const { season } = useSeasonFilter();
   const [placed, setPlaced] = useState<PackedBird[]>([]);
   const [layoutReady, setLayoutReady] = useState(false);
   const [hovered, setHovered] = useState<PackedBird | null>(null);
