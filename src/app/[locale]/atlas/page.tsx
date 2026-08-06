@@ -8,7 +8,8 @@ import { parseSeasonSearchParam } from "@/lib/collage/season";
 import { commonNameForLocale } from "@/lib/locale/species";
 import { AtlasSpeciesCard } from "@/components/atlas/AtlasSpeciesCard";
 import { BackLink } from "@/components/site/BackLink";
-import { SiteFooter } from "@/components/site/SiteFooter";
+import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
+import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import {
   Empty,
@@ -132,7 +133,7 @@ function AtlasListFallback() {
   return <div className="min-h-[50vh]" aria-hidden />;
 }
 
-export default function AtlasPage({ searchParams }: PageProps) {
+export default function AtlasPage({ params, searchParams }: PageProps) {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="flex min-h-screen flex-col bg-background">
@@ -149,7 +150,9 @@ export default function AtlasPage({ searchParams }: PageProps) {
             <AtlasSeasonBody searchParams={searchParams} />
           </Suspense>
         </div>
-        <SiteFooter />
+        <Suspense fallback={<SiteFooterFallback />}>
+          <LocaleSiteFooter params={params} />
+        </Suspense>
       </div>
     </main>
   );

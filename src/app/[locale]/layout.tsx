@@ -1,8 +1,9 @@
 import { Suspense } from "react";
 import { hasLocale, NextIntlClientProvider } from "next-intl";
-import { getMessages, setRequestLocale } from "next-intl/server";
+import { setRequestLocale } from "next-intl/server";
 import { notFound } from "next/navigation";
 import { HtmlLang } from "@/components/site/HtmlLang";
+import { loadMessages } from "@/i18n/load-messages";
 import { routing, type AppLocale } from "@/i18n/routing";
 
 type Props = {
@@ -32,10 +33,10 @@ async function LocaleProviders({ children, params }: Props) {
   }
 
   setRequestLocale(locale);
-  const messages = await getMessages();
+  const messages = await loadMessages(locale as AppLocale);
 
   return (
-    <NextIntlClientProvider messages={messages}>
+    <NextIntlClientProvider locale={locale} messages={messages}>
       <HtmlLang locale={locale as AppLocale} />
       {children}
     </NextIntlClientProvider>

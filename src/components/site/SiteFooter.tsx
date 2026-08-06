@@ -1,16 +1,21 @@
-"use client";
-
-import { useTranslations } from "next-intl";
+import { loadMessages } from "@/i18n/load-messages";
+import type { AppLocale } from "@/i18n/routing";
 import { SITE_FOOTER } from "@/lib/site/attribution";
 
-export function SiteFooter() {
-  const t = useTranslations("Footer");
+type SiteFooterProps = {
+  locale: AppLocale;
+};
+
+/** Footer copy from the cached message catalog (per Locale). */
+export async function SiteFooter({ locale }: SiteFooterProps) {
+  const messages = await loadMessages(locale);
+  const t = messages.Footer;
 
   return (
     <footer className="mt-auto px-6 py-6 md:px-10">
       <div className="mx-auto max-w-3xl text-center">
         <p className="font-mono text-[10px] tracking-[0.18em] text-ink-soft uppercase">
-          {t("credit")}{" "}
+          {t.credit}{" "}
           <a
             href={SITE_FOOTER.creditUrl}
             target="_blank"
@@ -29,7 +34,7 @@ export function SiteFooter() {
             {SITE_FOOTER.creditSite}
           </a>
           {" · "}
-          {t("createdBy")}{" "}
+          {t.createdBy}{" "}
           <a
             href={SITE_FOOTER.authorUrl}
             target="_blank"
@@ -42,4 +47,8 @@ export function SiteFooter() {
       </div>
     </footer>
   );
+}
+
+export function SiteFooterFallback() {
+  return <footer className="mt-auto px-6 py-6 md:px-10" aria-hidden />;
 }

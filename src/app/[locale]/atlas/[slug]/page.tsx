@@ -6,7 +6,8 @@ import { loadListedSpecies } from "@/lib/atlas/load-listed-species";
 import { longFormForLocale, nameStackForLocale } from "@/lib/locale/species";
 import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
 import { BackLink } from "@/components/site/BackLink";
-import { SiteFooter } from "@/components/site/SiteFooter";
+import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
+import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import type { AppLocale } from "@/i18n/routing";
 
 type PageProps = {
@@ -67,7 +68,9 @@ export default function AtlasSpeciesPage({ params }: PageProps) {
             <AtlasSpeciesBody params={params} />
           </Suspense>
         </article>
-        <SiteFooter />
+        <Suspense fallback={<SiteFooterFallback />}>
+          <LocaleSiteFooter params={params} />
+        </Suspense>
       </div>
     </main>
   );

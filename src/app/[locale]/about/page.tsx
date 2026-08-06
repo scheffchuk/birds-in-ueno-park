@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { BackLink } from "@/components/site/BackLink";
-import { SiteFooter } from "@/components/site/SiteFooter";
+import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
+import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 
 const SECTION_IDS = ["about", "data", "art"] as const;
@@ -53,7 +54,9 @@ export default function AboutPage({ params }: PageProps) {
       <Suspense fallback={<div className="min-h-[50vh]" aria-hidden />}>
         <AboutBody params={params} />
       </Suspense>
-      <SiteFooter />
+      <Suspense fallback={<SiteFooterFallback />}>
+        <LocaleSiteFooter params={params} />
+      </Suspense>
     </main>
   );
 }
