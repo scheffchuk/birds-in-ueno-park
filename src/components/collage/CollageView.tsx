@@ -64,11 +64,7 @@ export function CollageView({ species }: CollageViewProps) {
 
   return (
     <>
-      <SeasonPicker
-        value={season}
-        onChange={setSeason}
-        className="fixed top-4 left-4 z-30 md:top-5 md:left-7"
-      />
+      <SeasonFilterPicker className="fixed top-4 left-4 z-30 md:top-5 md:left-7" />
 
       <div
         ref={stageRef}
