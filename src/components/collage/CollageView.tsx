@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useRef, useState } from "react";
+import { startTransition, useEffect, useRef, useState } from "react";
 import {
   COLLAGE_IMAGE_SIZES,
   largestIllustratedTileSlug,
@@ -36,6 +36,8 @@ export function CollageView({ species }: CollageViewProps) {
   const { season } = useSeasonFilter();
   const [placed, setPlaced] = useState<PackedBird[]>([]);
   const [layoutReady, setLayoutReady] = useState(false);
+  // First paint only — season switches should not replay staggered enter motion.
+  const [enterMotion, setEnterMotion] = useState(true);
   const [hovered, setHovered] = useState<PackedBird | null>(null);
   const stageRef = useRef<HTMLDivElement>(null);
 
@@ -46,16 +48,26 @@ export function CollageView({ species }: CollageViewProps) {
     const layout = () => {
       const selected = selectForCollage(species, season);
       const { width, height } = el.getBoundingClientRect();
-      setPlaced(packCollage(selected, width, height));
-      setLayoutReady(true);
+      const next = packCollage(selected, width, height);
+      // Keep prior tiles visible while packing; don't blank the stage.
+      startTransition(() => {
+        setPlaced(next);
+        setLayoutReady(true);
+      });
     };
 
-    setLayoutReady(false);
     layout();
     const observer = new ResizeObserver(layout);
     observer.observe(el);
     return () => observer.disconnect();
   }, [species, season]);
+
+  useEffect(() => {
+    if (!enterMotion || !layoutReady || placed.length === 0) return;
+    // Clear after the staggered enter finishes so later Season switches stay snappy.
+    const id = window.setTimeout(() => setEnterMotion(false), 900);
+    return () => window.clearTimeout(id);
+  }, [enterMotion, layoutReady, placed.length]);
 
   const birds = selectForCollage(species, season);
   const showEmpty = birds.length === 0 || (layoutReady && placed.length === 0);
@@ -95,20 +107,21 @@ export function CollageView({ species }: CollageViewProps) {
             const isPriority = tile.slug === prioritySlug;
             const delay = isPriority ? 0 : Math.min(index * 28, 420);
             const name = commonNameForLocale(tile, locale);
+            const animate = enterMotion && !isPriority;
             return (
               <Link
                 key={tile.slug}
                 href={`/atlas/${tile.slug}`}
                 className={cn(
                   "absolute transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]",
-                  !isPriority && "collage-tile-enter",
+                  animate && "collage-tile-enter",
                 )}
                 style={{
                   left: tile.x,
                   top: tile.y,
                   width: tile.width,
                   height: tile.height,
-                  ...(!isPriority
+                  ...(animate
                     ? {
                         animation: `collage-tile-in 420ms cubic-bezier(.2,.7,.3,1) ${delay}ms backwards`,
                       }
