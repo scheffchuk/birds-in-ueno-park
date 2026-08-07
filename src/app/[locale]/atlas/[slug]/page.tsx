@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { loadListedSpecies } from "@/lib/atlas/load-listed-species";
 import { longFormForLocale, nameStackForLocale } from "@/lib/locale/species";
 import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
@@ -11,15 +11,15 @@ import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import type { AppLocale } from "@/i18n/routing";
 
 type PageProps = {
-  params: Promise<{ locale: string; slug: string }>;
+  params: Promise<{ slug: string }>;
 };
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { locale: localeParam, slug } = await params;
-  const locale = localeParam as AppLocale;
-  const t = await getTranslations({ locale, namespace: "AtlasDetail" });
+  const { slug } = await params;
+  const locale = (await getLocale()) as AppLocale;
+  const t = await getTranslations("AtlasDetail");
   const species = await loadListedSpecies(slug);
   if (!species) {
     return { title: t("notFound") };
@@ -32,9 +32,7 @@ export async function generateMetadata({
   };
 }
 
-async function AtlasSpeciesChrome({ params }: PageProps) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+async function AtlasSpeciesChrome() {
   const tNav = await getTranslations("Nav");
 
   return (
@@ -47,9 +45,8 @@ async function AtlasSpeciesChrome({ params }: PageProps) {
 }
 
 async function AtlasSpeciesBody({ params }: PageProps) {
-  const { locale: localeParam, slug } = await params;
-  const locale = localeParam as AppLocale;
-  setRequestLocale(locale);
+  const { slug } = await params;
+  const locale = (await getLocale()) as AppLocale;
   const species = await loadListedSpecies(slug);
   if (!species) notFound();
 
@@ -62,14 +59,14 @@ export default function AtlasSpeciesPage({ params }: PageProps) {
       <div className="flex min-h-screen flex-col bg-background">
         <article className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-5 px-6 py-10 md:px-8">
           <Suspense fallback={<div className="h-4" aria-hidden />}>
-            <AtlasSpeciesChrome params={params} />
+            <AtlasSpeciesChrome />
           </Suspense>
           <Suspense fallback={<div className="min-h-[60vh]" aria-hidden />}>
             <AtlasSpeciesBody params={params} />
           </Suspense>
         </article>
         <Suspense fallback={<SiteFooterFallback />}>
-          <LocaleSiteFooter params={params} />
+          <LocaleSiteFooter />
         </Suspense>
       </div>
     </main>

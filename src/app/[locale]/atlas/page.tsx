@@ -21,21 +21,18 @@ import {
 import type { AppLocale } from "@/i18n/routing";
 
 type PageProps = {
-  params: Promise<{ locale: string }>;
   searchParams: Promise<{ season?: string | string[] }>;
 };
 
 export async function generateMetadata({
-  params,
   searchParams,
 }: PageProps): Promise<Metadata> {
   await connection();
-  const { locale } = await params;
   const { season: seasonParam } = await searchParams;
   const season = parseSeasonSearchParam(seasonParam);
-  const tMeta = await getTranslations({ locale, namespace: "Meta" });
-  const t = await getTranslations({ locale, namespace: "Atlas" });
-  const tSeason = await getTranslations({ locale, namespace: "Season" });
+  const tMeta = await getTranslations("Meta");
+  const t = await getTranslations("Atlas");
+  const tSeason = await getTranslations("Season");
   return {
     title: `${t("title")} · ${tMeta("title")}`,
     description: t("subtitle", { season: tSeason(season) }),
@@ -135,7 +132,7 @@ function AtlasListFallback() {
   return <div className="min-h-[50vh]" aria-hidden />;
 }
 
-export default function AtlasPage({ params, searchParams }: PageProps) {
+export default function AtlasPage({ searchParams }: PageProps) {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="flex min-h-screen flex-col bg-background">
@@ -153,7 +150,7 @@ export default function AtlasPage({ params, searchParams }: PageProps) {
           </Suspense>
         </div>
         <Suspense fallback={<SiteFooterFallback />}>
-          <LocaleSiteFooter params={params} />
+          <LocaleSiteFooter />
         </Suspense>
       </div>
     </main>

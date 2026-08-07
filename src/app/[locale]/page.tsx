@@ -3,8 +3,7 @@ import { getImageProps } from "next/image";
 import { Suspense } from "react";
 import { cacheLife } from "next/cache";
 import { connection } from "next/server";
-import { hasLocale } from "next-intl";
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { CollageView } from "@/components/collage/CollageView";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
@@ -12,7 +11,7 @@ import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { SeasonLink } from "@/components/site/SeasonLink";
 import { Link } from "@/i18n/navigation";
 import { loadMessages } from "@/i18n/load-messages";
-import { routing, type AppLocale } from "@/i18n/routing";
+import type { AppLocale } from "@/i18n/routing";
 import { COLLAGE_IMAGE_SIZES } from "@/lib/collage/image";
 import { loadForCollage } from "@/lib/collage/load-for-collage";
 import { collagePoseUrl } from "@/lib/collage/pose";
@@ -20,15 +19,8 @@ import { selectForCollage } from "@/lib/collage/select";
 import { currentTokyoSeason } from "@/lib/collage/season";
 import type { SpeciesRecord } from "@/lib/collage/types";
 
-type PageProps = {
-  params: Promise<{ locale: string }>;
-};
-
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "Meta" });
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("Meta");
   return { title: t("title"), description: t("description") };
 }
 
@@ -43,11 +35,8 @@ async function homeChromeCopy(locale: AppLocale) {
   };
 }
 
-async function HomeChrome({ params }: PageProps) {
-  const { locale } = await params;
-  if (!hasLocale(routing.locales, locale)) {
-    return <HomeChromeFallback />;
-  }
+async function HomeChrome() {
+  const locale = (await getLocale()) as AppLocale;
   const copy = await homeChromeCopy(locale);
 
   return (
@@ -153,12 +142,12 @@ async function CollageSection() {
   );
 }
 
-export default function HomePage({ params }: PageProps) {
+export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col bg-background">
       <div className="flex min-h-0 flex-1 flex-col">
         <Suspense fallback={<HomeChromeFallback />}>
-          <HomeChrome params={params} />
+          <HomeChrome />
         </Suspense>
 
         <div className="relative mx-auto min-h-[60vh] w-full max-w-325 flex-1 px-2 md:px-8">
@@ -168,7 +157,7 @@ export default function HomePage({ params }: PageProps) {
         </div>
 
         <Suspense fallback={<SiteFooterFallback />}>
-          <LocaleSiteFooter params={params} />
+          <LocaleSiteFooter />
         </Suspense>
       </div>
     </main>

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { getTranslations, setRequestLocale } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import { BackLink } from "@/components/site/BackLink";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
@@ -8,22 +8,16 @@ import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 
 const SECTION_IDS = ["about", "data", "art"] as const;
 
-type PageProps = {
-  params: Promise<{ locale: string }>;
-};
-
-export async function generateMetadata({
-  params,
-}: PageProps): Promise<Metadata> {
-  const { locale } = await params;
-  const tMeta = await getTranslations({ locale, namespace: "Meta" });
-  const t = await getTranslations({ locale, namespace: "About" });
-  return { title: `${t("title")} · ${tMeta("title")}`, description: tMeta("description") };
+export async function generateMetadata(): Promise<Metadata> {
+  const tMeta = await getTranslations("Meta");
+  const t = await getTranslations("About");
+  return {
+    title: `${t("title")} · ${tMeta("title")}`,
+    description: tMeta("description"),
+  };
 }
 
-async function AboutBody({ params }: PageProps) {
-  const { locale } = await params;
-  setRequestLocale(locale);
+async function AboutBody() {
   const t = await getTranslations("About");
   const tNav = await getTranslations("Nav");
 
@@ -48,14 +42,14 @@ async function AboutBody({ params }: PageProps) {
   );
 }
 
-export default function AboutPage({ params }: PageProps) {
+export default function AboutPage() {
   return (
     <main className="flex min-h-screen flex-col bg-background text-foreground">
       <Suspense fallback={<div className="min-h-[50vh]" aria-hidden />}>
-        <AboutBody params={params} />
+        <AboutBody />
       </Suspense>
       <Suspense fallback={<SiteFooterFallback />}>
-        <LocaleSiteFooter params={params} />
+        <LocaleSiteFooter />
       </Suspense>
     </main>
   );
