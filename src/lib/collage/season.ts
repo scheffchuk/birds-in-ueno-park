@@ -52,3 +52,14 @@ export function hrefWithSeason(
 ): SeasonPath | { pathname: SeasonPath; query: { season: SeasonFilter } } {
   return season ? { pathname, query: { season } } : pathname;
 }
+
+/** Update `?season=` via history.replaceState — no App Router navigation / RSC flight. */
+export function replaceSeasonSearchParam(next: SeasonFilter) {
+  const url = new URL(window.location.href);
+  url.searchParams.set("season", next);
+  window.history.replaceState(
+    window.history.state,
+    "",
+    `${url.pathname}${url.search}${url.hash}`,
+  );
+}
