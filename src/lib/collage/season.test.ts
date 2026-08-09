@@ -1,9 +1,11 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  getSeasonLocationEpoch,
   hrefWithSeason,
   parseSeasonSearchParam,
   readSeasonSearchParam,
   replaceSeasonSearchParam,
+  subscribeSeasonLocation,
 } from "./season";
 
 describe("readSeasonSearchParam", () => {
@@ -50,12 +52,17 @@ describe("hrefWithSeason", () => {
   it("returns the pathname alone when season is absent", () => {
     expect(hrefWithSeason("/atlas", undefined)).toBe("/atlas");
     expect(hrefWithSeason("/", undefined)).toBe("/");
+    expect(hrefWithSeason("/atlas/mallard", undefined)).toBe("/atlas/mallard");
   });
 
   it("attaches ?season= when present", () => {
     expect(hrefWithSeason("/atlas", "winter")).toEqual({
       pathname: "/atlas",
       query: { season: "winter" },
+    });
+    expect(hrefWithSeason("/atlas/mallard", "summer")).toEqual({
+      pathname: "/atlas/mallard",
+      query: { season: "summer" },
     });
   });
 });
@@ -75,7 +82,13 @@ describe("replaceSeasonSearchParam", () => {
         state: { idx: 0 },
         replaceState,
       },
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
     });
+
+    const before = getSeasonLocationEpoch();
+    const listener = vi.fn();
+    const unsubscribe = subscribeSeasonLocation(listener);
 
     replaceSeasonSearchParam("winter");
 
@@ -85,6 +98,9 @@ describe("replaceSeasonSearchParam", () => {
       "",
       "/ja?utm=1&season=winter",
     );
+    expect(getSeasonLocationEpoch()).toBe(before + 1);
+    expect(listener).toHaveBeenCalledOnce();
+    unsubscribe();
   });
 
   it("replaces an existing season param", () => {
@@ -97,6 +113,8 @@ describe("replaceSeasonSearchParam", () => {
         state: null,
         replaceState,
       },
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
     });
 
     replaceSeasonSearchParam("autumn");

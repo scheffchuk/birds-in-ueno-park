@@ -30,14 +30,59 @@ export function parseSeasonSearchParam(
   return readSeasonSearchParam(value) ?? "all";
 }
 
-type SeasonPath = "/" | "/atlas";
+/** Paths that may carry a Season filter query. */
+export type SeasonHrefPath = "/" | "/atlas" | `/atlas/${string}`;
 
 /** Pathname, or pathname + `?season=` when a filter is present. */
 export function hrefWithSeason(
-  pathname: SeasonPath,
+  pathname: SeasonHrefPath,
   season: SeasonFilter | undefined,
-): SeasonPath | { pathname: SeasonPath; query: { season: SeasonFilter } } {
+): SeasonHrefPath | { pathname: SeasonHrefPath; query: { season: SeasonFilter } } {
   return season ? { pathname, query: { season } } : pathname;
+}
+
+type SeasonLocationListener = () => void;
+
+let seasonLocationEpoch = 0;
+let popstateSubscriberCount = 0;
+const seasonLocationListeners = new Set<SeasonLocationListener>();
+
+function notifySeasonLocationListeners() {
+  seasonLocationEpoch += 1;
+  for (const listener of seasonLocationListeners) listener();
+}
+
+/** Subscribe to homepage shallow `?season=` writes and browser history hops. */
+export function subscribeSeasonLocation(listener: SeasonLocationListener) {
+  seasonLocationListeners.add(listener);
+  if (typeof window !== "undefined") {
+    if (popstateSubscriberCount === 0) {
+      window.addEventListener("popstate", notifySeasonLocationListeners);
+    }
+    popstateSubscriberCount += 1;
+  }
+  return () => {
+    seasonLocationListeners.delete(listener);
+    if (typeof window !== "undefined") {
+      popstateSubscriberCount -= 1;
+      if (popstateSubscriberCount === 0) {
+        window.removeEventListener("popstate", notifySeasonLocationListeners);
+      }
+    }
+  };
+}
+
+export function getSeasonLocationEpoch() {
+  return seasonLocationEpoch;
+}
+
+export function getSeasonLocationEpochServerSnapshot() {
+  return 0;
+}
+
+/** Live `?season=` from the address bar (client). */
+export function readWindowSeasonSearchParam(): string | null {
+  return new URLSearchParams(window.location.search).get("season");
 }
 
 /** Update `?season=` via history.replaceState — no App Router navigation / RSC flight. */
@@ -49,4 +94,5 @@ export function replaceSeasonSearchParam(next: SeasonFilter) {
     "",
     `${url.pathname}${url.search}${url.hash}`,
   );
+  notifySeasonLocationListeners();
 }

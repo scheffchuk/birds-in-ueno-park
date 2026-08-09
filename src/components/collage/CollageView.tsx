@@ -3,7 +3,11 @@
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { useState } from "react";
-import { useSeasonFilter } from "@/lib/collage/season-context";
+import { hrefWithSeason } from "@/lib/collage/season";
+import {
+  useSeasonFilter,
+  useSeasonQuery,
+} from "@/lib/collage/use-season-filter";
 import type { CollageArt, CollageLayouts } from "@/lib/collage/types";
 import { commonNameForLocale } from "@/lib/locale/species";
 import {
@@ -29,6 +33,7 @@ export function CollageView({ layouts }: CollageViewProps) {
   const t = useTranslations("Collage");
   const locale = useLocale() as AppLocale;
   const { season } = useSeasonFilter();
+  const seasonQuery = useSeasonQuery();
   const [hovered, setHovered] = useState<CollageArt | null>(null);
 
   const artBySlug = new Map(layouts.art.map((art) => [art.slug, art]));
@@ -69,7 +74,7 @@ export function CollageView({ layouts }: CollageViewProps) {
               return (
                 <Link
                   key={tile.slug}
-                  href={`/atlas/${tile.slug}`}
+                  href={hrefWithSeason(`/atlas/${tile.slug}`, seasonQuery)}
                   className="absolute hover:z-10"
                   style={{
                     left: `${tile.x}%`,

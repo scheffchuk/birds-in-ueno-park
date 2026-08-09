@@ -4,7 +4,10 @@ import { connection } from "next/server";
 import { getLocale, getTranslations } from "next-intl/server";
 import { loadAtlasList } from "@/lib/atlas/load-atlas-list";
 import { selectForAtlas } from "@/lib/atlas/select";
-import { parseSeasonSearchParam } from "@/lib/collage/season";
+import {
+  parseSeasonSearchParam,
+  readSeasonSearchParam,
+} from "@/lib/collage/season";
 import { commonNameForLocale } from "@/lib/locale/species";
 import { AtlasSpeciesCard } from "@/components/atlas/AtlasSpeciesCard";
 import { SeasonFilterPicker } from "@/components/collage/SeasonFilterPicker";
@@ -93,6 +96,7 @@ async function AtlasSeasonBody({
   await connection();
   const { season: seasonParam } = await searchParams;
   const season = parseSeasonSearchParam(seasonParam);
+  const seasonQuery = readSeasonSearchParam(seasonParam);
   const species = await loadAtlasList();
   const rows = selectForAtlas(species, season);
   const locale = (await getLocale()) as AppLocale;
@@ -121,6 +125,7 @@ async function AtlasSeasonBody({
             sciName={row.sciName}
             imageUrl={row.imageUrl}
             index={index}
+            season={seasonQuery}
           />
         </li>
       ))}

@@ -7,6 +7,8 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
+import { hrefWithSeason } from "@/lib/collage/season";
+import type { SeasonFilter } from "@/lib/collage/types";
 import { cn } from "@/lib/utils";
 
 type AtlasSpeciesCardProps = {
@@ -15,6 +17,7 @@ type AtlasSpeciesCardProps = {
   sciName: string;
   imageUrl?: string;
   index: number;
+  season?: SeasonFilter;
 };
 
 export function AtlasSpeciesCard({
@@ -23,12 +26,13 @@ export function AtlasSpeciesCard({
   sciName,
   imageUrl,
   index,
+  season,
 }: AtlasSpeciesCardProps) {
   const delayMs = Math.min(index, 12) * 40;
 
   return (
     <Link
-      href={`/atlas/${slug}`}
+      href={hrefWithSeason(`/atlas/${slug}`, season)}
       className={cn(
         "atlas-card-enter block rounded-xl outline-none transition-transform duration-160 ease-out",
         "focus-visible:ring-3 focus-visible:ring-ring/50",
