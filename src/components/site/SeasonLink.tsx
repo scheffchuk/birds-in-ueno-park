@@ -5,7 +5,7 @@ import { ArrowLeftIcon } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { hrefWithSeason } from "@/lib/collage/season";
-import { useSeasonQuery } from "@/lib/collage/use-season-filter";
+import { useSeasonQuery } from "@/lib/collage/season-context";
 import { cn } from "@/lib/utils";
 
 type SeasonPath = "/" | "/atlas";
