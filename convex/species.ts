@@ -74,10 +74,8 @@ const collageSpeciesValidator = v.object({
   comNameJa: v.string(),
   comNameZhTw: v.string(),
   prevalence: prevalenceValidator,
-  perchUrl: v.string(),
-  flightUrl: v.string(),
-  aspectPerch: v.number(),
-  aspectFlight: v.number(),
+  url: v.string(),
+  aspect: v.number(),
 });
 
 const speciesCopyValidator = v.object({

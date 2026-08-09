@@ -17,19 +17,15 @@ import {
 import type { SeasonFilter } from "@/lib/collage/types";
 
 /**
- * A Season picked this session, tagged with the search string it was picked
- * against. The homepage collage filters client-side and only shallow-updates
- * the URL, so `useSearchParams` never sees those writes and the pick stands.
- * A real navigation changes the search string, which retires the pick.
+ * Homepage shallow-updates `?season=` (no RSC), so `useSearchParams` stays
+ * stale — keep the chosen Season here until a real navigation changes the URL.
  */
 type SeasonPick = { season: SeasonFilter; urlKey: string };
 
-type SeasonPickStore = {
+const SeasonPickContext = createContext<{
   pick: SeasonPick | undefined;
   setPick: (next: SeasonPick) => void;
-};
-
-const SeasonPickContext = createContext<SeasonPickStore | null>(null);
+} | null>(null);
 
 export function SeasonProvider({ children }: { children: ReactNode }) {
   const [pick, setPick] = useState<SeasonPick>();
@@ -38,13 +34,13 @@ export function SeasonProvider({ children }: { children: ReactNode }) {
   );
 }
 
-function useSeasonPick(): SeasonPickStore {
+function useSeasonPick() {
   const store = useContext(SeasonPickContext);
   if (!store) throw new Error("Season hooks require <SeasonProvider>");
   return store;
 }
 
-/** Resolved Season filter from `?season=` (defaults to Tokyo meteorological Season). */
+/** Active Season filter — defaults to All when `?season=` is missing. */
 export function useSeasonFilter() {
   const router = useRouter();
   const pathname = usePathname();
@@ -61,8 +57,6 @@ export function useSeasonFilter() {
     if (next === season) return;
     setPick({ season: next, urlKey });
 
-    // Collage filters client-side — shallow URL write only.
-    // Atlas list is RSC-filtered — soft-navigate so the searchParams hole updates.
     if (pathname === "/") {
       replaceSeasonSearchParam(next);
       return;
@@ -77,7 +71,7 @@ export function useSeasonFilter() {
   return { season, setSeason };
 }
 
-/** Present `?season=` only — undefined when missing/invalid (for carrying on nav links). */
+/** Present `?season=` only — undefined when missing/invalid (for nav links). */
 export function useSeasonQuery(): SeasonFilter | undefined {
   const searchParams = useSearchParams();
   const { pick } = useSeasonPick();

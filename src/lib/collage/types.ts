@@ -11,7 +11,7 @@ export type IllustrationStatus =
 
 export type SeasonalPrevalence = Record<Season, number>;
 
-/** Row from `listForCollage` — approved art only, so both poses are present. */
+/** Row from `listForCollage` — one cutout URL + aspect, ready to pack. */
 export type CollageSpecies = {
   slug: string;
   sciName: string;
@@ -19,10 +19,8 @@ export type CollageSpecies = {
   comNameJa: string;
   comNameZhTw: string;
   prevalence: SeasonalPrevalence;
-  perchUrl: string;
-  flightUrl: string;
-  aspectPerch: number;
-  aspectFlight: number;
+  url: string;
+  aspect: number;
 };
 
 export type CollageBird = {
@@ -33,7 +31,6 @@ export type CollageBird = {
   comNameZhTw: string;
   /** Prevalence for the selected Season filter (0–100). */
   prevalence: number;
-  /** Chosen pose cutout and the aspect of that same pose. */
   url: string;
   aspect: number;
 };
@@ -64,24 +61,17 @@ export type PackedBird = CollageBird & {
   height: number;
 };
 
-/** Tile box as a percentage of the canvas it was packed against. */
-export type TileRect = {
+/** Tile box as a percentage of the collage canvas. */
+export type SeasonTile = {
+  slug: string;
   x: number;
   y: number;
   width: number;
   height: number;
 };
 
-export type SeasonTile = {
-  slug: string;
-  portrait: TileRect;
-  landscape: TileRect;
-};
-
 export type SeasonLayout = {
   tiles: SeasonTile[];
-  /** Largest landscape tile — the collage LCP candidate. */
-  prioritySlug: string | null;
 };
 
 /** Everything needed to draw a tile, listed once and shared across Seasons. */

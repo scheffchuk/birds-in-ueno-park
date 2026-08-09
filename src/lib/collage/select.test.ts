@@ -9,10 +9,8 @@ function species(
     comNameEn: overrides.sciName,
     comNameJa: overrides.sciName,
     comNameZhTw: overrides.sciName,
-    perchUrl: `https://example.com/${overrides.slug}-perch.png`,
-    flightUrl: `https://example.com/${overrides.slug}-flight.png`,
-    aspectPerch: 1.2,
-    aspectFlight: 1.8,
+    url: `https://example.com/${overrides.slug}.png`,
+    aspect: 1.2,
     prevalence: {
       winter: 0,
       spring: 0,
@@ -82,15 +80,11 @@ describe("selectForCollage", () => {
     expect(absent).toEqual([]);
   });
 
-  it("resolves one pose per bird, aspect matching the chosen URL", () => {
+  it("passes through the row's url and aspect", () => {
     for (const bird of selectForCollage(flock, "all")) {
       const source = flock.find((s) => s.slug === bird.slug)!;
-      const expected =
-        bird.url === source.flightUrl
-          ? source.aspectFlight
-          : source.aspectPerch;
-      expect([source.perchUrl, source.flightUrl]).toContain(bird.url);
-      expect(bird.aspect).toBe(expected);
+      expect(bird.url).toBe(source.url);
+      expect(bird.aspect).toBe(source.aspect);
     }
   });
 });

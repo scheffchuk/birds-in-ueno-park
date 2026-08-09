@@ -2,8 +2,7 @@
 
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { useState, type CSSProperties } from "react";
-import { tileSizes } from "@/lib/collage/tile-sizes";
+import { useState } from "react";
 import { useSeasonFilter } from "@/lib/collage/season-context";
 import type { CollageArt, CollageLayouts } from "@/lib/collage/types";
 import { commonNameForLocale } from "@/lib/locale/species";
@@ -19,6 +18,9 @@ import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
 import { SeasonFilterPicker } from "./SeasonFilterPicker";
 
+/** One sizes hint for every tile — good enough; avoids per-tile packing math. */
+const COLLAGE_IMAGE_SIZES = "(max-width: 767px) 30vw, 12vw";
+
 type CollageViewProps = {
   layouts: CollageLayouts;
 };
@@ -30,7 +32,7 @@ export function CollageView({ layouts }: CollageViewProps) {
   const [hovered, setHovered] = useState<CollageArt | null>(null);
 
   const artBySlug = new Map(layouts.art.map((art) => [art.slug, art]));
-  const { tiles, prioritySlug } = layouts.seasons[season];
+  const { tiles } = layouts.seasons[season];
   const hoverName = hovered ? commonNameForLocale(hovered, locale) : null;
 
   return (
@@ -38,7 +40,7 @@ export function CollageView({ layouts }: CollageViewProps) {
       <SeasonFilterPicker className="fixed top-4 left-4 z-30 md:top-5 md:left-7" />
 
       <div
-        className="absolute inset-0 flex items-center justify-center overflow-hidden"
+        className="collage-frame"
         onMouseLeave={() => setHovered(null)}
       >
         {tiles.length === 0 ? (
@@ -59,10 +61,7 @@ export function CollageView({ layouts }: CollageViewProps) {
             </EmptyContent>
           </Empty>
         ) : (
-          <div
-            className="collage-stage collage-stage-enter"
-            aria-label={t("ariaLabel")}
-          >
+          <div className="collage-stage" aria-label={t("ariaLabel")}>
             {tiles.map((tile) => {
               const art = artBySlug.get(tile.slug);
               if (!art) return null;
@@ -71,19 +70,13 @@ export function CollageView({ layouts }: CollageViewProps) {
                 <Link
                   key={tile.slug}
                   href={`/atlas/${tile.slug}`}
-                  className="collage-tile transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]"
-                  style={
-                    {
-                      "--tile-x": `${tile.portrait.x}%`,
-                      "--tile-y": `${tile.portrait.y}%`,
-                      "--tile-w": `${tile.portrait.width}%`,
-                      "--tile-h": `${tile.portrait.height}%`,
-                      "--tile-x-lg": `${tile.landscape.x}%`,
-                      "--tile-y-lg": `${tile.landscape.y}%`,
-                      "--tile-w-lg": `${tile.landscape.width}%`,
-                      "--tile-h-lg": `${tile.landscape.height}%`,
-                    } as CSSProperties
-                  }
+                  className="absolute hover:z-10"
+                  style={{
+                    left: `${tile.x}%`,
+                    top: `${tile.y}%`,
+                    width: `${tile.width}%`,
+                    height: `${tile.height}%`,
+                  }}
                   onMouseEnter={() => setHovered(art)}
                   onFocus={() => setHovered(art)}
                 >
@@ -91,10 +84,9 @@ export function CollageView({ layouts }: CollageViewProps) {
                     src={art.url}
                     alt={name}
                     fill
-                    sizes={tileSizes(tile.portrait.width, tile.landscape.width)}
-                    className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
-                    loading="eager"
-                    priority={tile.slug === prioritySlug}
+                    sizes={COLLAGE_IMAGE_SIZES}
+                    className="object-contain"
+                    loading="lazy"
                   />
                 </Link>
               );
