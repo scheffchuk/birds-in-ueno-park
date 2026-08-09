@@ -182,7 +182,17 @@ const DEFAULT_ASPECT = 1.4;
 function aspectFromDims(dims: number[] | undefined): number {
   const w = dims?.[0];
   const h = dims?.[1];
-  if (typeof w === "number" && typeof h === "number" && h > 0) return w / h;
+  // Width must be positive too — w=0 yields aspect 0, and width/aspect → NaN tiles.
+  if (
+    typeof w === "number" &&
+    typeof h === "number" &&
+    Number.isFinite(w) &&
+    Number.isFinite(h) &&
+    w > 0 &&
+    h > 0
+  ) {
+    return w / h;
+  }
   return DEFAULT_ASPECT;
 }
 

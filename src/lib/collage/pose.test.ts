@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { collagePose } from "./pose";
+import { collagePose, DEFAULT_COLLAGE_ASPECT, safeAspect } from "./pose";
 import type { CollageSpecies } from "./types";
 
 function species(slug: string): CollageSpecies {
@@ -49,5 +49,17 @@ describe("collagePose", () => {
       return collagePose(bird).url === bird.flightUrl ? "flight" : "perch";
     });
     expect(new Set(urls)).toEqual(new Set(["perch", "flight"]));
+  });
+
+  it("falls back when aspect is missing or non-positive", () => {
+    expect(safeAspect(Number.NaN)).toBe(DEFAULT_COLLAGE_ASPECT);
+    expect(safeAspect(0)).toBe(DEFAULT_COLLAGE_ASPECT);
+    expect(safeAspect(-1)).toBe(DEFAULT_COLLAGE_ASPECT);
+    expect(safeAspect(Number.POSITIVE_INFINITY)).toBe(DEFAULT_COLLAGE_ASPECT);
+
+    const bird = species("passer-montanus");
+    bird.aspectPerch = 0;
+    bird.aspectFlight = Number.NaN;
+    expect(collagePose(bird).aspect).toBe(DEFAULT_COLLAGE_ASPECT);
   });
 });

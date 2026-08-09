@@ -37,6 +37,17 @@ function toPercent(
   };
 }
 
+function isFiniteRect(rect: { x: number; y: number; width: number; height: number }) {
+  return (
+    Number.isFinite(rect.x) &&
+    Number.isFinite(rect.y) &&
+    Number.isFinite(rect.width) &&
+    Number.isFinite(rect.height) &&
+    rect.width > 0 &&
+    rect.height > 0
+  );
+}
+
 function largestSlug(placed: PackedBird[]): string | null {
   let best: PackedBird | null = null;
   let bestArea = 0;
@@ -73,10 +84,16 @@ function layoutForSeason(birds: ReturnType<typeof selectForCollage>): SeasonLayo
   for (const tile of landscape) {
     const other = portraitBySlug.get(tile.slug);
     if (!other) return EMPTY_LAYOUT;
+    const portraitBox = toPercent(other, COLLAGE_CANVAS.portrait);
+    const landscapeBox = toPercent(tile, COLLAGE_CANVAS.landscape);
+    // Never ship NaN% CSS vars — the stage renders blank with no console error.
+    if (!isFiniteRect(portraitBox) || !isFiniteRect(landscapeBox)) {
+      return EMPTY_LAYOUT;
+    }
     tiles.push({
       slug: tile.slug,
-      portrait: toPercent(other, COLLAGE_CANVAS.portrait),
-      landscape: toPercent(tile, COLLAGE_CANVAS.landscape),
+      portrait: portraitBox,
+      landscape: landscapeBox,
     });
   }
 

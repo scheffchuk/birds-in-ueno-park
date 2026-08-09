@@ -102,6 +102,29 @@ describe("buildCollageLayouts", () => {
       expect(empty.seasons[season]).toEqual({ tiles: [], prioritySlug: null });
     }
   });
+
+  it("packs with a fallback aspect when pose aspects are missing", () => {
+    // Prerender once hit this: Convex returned rows before aspect* existed, and
+    // every tile shipped as NaN% — invisible birds, no error.
+    const broken = FLOCK.map((bird) => ({
+      ...bird,
+      aspectPerch: Number.NaN,
+      aspectFlight: 0,
+    }));
+    const layouts = buildCollageLayouts(broken);
+    for (const season of SEASON_FILTERS) {
+      const { tiles } = layouts.seasons[season];
+      expect(tiles.length).toBeGreaterThan(0);
+      for (const tile of tiles) {
+        for (const box of [tile.portrait, tile.landscape]) {
+          expect(Number.isFinite(box.x)).toBe(true);
+          expect(Number.isFinite(box.y)).toBe(true);
+          expect(box.width).toBeGreaterThan(0);
+          expect(box.height).toBeGreaterThan(0);
+        }
+      }
+    }
+  });
 });
 
 describe("tileSizes", () => {
