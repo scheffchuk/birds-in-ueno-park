@@ -11,7 +11,7 @@ import { packCollage } from "@/lib/collage/pack";
 import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
 import type { PackedBird, SpeciesRecord } from "@/lib/collage/types";
-import { useSeasonFilter } from "@/lib/collage/use-season-filter";
+import { useSeasonFilter } from "@/lib/collage/season-context";
 import { commonNameForLocale } from "@/lib/locale/species";
 import {
   Empty,
