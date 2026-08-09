@@ -1,18 +1,18 @@
 import { describe, expect, it } from "vitest";
 import { selectForCollage } from "./select";
-import type { SpeciesRecord, Season } from "./types";
+import type { CollageSpecies, Season } from "./types";
 
 function species(
-  overrides: Partial<SpeciesRecord> & Pick<SpeciesRecord, "slug" | "sciName">,
-): SpeciesRecord {
+  overrides: Partial<CollageSpecies> & Pick<CollageSpecies, "slug" | "sciName">,
+): CollageSpecies {
   return {
-    listed: true,
-    illustrationStatus: "approved",
     comNameEn: overrides.sciName,
     comNameJa: overrides.sciName,
     comNameZhTw: overrides.sciName,
-    perchUrl: "https://example.com/perch.png",
-    flightUrl: "https://example.com/flight.png",
+    perchUrl: `https://example.com/${overrides.slug}-perch.png`,
+    flightUrl: `https://example.com/${overrides.slug}-flight.png`,
+    aspectPerch: 1.2,
+    aspectFlight: 1.8,
     prevalence: {
       winter: 0,
       spring: 0,
@@ -24,7 +24,7 @@ function species(
 }
 
 describe("selectForCollage", () => {
-  const flock: SpeciesRecord[] = [
+  const flock: CollageSpecies[] = [
     species({
       slug: "passer-montanus",
       sciName: "Passer montanus",
@@ -38,25 +38,13 @@ describe("selectForCollage", () => {
       prevalence: { winter: 50, spring: 10, summer: 0, autumn: 20 },
     }),
     species({
-      slug: "zoo-escape",
-      sciName: "Pavo cristatus",
-      listed: false,
-      prevalence: { winter: 90, spring: 90, summer: 90, autumn: 90 },
-    }),
-    species({
-      slug: "pending-art",
-      sciName: "Parus minor",
-      illustrationStatus: "pendingReview",
-      prevalence: { winter: 40, spring: 40, summer: 40, autumn: 40 },
-    }),
-    species({
       slug: "summer-only",
       sciName: "Hirundo rustica",
       prevalence: { winter: 0, spring: 5, summer: 55, autumn: 15 },
     }),
   ];
 
-  it("includes only Listed approved species with Prevalence > 0 for the Season", () => {
+  it("carries the Season's Prevalence for each included bird", () => {
     const winter = selectForCollage(flock, "winter");
     expect(winter.map((b) => b.slug)).toEqual([
       "passer-montanus",
@@ -87,48 +75,22 @@ describe("selectForCollage", () => {
   });
 
   it("returns an empty list when nothing qualifies", () => {
-    const onlyPending = selectForCollage(
-      [
-        species({
-          slug: "x",
-          sciName: "X x",
-          illustrationStatus: "generating",
-          prevalence: { winter: 10, spring: 10, summer: 10, autumn: 10 },
-        }),
-      ],
+    const absent = selectForCollage(
+      [species({ slug: "x", sciName: "X x" })],
       "winter" satisfies Season,
     );
-    expect(onlyPending).toEqual([]);
+    expect(absent).toEqual([]);
   });
 
-  it("omits approved species that lack cutout URLs", () => {
-    const winter = selectForCollage(
-      [
-        species({
-          slug: "no-art",
-          sciName: "No Art",
-          perchUrl: undefined,
-          flightUrl: undefined,
-          prevalence: { winter: 50, spring: 50, summer: 50, autumn: 50 },
-        }),
-      ],
-      "winter",
-    );
-    expect(winter).toEqual([]);
-  });
-
-  it("omits regenerating species even when cutout URLs remain", () => {
-    const winter = selectForCollage(
-      [
-        species({
-          slug: "regen",
-          sciName: "Regen Bird",
-          illustrationStatus: "generating",
-          prevalence: { winter: 50, spring: 50, summer: 50, autumn: 50 },
-        }),
-      ],
-      "winter",
-    );
-    expect(winter).toEqual([]);
+  it("resolves one pose per bird, aspect matching the chosen URL", () => {
+    for (const bird of selectForCollage(flock, "all")) {
+      const source = flock.find((s) => s.slug === bird.slug)!;
+      const expected =
+        bird.url === source.flightUrl
+          ? source.aspectFlight
+          : source.aspectPerch;
+      expect([source.perchUrl, source.flightUrl]).toContain(bird.url);
+      expect(bird.aspect).toBe(expected);
+    }
   });
 });

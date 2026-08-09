@@ -14,10 +14,9 @@ import { loadMessages } from "@/i18n/load-messages";
 import type { AppLocale } from "@/i18n/routing";
 import { COLLAGE_IMAGE_SIZES } from "@/lib/collage/image";
 import { loadForCollage } from "@/lib/collage/load-for-collage";
-import { collagePoseUrl } from "@/lib/collage/pose";
 import { selectForCollage } from "@/lib/collage/select";
 import { currentTokyoSeason } from "@/lib/collage/season";
-import type { SpeciesRecord } from "@/lib/collage/types";
+import type { CollageSpecies } from "@/lib/collage/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Meta");
@@ -119,12 +118,12 @@ function CollageImagePreloads({ imageUrls }: { imageUrls: string[] }) {
 async function CollageSeasonImagePreloads({
   species,
 }: {
-  species: SpeciesRecord[];
+  species: CollageSpecies[];
 }) {
   await connection();
-  const imageUrls = selectForCollage(species, currentTokyoSeason())
-    .map((bird) => collagePoseUrl(bird))
-    .filter((url): url is string => url !== undefined);
+  const imageUrls = selectForCollage(species, currentTokyoSeason()).map(
+    (bird) => bird.url,
+  );
 
   return <CollageImagePreloads imageUrls={imageUrls} />;
 }

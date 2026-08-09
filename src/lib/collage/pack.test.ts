@@ -5,15 +5,17 @@ import type { CollageBird } from "./types";
 function bird(
   slug: string,
   prevalence: number,
-  sciName = slug,
+  aspect = 1.4,
 ): CollageBird {
   return {
     slug,
-    sciName,
+    sciName: slug,
     comNameEn: slug,
     comNameJa: slug,
     comNameZhTw: slug,
     prevalence,
+    url: `https://example.com/${slug}.png`,
+    aspect,
   };
 }
 
