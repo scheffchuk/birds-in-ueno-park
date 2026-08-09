@@ -41,9 +41,8 @@ export type AtlasListSpeciesRecord = {
 };
 
 /**
- * Collage row: approved art only, so both cutout URLs are resolved and each
- * pose carries its own aspect. Masks stay server-side — the collage packs by
- * bounding box, and shipping them cost ~1-2KB of base64 per species.
+ * Collage row: approved art with one cutout (perch preferred). Masks stay
+ * server-side — the collage packs by bounding box.
  */
 export type CollageSpeciesRecord = {
   slug: string;
@@ -52,10 +51,8 @@ export type CollageSpeciesRecord = {
   comNameJa: string;
   comNameZhTw: string;
   prevalence: SeasonalPrevalence;
-  perchUrl: string;
-  flightUrl: string;
-  aspectPerch: number;
-  aspectFlight: number;
+  url: string;
+  aspect: number;
 };
 
 export async function loadPrevalenceForSpecies(
@@ -182,11 +179,20 @@ const DEFAULT_ASPECT = 1.4;
 function aspectFromDims(dims: number[] | undefined): number {
   const w = dims?.[0];
   const h = dims?.[1];
-  if (typeof w === "number" && typeof h === "number" && h > 0) return w / h;
+  if (
+    typeof w === "number" &&
+    typeof h === "number" &&
+    Number.isFinite(w) &&
+    Number.isFinite(h) &&
+    w > 0 &&
+    h > 0
+  ) {
+    return w / h;
+  }
   return DEFAULT_ASPECT;
 }
 
-/** Listed species ready for the collage — approved, both cutouts resolved. */
+/** Listed species ready for the collage — approved, at least one cutout. */
 export async function loadSpeciesForCollage(
   ctx: QueryCtx,
 ): Promise<CollageSpeciesRecord[]> {
@@ -199,7 +205,8 @@ export async function loadSpeciesForCollage(
   for (const sp of listed) {
     if (sp.illustrationStatus !== "approved") continue;
     const { perchUrl, flightUrl } = await resolveIllustrationUrls(ctx, sp);
-    if (!perchUrl || !flightUrl) continue;
+    const url = perchUrl ?? flightUrl;
+    if (!url) continue;
 
     out.push({
       slug: sp.slug,
@@ -208,10 +215,8 @@ export async function loadSpeciesForCollage(
       comNameJa: sp.comNameJa,
       comNameZhTw: sp.comNameZhTw,
       prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
-      perchUrl,
-      flightUrl,
-      aspectPerch: aspectFromDims(sp.dimsPerch),
-      aspectFlight: aspectFromDims(sp.dimsFlight),
+      url,
+      aspect: aspectFromDims(perchUrl ? sp.dimsPerch : sp.dimsFlight),
     });
   }
   return out;

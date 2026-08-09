@@ -1,18 +1,4 @@
-import type { Season, SeasonFilter } from "./types";
-
-/** Current meteorological Season in Asia/Tokyo (not the visitor's local TZ). */
-export function currentTokyoSeason(nowMs: number = Date.now()): Season {
-  const month = Number(
-    new Intl.DateTimeFormat("en-US", {
-      timeZone: "Asia/Tokyo",
-      month: "numeric",
-    }).format(new Date(nowMs)),
-  );
-  if (month === 12 || month <= 2) return "winter";
-  if (month <= 5) return "spring";
-  if (month <= 8) return "summer";
-  return "autumn";
-}
+import type { SeasonFilter } from "./types";
 
 export const SEASON_FILTERS = [
   "winter",
@@ -37,12 +23,11 @@ export function readSeasonSearchParam(
   return undefined;
 }
 
-/** Atlas/collage `?season=` → Season filter; missing/invalid → Tokyo meteorological Season. */
+/** Atlas/collage `?season=` → Season filter; missing/invalid → All. */
 export function parseSeasonSearchParam(
   value: string | string[] | undefined,
-  nowMs: number = Date.now(),
 ): SeasonFilter {
-  return readSeasonSearchParam(value) ?? currentTokyoSeason(nowMs);
+  return readSeasonSearchParam(value) ?? "all";
 }
 
 type SeasonPath = "/" | "/atlas";
