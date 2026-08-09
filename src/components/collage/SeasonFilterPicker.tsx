@@ -1,7 +1,7 @@
 "use client";
 
 import { SeasonPicker } from "@/components/collage/SeasonPicker";
-import { useSeasonFilter } from "@/lib/collage/use-season-filter";
+import { useSeasonFilter } from "@/lib/collage/season-context";
 
 type SeasonFilterPickerProps = {
   className?: string;

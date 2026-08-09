@@ -4,6 +4,7 @@ import { getLocale, getMessages } from "next-intl/server";
 import { RootShell } from "@/components/site/RootShell";
 import { toHtmlLang } from "@/i18n/html-lang";
 import { routing, type AppLocale } from "@/i18n/routing";
+import { SeasonProvider } from "@/lib/collage/season-context";
 
 export const metadata: Metadata = {
   title: "Birds in Ueno",
@@ -29,7 +30,7 @@ export default async function LocaleLayout({
   return (
     <RootShell lang={toHtmlLang(locale)}>
       <NextIntlClientProvider locale={locale} messages={messages}>
-        {children}
+        <SeasonProvider>{children}</SeasonProvider>
       </NextIntlClientProvider>
     </RootShell>
   );

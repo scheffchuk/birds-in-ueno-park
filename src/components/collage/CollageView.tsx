@@ -8,7 +8,7 @@ import { packCollage } from "@/lib/collage/pack";
 import { prevalenceForFilter } from "@/lib/collage/prevalence";
 import { selectForCollage } from "@/lib/collage/select";
 import type { CollageSpecies, PackedBird } from "@/lib/collage/types";
-import { useSeasonFilter } from "@/lib/collage/use-season-filter";
+import { useSeasonFilter } from "@/lib/collage/season-context";
 import { commonNameForLocale } from "@/lib/locale/species";
 import {
   Empty,
