@@ -63,3 +63,37 @@ export type PackedBird = CollageBird & {
   width: number;
   height: number;
 };
+
+/** Tile box as a percentage of the canvas it was packed against. */
+export type TileRect = {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
+
+export type SeasonTile = {
+  slug: string;
+  portrait: TileRect;
+  landscape: TileRect;
+};
+
+export type SeasonLayout = {
+  tiles: SeasonTile[];
+  /** Largest landscape tile — the collage LCP candidate. */
+  prioritySlug: string | null;
+};
+
+/** Everything needed to draw a tile, listed once and shared across Seasons. */
+export type CollageArt = {
+  slug: string;
+  comNameEn: string;
+  comNameJa: string;
+  comNameZhTw: string;
+  url: string;
+};
+
+export type CollageLayouts = {
+  art: CollageArt[];
+  seasons: Record<SeasonFilter, SeasonLayout>;
+};

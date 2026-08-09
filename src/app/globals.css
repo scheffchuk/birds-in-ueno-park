@@ -110,15 +110,54 @@
   }
 }
 
-@keyframes collage-tile-in {
+/*
+ * Stage keeps the aspect its tiles were packed against, so percentages hold.
+ * Size from whichever axis is binding — setting both fights `aspect-ratio`
+ * and stretches every tile.
+ */
+.collage-stage {
+  position: relative;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 600 / 1000;
+}
+
+.collage-tile {
+  position: absolute;
+  left: var(--tile-x);
+  top: var(--tile-y);
+  width: var(--tile-w);
+  height: var(--tile-h);
+}
+
+@media (min-width: 768px) {
+  .collage-stage {
+    width: auto;
+    height: 100%;
+    aspect-ratio: 1000 / 540;
+  }
+
+  .collage-tile {
+    left: var(--tile-x-lg);
+    top: var(--tile-y-lg);
+    width: var(--tile-w-lg);
+    height: var(--tile-h-lg);
+  }
+}
+
+@keyframes collage-stage-in {
   from {
     opacity: 0;
-    transform: scale(0.82);
+    transform: scale(0.98);
   }
   to {
     opacity: 1;
     transform: scale(1);
   }
+}
+
+.collage-stage-enter {
+  animation: collage-stage-in 420ms cubic-bezier(0.2, 0.7, 0.3, 1) backwards;
 }
 
 @keyframes atlas-card-in {
@@ -143,7 +182,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .collage-tile-enter {
+  .collage-stage-enter {
     animation: none !important;
   }
 
