@@ -41,6 +41,16 @@ function isFiniteTile(tile: SeasonTile): boolean {
 
 const EMPTY_LAYOUT: SeasonLayout = { tiles: [] };
 
+/** Cutout row the packer can size — drops shape-skew / partial payloads. */
+function isDrawable(species: CollageSpecies): boolean {
+  return (
+    typeof species.url === "string" &&
+    species.url.length > 0 &&
+    Number.isFinite(species.aspect) &&
+    species.aspect > 0
+  );
+}
+
 function layoutForSeason(birds: ReturnType<typeof selectForCollage>): SeasonLayout {
   const placed = packCollage(
     birds,
@@ -59,11 +69,12 @@ function layoutForSeason(birds: ReturnType<typeof selectForCollage>): SeasonLayo
  * without shipping the packer. Art is listed once and referenced by Slug.
  */
 export function buildCollageLayouts(species: CollageSpecies[]): CollageLayouts {
+  const drawable = species.filter(isDrawable);
   const art = new Map<string, CollageArt>();
   const seasons = {} as CollageLayouts["seasons"];
 
   for (const season of SEASON_FILTERS) {
-    const birds = selectForCollage(species, season);
+    const birds = selectForCollage(drawable, season);
     for (const bird of birds) {
       art.set(bird.slug, {
         slug: bird.slug,

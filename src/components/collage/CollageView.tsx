@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
-import { useSeasonFilter } from "@/lib/collage/season-context";
+import { Suspense, useState } from "react";
+import { useSeasonSelection } from "@/lib/collage/season-context";
 import type { CollageArt, CollageLayouts } from "@/lib/collage/types";
 import { commonNameForLocale } from "@/lib/locale/species";
 import {
@@ -25,10 +25,21 @@ type CollageViewProps = {
   layouts: CollageLayouts;
 };
 
+function SeasonFilterPickerFallback() {
+  return (
+    <div
+      className="fixed top-4 left-4 z-30 h-8 w-52 max-w-[calc(100vw-8rem)] rounded-full bg-paper-2 shadow-(--recess) md:top-5 md:left-7"
+      aria-hidden
+    />
+  );
+}
+
 export function CollageView({ layouts }: CollageViewProps) {
   const t = useTranslations("Collage");
   const locale = useLocale() as AppLocale;
-  const { season } = useSeasonFilter();
+  // Context only — useSearchParams in the picker stays behind its own Suspense
+  // so tiles can SSR instead of bailing the whole collage to a skeleton.
+  const season = useSeasonSelection();
   const [hovered, setHovered] = useState<CollageArt | null>(null);
 
   const artBySlug = new Map(layouts.art.map((art) => [art.slug, art]));
@@ -37,7 +48,9 @@ export function CollageView({ layouts }: CollageViewProps) {
 
   return (
     <>
-      <SeasonFilterPicker className="fixed top-4 left-4 z-30 md:top-5 md:left-7" />
+      <Suspense fallback={<SeasonFilterPickerFallback />}>
+        <SeasonFilterPicker className="fixed top-4 left-4 z-30 md:top-5 md:left-7" />
+      </Suspense>
 
       <div
         className="collage-frame"

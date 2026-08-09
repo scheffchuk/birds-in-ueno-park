@@ -77,4 +77,16 @@ describe("buildCollageLayouts", () => {
       expect(empty.seasons[season]).toEqual({ tiles: [] });
     }
   });
+
+  it("skips rows without a drawable cutout instead of packing NaN tiles", () => {
+    const broken: CollageSpecies[] = FLOCK.map((bird, index) =>
+      index % 2 === 0
+        ? { ...bird, url: "", aspect: Number.NaN }
+        : bird,
+    );
+    const layouts = buildCollageLayouts(broken);
+    expect(layouts.art.length).toBeGreaterThan(0);
+    expect(layouts.art.every((art) => art.url.length > 0)).toBe(true);
+    expect(layouts.seasons.all.tiles.length).toBeGreaterThan(0);
+  });
 });

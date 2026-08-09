@@ -4,6 +4,7 @@ import {
   createContext,
   startTransition,
   useContext,
+  useLayoutEffect,
   useState,
   type ReactNode,
 } from "react";
@@ -40,6 +41,15 @@ function useSeasonPick() {
   return store;
 }
 
+/**
+ * Season for collage tiles — context only (default All).
+ * Avoids `useSearchParams`, so the tile tree can SSR inside Cache Components.
+ */
+export function useSeasonSelection(): SeasonFilter {
+  const { pick } = useSeasonPick();
+  return pick?.season ?? "all";
+}
+
 /** Active Season filter — defaults to All when `?season=` is missing. */
 export function useSeasonFilter() {
   const router = useRouter();
@@ -52,6 +62,12 @@ export function useSeasonFilter() {
     pick?.urlKey === urlKey
       ? pick.season
       : parseSeasonSearchParam(searchParams.get("season") ?? undefined);
+
+  // Publish URL season into context so useSeasonSelection tracks picker/URL.
+  useLayoutEffect(() => {
+    if (pick?.urlKey === urlKey) return;
+    setPick({ season, urlKey });
+  }, [pick?.urlKey, urlKey, season, setPick]);
 
   function setSeason(next: SeasonFilter) {
     if (next === season) return;
