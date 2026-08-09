@@ -14,16 +14,18 @@ export function currentTokyoSeason(nowMs: number = Date.now()): Season {
   return "autumn";
 }
 
-const SEASON_FILTERS: ReadonlySet<string> = new Set([
+export const SEASON_FILTERS = [
   "winter",
   "spring",
   "summer",
   "autumn",
   "all",
-]);
+] as const satisfies readonly SeasonFilter[];
+
+const SEASON_FILTER_SET: ReadonlySet<string> = new Set(SEASON_FILTERS);
 
 export function isSeasonFilter(value: string): value is SeasonFilter {
-  return SEASON_FILTERS.has(value);
+  return SEASON_FILTER_SET.has(value);
 }
 
 /** `?season=` when valid; otherwise undefined (do not invent a default). */

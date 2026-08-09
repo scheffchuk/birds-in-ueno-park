@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
-import { getImageProps } from "next/image";
 import { Suspense } from "react";
 import { cacheLife } from "next/cache";
-import { connection } from "next/server";
 import { getLocale, getTranslations } from "next-intl/server";
 import { CollageView } from "@/components/collage/CollageView";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
@@ -12,12 +10,7 @@ import { SeasonLink } from "@/components/site/SeasonLink";
 import { Link } from "@/i18n/navigation";
 import { loadMessages } from "@/i18n/load-messages";
 import type { AppLocale } from "@/i18n/routing";
-import { COLLAGE_IMAGE_SIZES } from "@/lib/collage/image";
 import { loadForCollage } from "@/lib/collage/load-for-collage";
-import { collagePoseUrl } from "@/lib/collage/pose";
-import { selectForCollage } from "@/lib/collage/select";
-import { currentTokyoSeason } from "@/lib/collage/season";
-import type { SpeciesRecord } from "@/lib/collage/types";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Meta");
@@ -91,55 +84,10 @@ function CollageShellFallback() {
   );
 }
 
-function CollageImagePreloads({ imageUrls }: { imageUrls: string[] }) {
-  return imageUrls.map((imageUrl) => {
-    const {
-      props: { src, srcSet, sizes },
-    } = getImageProps({
-      src: imageUrl,
-      alt: "",
-      width: 120,
-      height: 120,
-      sizes: COLLAGE_IMAGE_SIZES,
-    });
-    return (
-      <link
-        key={src}
-        rel="preload"
-        as="image"
-        href={src}
-        imageSrcSet={srcSet}
-        imageSizes={sizes}
-      />
-    );
-  });
-}
-
-/** Tokyo Season uses wall-clock time — keep outside the cached species fetch. */
-async function CollageSeasonImagePreloads({
-  species,
-}: {
-  species: SpeciesRecord[];
-}) {
-  await connection();
-  const imageUrls = selectForCollage(species, currentTokyoSeason())
-    .map((bird) => collagePoseUrl(bird))
-    .filter((url): url is string => url !== undefined);
-
-  return <CollageImagePreloads imageUrls={imageUrls} />;
-}
-
 async function CollageSection() {
-  const species = await loadForCollage();
+  const layouts = await loadForCollage();
 
-  return (
-    <>
-      <Suspense fallback={null}>
-        <CollageSeasonImagePreloads species={species} />
-      </Suspense>
-      <CollageView species={species} />
-    </>
-  );
+  return <CollageView layouts={layouts} />;
 }
 
 export default function HomePage() {

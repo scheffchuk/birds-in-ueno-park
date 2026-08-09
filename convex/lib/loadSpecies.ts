@@ -40,11 +40,22 @@ export type AtlasListSpeciesRecord = {
   imageUrl?: string;
 };
 
-export type CollageSpeciesRecord = ListedSpeciesRecord & {
-  dimsPerch?: number[];
-  dimsFlight?: number[];
-  maskPerch?: MaskBits;
-  maskFlight?: MaskBits;
+/**
+ * Collage row: approved art only, so both cutout URLs are resolved and each
+ * pose carries its own aspect. Masks stay server-side — the collage packs by
+ * bounding box, and shipping them cost ~1-2KB of base64 per species.
+ */
+export type CollageSpeciesRecord = {
+  slug: string;
+  sciName: string;
+  comNameEn: string;
+  comNameJa: string;
+  comNameZhTw: string;
+  prevalence: SeasonalPrevalence;
+  perchUrl: string;
+  flightUrl: string;
+  aspectPerch: number;
+  aspectFlight: number;
 };
 
 export async function loadPrevalenceForSpecies(
@@ -165,7 +176,17 @@ export async function loadAtlasListSpecies(
   return out;
 }
 
-/** Listed species with resolved cutout URLs + mask/dims for collage packing. */
+/** Fallback shape for art attached before dims were recorded. */
+const DEFAULT_ASPECT = 1.4;
+
+function aspectFromDims(dims: number[] | undefined): number {
+  const w = dims?.[0];
+  const h = dims?.[1];
+  if (typeof w === "number" && typeof h === "number" && h > 0) return w / h;
+  return DEFAULT_ASPECT;
+}
+
+/** Listed species ready for the collage — approved, both cutouts resolved. */
 export async function loadSpeciesForCollage(
   ctx: QueryCtx,
 ): Promise<CollageSpeciesRecord[]> {
@@ -176,14 +197,21 @@ export async function loadSpeciesForCollage(
 
   const out: CollageSpeciesRecord[] = [];
   for (const sp of listed) {
+    if (sp.illustrationStatus !== "approved") continue;
+    const { perchUrl, flightUrl } = await resolveIllustrationUrls(ctx, sp);
+    if (!perchUrl || !flightUrl) continue;
+
     out.push({
-      ...baseListedFields(sp),
+      slug: sp.slug,
+      sciName: sp.sciName,
+      comNameEn: sp.comNameEn,
+      comNameJa: sp.comNameJa,
+      comNameZhTw: sp.comNameZhTw,
       prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
-      ...(await resolveIllustrationUrls(ctx, sp)),
-      dimsPerch: sp.dimsPerch,
-      dimsFlight: sp.dimsFlight,
-      maskPerch: sp.maskPerch,
-      maskFlight: sp.maskFlight,
+      perchUrl,
+      flightUrl,
+      aspectPerch: aspectFromDims(sp.dimsPerch),
+      aspectFlight: aspectFromDims(sp.dimsFlight),
     });
   }
   return out;

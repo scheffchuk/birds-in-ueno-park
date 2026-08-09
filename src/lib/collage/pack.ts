@@ -1,6 +1,5 @@
 import type { CollageBird, PackedBird } from "./types";
 
-const ASPECT = 1.4;
 const COUNT_EXP = 0.55;
 const PACKING_BUDGET_FRAC = 0.55;
 const MIN_TILE_AREA_FRAC = 0.012;
@@ -8,39 +7,24 @@ const GAP = 8;
 
 type Sized = CollageBird & { width: number; height: number };
 
-function aspectRatio(bird: CollageBird): number {
-  const dims = bird.dimsPerch ?? bird.dimsFlight;
-  if (dims && dims.length >= 2) {
-    const w = dims[0];
-    const h = dims[1];
-    if (typeof w === "number" && typeof h === "number" && h > 0) {
-      return w / h;
-    }
-  }
-  return ASPECT;
-}
-
 function sizeTiles(birds: CollageBird[], viewportW: number, viewportH: number): Sized[] {
   const vpArea = viewportW * viewportH;
   const budget = vpArea * PACKING_BUDGET_FRAC;
   const minArea = vpArea * MIN_TILE_AREA_FRAC;
 
   const scored = birds.map((bird) => ({
-    ...bird,
+    bird,
     score: Math.pow(Math.max(1, bird.prevalence), COUNT_EXP),
-    ar: aspectRatio(bird),
   }));
   const sumScore = scored.reduce((a, t) => a + t.score, 0) || 1;
 
-  const tiles = scored.map((t) => {
-    const area = Math.max(minArea, (budget * t.score) / sumScore);
-    const width = Math.sqrt(area * t.ar);
-    const height = width / t.ar;
-    const { score: _score, ar: _ar, ...rest } = t;
-    return { ...rest, width, height };
+  const tiles = scored.map(({ bird, score }) => {
+    const area = Math.max(minArea, (budget * score) / sumScore);
+    const width = Math.sqrt(area * bird.aspect);
+    return { ...bird, width, height: width / bird.aspect };
   });
 
-  let sumA = tiles.reduce((a, t) => a + t.width * t.height, 0);
+  const sumA = tiles.reduce((a, t) => a + t.width * t.height, 0);
   if (sumA > budget) {
     const fixedSum = tiles
       .filter((t) => t.width * t.height <= minArea + 1e-9)

@@ -2,15 +2,18 @@ import { cacheLife, cacheTag } from "next/cache";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../convex/_generated/api";
 import { GUIDE_SPECIES_TAG } from "@/lib/atlas/cache-tags";
+import { buildCollageLayouts } from "@/lib/collage/layouts";
+import type { CollageLayouts } from "@/lib/collage/types";
 
 /**
- * Cached collage payload for Listed Guide species with approved art.
+ * Cached collage layouts for Listed Guide species with approved art.
  * Hourly TTL; busted via `guide-species` from illustration generate paths.
- * Season filtering stays client-side (`?season=` + packing).
+ * Packing rides the same cache entry, so a Season switch is a client swap.
  */
-export async function loadForCollage() {
+export async function loadForCollage(): Promise<CollageLayouts> {
   "use cache";
   cacheLife("hours");
   cacheTag(GUIDE_SPECIES_TAG);
-  return await fetchQuery(api.species.listForCollage);
+  const species = await fetchQuery(api.species.listForCollage);
+  return buildCollageLayouts(species);
 }

@@ -2,16 +2,10 @@
 
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { startTransition, useEffect, useRef, useState } from "react";
-import {
-  COLLAGE_IMAGE_SIZES,
-  largestIllustratedTileSlug,
-} from "@/lib/collage/image";
-import { packCollage } from "@/lib/collage/pack";
-import { collagePoseUrl } from "@/lib/collage/pose";
-import { selectForCollage } from "@/lib/collage/select";
-import type { PackedBird, SpeciesRecord } from "@/lib/collage/types";
+import { useState, type CSSProperties } from "react";
+import { tileSizes } from "@/lib/collage/tile-sizes";
 import { useSeasonFilter } from "@/lib/collage/season-context";
+import type { CollageArt, CollageLayouts } from "@/lib/collage/types";
 import { commonNameForLocale } from "@/lib/locale/species";
 import {
   Empty,
@@ -23,55 +17,20 @@ import {
 import { SeasonLink } from "@/components/site/SeasonLink";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
-import { cn } from "@/lib/utils";
 import { SeasonFilterPicker } from "./SeasonFilterPicker";
 
 type CollageViewProps = {
-  species: SpeciesRecord[];
+  layouts: CollageLayouts;
 };
 
-export function CollageView({ species }: CollageViewProps) {
+export function CollageView({ layouts }: CollageViewProps) {
   const t = useTranslations("Collage");
   const locale = useLocale() as AppLocale;
   const { season } = useSeasonFilter();
-  const [placed, setPlaced] = useState<PackedBird[]>([]);
-  const [layoutReady, setLayoutReady] = useState(false);
-  // First paint only — season switches should not replay staggered enter motion.
-  const [enterMotion, setEnterMotion] = useState(true);
-  const [hovered, setHovered] = useState<PackedBird | null>(null);
-  const stageRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState<CollageArt | null>(null);
 
-  useEffect(() => {
-    const el = stageRef.current;
-    if (!el) return;
-
-    const layout = () => {
-      const selected = selectForCollage(species, season);
-      const { width, height } = el.getBoundingClientRect();
-      const next = packCollage(selected, width, height);
-      // Keep prior tiles visible while packing; don't blank the stage.
-      startTransition(() => {
-        setPlaced(next);
-        setLayoutReady(true);
-      });
-    };
-
-    layout();
-    const observer = new ResizeObserver(layout);
-    observer.observe(el);
-    return () => observer.disconnect();
-  }, [species, season]);
-
-  useEffect(() => {
-    if (!enterMotion || !layoutReady || placed.length === 0) return;
-    // Clear after the staggered enter finishes so later Season switches stay snappy.
-    const id = window.setTimeout(() => setEnterMotion(false), 900);
-    return () => window.clearTimeout(id);
-  }, [enterMotion, layoutReady, placed.length]);
-
-  const birds = selectForCollage(species, season);
-  const showEmpty = birds.length === 0 || (layoutReady && placed.length === 0);
-  const prioritySlug = largestIllustratedTileSlug(placed);
+  const artBySlug = new Map(layouts.art.map((art) => [art.slug, art]));
+  const { tiles, prioritySlug } = layouts.seasons[season];
   const hoverName = hovered ? commonNameForLocale(hovered, locale) : null;
 
   return (
@@ -79,12 +38,10 @@ export function CollageView({ species }: CollageViewProps) {
       <SeasonFilterPicker className="fixed top-4 left-4 z-30 md:top-5 md:left-7" />
 
       <div
-        ref={stageRef}
-        className="absolute inset-0 overflow-hidden"
-        aria-label={t("ariaLabel")}
+        className="absolute inset-0 flex items-center justify-center overflow-hidden"
         onMouseLeave={() => setHovered(null)}
       >
-        {showEmpty ? (
+        {tiles.length === 0 ? (
           <Empty className="absolute inset-0 border-0">
             <EmptyHeader>
               <EmptyTitle className="font-heading text-xl">
@@ -102,54 +59,47 @@ export function CollageView({ species }: CollageViewProps) {
             </EmptyContent>
           </Empty>
         ) : (
-          placed.map((tile, index) => {
-            const src = collagePoseUrl(tile);
-            const isPriority = tile.slug === prioritySlug;
-            const delay = isPriority ? 0 : Math.min(index * 28, 420);
-            const name = commonNameForLocale(tile, locale);
-            const animate = enterMotion && !isPriority;
-            return (
-              <Link
-                key={tile.slug}
-                href={`/atlas/${tile.slug}`}
-                className={cn(
-                  "absolute transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]",
-                  animate && "collage-tile-enter",
-                )}
-                style={{
-                  left: tile.x,
-                  top: tile.y,
-                  width: tile.width,
-                  height: tile.height,
-                  ...(animate
-                    ? {
-                        animation: `collage-tile-in 420ms cubic-bezier(.2,.7,.3,1) ${delay}ms backwards`,
-                      }
-                    : {}),
-                }}
-                onMouseEnter={() => setHovered(tile)}
-                onFocus={() => setHovered(tile)}
-              >
-                {src ? (
+          <div
+            className="collage-stage collage-stage-enter"
+            aria-label={t("ariaLabel")}
+          >
+            {tiles.map((tile) => {
+              const art = artBySlug.get(tile.slug);
+              if (!art) return null;
+              const name = commonNameForLocale(art, locale);
+              return (
+                <Link
+                  key={tile.slug}
+                  href={`/atlas/${tile.slug}`}
+                  className="collage-tile transition-transform duration-200 ease-out hover:z-10 hover:scale-[1.04]"
+                  style={
+                    {
+                      "--tile-x": `${tile.portrait.x}%`,
+                      "--tile-y": `${tile.portrait.y}%`,
+                      "--tile-w": `${tile.portrait.width}%`,
+                      "--tile-h": `${tile.portrait.height}%`,
+                      "--tile-x-lg": `${tile.landscape.x}%`,
+                      "--tile-y-lg": `${tile.landscape.y}%`,
+                      "--tile-w-lg": `${tile.landscape.width}%`,
+                      "--tile-h-lg": `${tile.landscape.height}%`,
+                    } as CSSProperties
+                  }
+                  onMouseEnter={() => setHovered(art)}
+                  onFocus={() => setHovered(art)}
+                >
                   <Image
-                    src={src}
+                    src={art.url}
                     alt={name}
                     fill
-                    sizes={COLLAGE_IMAGE_SIZES}
+                    sizes={tileSizes(tile.portrait.width, tile.landscape.width)}
                     className="object-contain drop-shadow-[0_2px_8px_rgba(26,22,18,0.12)] transition-[filter] duration-200 hover:drop-shadow-[0_3px_10px_rgba(26,22,18,0.26)]"
                     loading="eager"
-                    priority={isPriority}
-                    fetchPriority={isPriority ? "high" : "auto"}
+                    priority={tile.slug === prioritySlug}
                   />
-                ) : (
-                  <PlaceholderSilhouette
-                    label={name}
-                    prevalence={tile.prevalence}
-                  />
-                )}
-              </Link>
-            );
-          })
+                </Link>
+              );
+            })}
+          </div>
         )}
 
         <div
@@ -163,27 +113,5 @@ export function CollageView({ species }: CollageViewProps) {
         </div>
       </div>
     </>
-  );
-}
-
-function PlaceholderSilhouette({
-  label,
-  prevalence,
-}: {
-  label: string;
-  prevalence: number;
-}) {
-  const opacity = 0.35 + (prevalence / 100) * 0.45;
-  return (
-    <div
-      className="flex h-full w-full items-end justify-center rounded-[40%_40%_35%_35%] bg-silhouette"
-      style={{ opacity }}
-      role="img"
-      aria-label={label}
-    >
-      <span className="mb-2 max-w-[90%] truncate px-1 text-center text-[10px] text-primary-foreground md:text-xs">
-        {label}
-      </span>
-    </div>
   );
 }

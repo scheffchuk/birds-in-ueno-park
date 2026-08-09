@@ -22,12 +22,6 @@ const prevalenceValidator = v.object({
   autumn: v.number(),
 });
 
-const maskValidator = v.object({
-  w: v.number(),
-  h: v.number(),
-  bits: v.string(),
-});
-
 const guideSpeciesValidator = v.object({
   sciName: v.string(),
   comNameEn: v.string(),
@@ -79,27 +73,11 @@ const collageSpeciesValidator = v.object({
   comNameEn: v.string(),
   comNameJa: v.string(),
   comNameZhTw: v.string(),
-  listed: v.boolean(),
-  illustrationStatus: v.union(
-    v.literal("queued"),
-    v.literal("generating"),
-    v.literal("pendingReview"),
-    v.literal("approved"),
-    v.literal("failed"),
-  ),
   prevalence: prevalenceValidator,
-  descriptionEn: v.optional(v.string()),
-  descriptionJa: v.optional(v.string()),
-  descriptionZhTw: v.optional(v.string()),
-  spottingTipsEn: v.optional(v.string()),
-  spottingTipsJa: v.optional(v.string()),
-  spottingTipsZhTw: v.optional(v.string()),
-  perchUrl: v.optional(v.string()),
-  flightUrl: v.optional(v.string()),
-  dimsPerch: v.optional(v.array(v.number())),
-  dimsFlight: v.optional(v.array(v.number())),
-  maskPerch: v.optional(maskValidator),
-  maskFlight: v.optional(maskValidator),
+  perchUrl: v.string(),
+  flightUrl: v.string(),
+  aspectPerch: v.number(),
+  aspectFlight: v.number(),
 });
 
 const speciesCopyValidator = v.object({
@@ -112,18 +90,12 @@ const speciesCopyValidator = v.object({
   spottingTipsZhTw: v.string(),
 });
 
-/** Listed Guide species with cutout URLs + mask/dims for the collage. */
+/** Listed Guide species with approved cutouts, sized for the collage. */
 export const listForCollage = query({
   args: {},
   returns: v.array(collageSpeciesValidator),
   handler: async (ctx) => {
-    const all = await loadSpeciesForCollage(ctx);
-    return all.filter(
-      (sp) =>
-        sp.illustrationStatus === "approved" &&
-        Boolean(sp.perchUrl) &&
-        Boolean(sp.flightUrl),
-    );
+    return await loadSpeciesForCollage(ctx);
   },
 });
 
