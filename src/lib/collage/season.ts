@@ -30,23 +30,13 @@ export function parseSeasonSearchParam(
   return readSeasonSearchParam(value) ?? "all";
 }
 
-type SeasonPath = "/" | "/atlas";
+/** Paths that may carry a Season filter query. */
+export type SeasonHrefPath = "/" | "/atlas" | `/atlas/${string}`;
 
 /** Pathname, or pathname + `?season=` when a filter is present. */
 export function hrefWithSeason(
-  pathname: SeasonPath,
+  pathname: SeasonHrefPath,
   season: SeasonFilter | undefined,
-): SeasonPath | { pathname: SeasonPath; query: { season: SeasonFilter } } {
+): SeasonHrefPath | { pathname: SeasonHrefPath; query: { season: SeasonFilter } } {
   return season ? { pathname, query: { season } } : pathname;
-}
-
-/** Update `?season=` via history.replaceState — no App Router navigation / RSC flight. */
-export function replaceSeasonSearchParam(next: SeasonFilter) {
-  const url = new URL(window.location.href);
-  url.searchParams.set("season", next);
-  window.history.replaceState(
-    window.history.state,
-    "",
-    `${url.pathname}${url.search}${url.hash}`,
-  );
 }

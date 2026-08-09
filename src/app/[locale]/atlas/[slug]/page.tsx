@@ -5,9 +5,9 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { loadListedSpecies } from "@/lib/atlas/load-listed-species";
 import { longFormForLocale, nameStackForLocale } from "@/lib/locale/species";
 import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
-import { BackLink } from "@/components/site/BackLink";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
+import { SeasonLink } from "@/components/site/SeasonLink";
 import type { AppLocale } from "@/i18n/routing";
 
 type PageProps = {
@@ -36,9 +36,9 @@ async function AtlasSpeciesChrome() {
   const tNav = await getTranslations("Nav");
 
   return (
-    <BackLink
-      href="/atlas"
-      label={tNav("backToAtlas")}
+    <SeasonLink
+      pathname="/atlas"
+      backLabel={tNav("backToAtlas")}
       className="self-start"
     />
   );

@@ -1,9 +1,8 @@
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { describe, expect, it } from "vitest";
 import {
   hrefWithSeason,
   parseSeasonSearchParam,
   readSeasonSearchParam,
-  replaceSeasonSearchParam,
 } from "./season";
 
 describe("readSeasonSearchParam", () => {
@@ -50,6 +49,7 @@ describe("hrefWithSeason", () => {
   it("returns the pathname alone when season is absent", () => {
     expect(hrefWithSeason("/atlas", undefined)).toBe("/atlas");
     expect(hrefWithSeason("/", undefined)).toBe("/");
+    expect(hrefWithSeason("/atlas/mallard", undefined)).toBe("/atlas/mallard");
   });
 
   it("attaches ?season= when present", () => {
@@ -57,50 +57,9 @@ describe("hrefWithSeason", () => {
       pathname: "/atlas",
       query: { season: "winter" },
     });
-  });
-});
-
-describe("replaceSeasonSearchParam", () => {
-  afterEach(() => {
-    vi.unstubAllGlobals();
-  });
-
-  it("writes ?season= via history.replaceState without navigation", () => {
-    const replaceState = vi.fn();
-    vi.stubGlobal("window", {
-      location: {
-        href: "http://localhost:3000/ja?utm=1",
-      },
-      history: {
-        state: { idx: 0 },
-        replaceState,
-      },
+    expect(hrefWithSeason("/atlas/mallard", "summer")).toEqual({
+      pathname: "/atlas/mallard",
+      query: { season: "summer" },
     });
-
-    replaceSeasonSearchParam("winter");
-
-    expect(replaceState).toHaveBeenCalledOnce();
-    expect(replaceState).toHaveBeenCalledWith(
-      { idx: 0 },
-      "",
-      "/ja?utm=1&season=winter",
-    );
-  });
-
-  it("replaces an existing season param", () => {
-    const replaceState = vi.fn();
-    vi.stubGlobal("window", {
-      location: {
-        href: "http://localhost:3000/en?season=summer",
-      },
-      history: {
-        state: null,
-        replaceState,
-      },
-    });
-
-    replaceSeasonSearchParam("autumn");
-
-    expect(replaceState).toHaveBeenCalledWith(null, "", "/en?season=autumn");
   });
 });
