@@ -3,6 +3,7 @@ import { Suspense } from "react";
 import { cacheLife } from "next/cache";
 import { getLocale, getTranslations } from "next-intl/server";
 import { CollageView } from "@/components/collage/CollageView";
+import { LocaleChromeBar } from "@/components/site/LocaleChromeBar";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
@@ -34,15 +35,20 @@ async function HomeChrome() {
 
   return (
     <>
-      <nav className="fixed top-4 right-4 z-30 flex items-center gap-2 md:top-5 md:right-7">
-        <SeasonLink
-          pathname="/atlas"
-          className="inline-flex h-8 items-center rounded-full bg-background px-3.5 font-mono text-[10px] leading-none tracking-[0.18em] text-ink uppercase shadow-(--raised)"
-        >
-          {copy.atlas}
-        </SeasonLink>
-        <LocaleSwitcher />
-      </nav>
+      <LocaleChromeBar
+        className="fixed top-4 right-4 z-30 md:top-5 md:right-7"
+        trailing={
+          <>
+            <SeasonLink
+              pathname="/atlas"
+              className="inline-flex h-8 items-center rounded-full bg-background px-3.5 font-mono text-[10px] leading-none tracking-[0.18em] text-ink uppercase shadow-(--raised)"
+            >
+              {copy.atlas}
+            </SeasonLink>
+            <LocaleSwitcher />
+          </>
+        }
+      />
 
       <header className="flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
         <h1 className="font-heading text-[clamp(22px,2.8vw,34px)] leading-none tracking-tight text-ink">
@@ -61,13 +67,13 @@ async function HomeChrome() {
 function HomeChromeFallback() {
   return (
     <>
-      <nav
-        className="fixed top-4 right-4 z-30 flex h-8 items-center gap-2 md:top-5 md:right-7"
+      <div
+        className="fixed top-4 right-4 z-30 flex items-center gap-2 md:top-5 md:right-7"
         aria-hidden
       >
         <div className="h-8 w-20 rounded-full bg-background shadow-(--raised)" />
         <div className="size-8 rounded-lg bg-paper-2 shadow-(--recess)" />
-      </nav>
+      </div>
       <header className="flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
         <div className="h-9 w-56" aria-hidden />
       </header>
