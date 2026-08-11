@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { rootFontClassName } from "@/components/site/root-fonts";
 import "@/app/globals.css";
 
@@ -15,7 +16,10 @@ export function RootShell({ lang, children }: RootShellProps) {
       suppressHydrationWarning
       className={rootFontClassName()}
     >
-      <body className="flex min-h-full flex-col antialiased">{children}</body>
+      <body className="flex min-h-full flex-col antialiased">
+        {children}
+        <SpeedInsights />
+      </body>
     </html>
   );
 }
