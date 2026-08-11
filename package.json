@@ -14,7 +14,6 @@
     "seed:style-refs": "tsx --env-file=.env.local scripts/seed-style-refs.ts"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "^4.0.23",
     "@ai-sdk/xai": "^4.0.16",
     "@auth/core": "0.41.1",
     "@base-ui/react": "^1.6.0",
