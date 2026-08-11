@@ -60,6 +60,7 @@ async function HomeChrome() {
           </Link>
         </h1>
       </header>
+      <div className="h-28 shrink-0 md:h-32" aria-hidden />
     </>
   );
 }
@@ -77,6 +78,7 @@ function HomeChromeFallback() {
       <header className="fixed inset-x-0 top-0 z-20 flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
         <div className="h-9 w-56" aria-hidden />
       </header>
+      <div className="h-28 shrink-0 md:h-32" aria-hidden />
     </>
   );
 }
