@@ -1,4 +1,4 @@
-import { GUIDE_SPECIES_TAG, speciesCacheTag } from "@/lib/atlas/cache-tags";
+import { GUIDE_SPECIES_TAG, speciesCacheTag } from "@/lib/guide/cache-tags";
 import { mapPool } from "./map-pool";
 
 export const GEMINI_ILLUSTRATION_MODEL = "google/gemini-2.5-flash-image";

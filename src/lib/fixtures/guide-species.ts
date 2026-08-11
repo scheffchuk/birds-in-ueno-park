@@ -1,4 +1,4 @@
-import type { SpeciesRecord } from "@/lib/collage/types";
+import type { SpeciesRecord } from "@/lib/guide/types";
 
 /** Guide species seeded from merged eBird histograms (Ueno + Shinobazu). */
 export const FIXTURE_SPECIES: SpeciesRecord[] = [
