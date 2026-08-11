@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { hrefWithSeason } from "@/lib/collage/season";
 import {
   useSeasonFilter,
@@ -75,13 +75,19 @@ export function CollageView({ layouts }: CollageViewProps) {
                 <Link
                   key={tile.slug}
                   href={hrefWithSeason(`/atlas/${tile.slug}`, seasonQuery)}
-                  className="absolute hover:z-10"
-                  style={{
-                    left: `${tile.x}%`,
-                    top: `${tile.y}%`,
-                    width: `${tile.width}%`,
-                    height: `${tile.height}%`,
-                  }}
+                  className="collage-tile hover:z-10"
+                  style={
+                    {
+                      "--tile-x": `${tile.portrait.x}%`,
+                      "--tile-y": `${tile.portrait.y}%`,
+                      "--tile-w": `${tile.portrait.width}%`,
+                      "--tile-h": `${tile.portrait.height}%`,
+                      "--tile-x-lg": `${tile.landscape.x}%`,
+                      "--tile-y-lg": `${tile.landscape.y}%`,
+                      "--tile-w-lg": `${tile.landscape.width}%`,
+                      "--tile-h-lg": `${tile.landscape.height}%`,
+                    } as CSSProperties
+                  }
                   onMouseEnter={() => setHovered(art)}
                   onFocus={() => setHovered(art)}
                 >

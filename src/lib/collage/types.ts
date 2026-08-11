@@ -61,13 +61,18 @@ export type PackedBird = CollageBird & {
   height: number;
 };
 
-/** Tile box as a percentage of the collage canvas. */
-export type SeasonTile = {
-  slug: string;
+/** Tile box as a percentage of the canvas it was packed against. */
+export type TileRect = {
   x: number;
   y: number;
   width: number;
   height: number;
+};
+
+export type SeasonTile = {
+  slug: string;
+  portrait: TileRect;
+  landscape: TileRect;
 };
 
 export type SeasonLayout = {

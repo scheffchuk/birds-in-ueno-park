@@ -265,7 +265,7 @@ Port core logic from [`apt.js`](temp/avian/frontend/apt.js) to TypeScript React:
 - Prevalence value maps directly to tile `score` (replaces detection count `n`)
 - Only `approved` illustrations render on the collage; species without approved art are omitted from packing (atlas still lists them)
 - Empty packing set → quiet empty state (EN+JA) with link to Atlas — no auto-fallback to All-year, no placeholders
-- Preserve: perched/flight pose randomization, hover tooltips (EN / JA / ZH-TW + scientific), resize reflow
+- Preserve: perched/flight pose randomization, hover tooltips (EN / JA / ZH-TW + scientific); dual fixed packs (portrait 600×1000 / landscape 1000×540) switched at 768px — not live resize reflow
 - Illustrations rendered from Convex storage URLs via `next/image`
 
 **`components/collage/SeasonPicker.tsx`**
