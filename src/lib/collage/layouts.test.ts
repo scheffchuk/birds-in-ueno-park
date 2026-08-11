@@ -93,3 +93,85 @@ describe("buildCollageLayouts", () => {
     }
   });
 });
+
+function species(
+  overrides: Partial<CollageSpecies> & Pick<CollageSpecies, "slug" | "sciName">,
+): CollageSpecies {
+  return {
+    comNameEn: overrides.sciName,
+    comNameJa: overrides.sciName,
+    comNameZhTw: overrides.sciName,
+    url: `https://example.com/${overrides.slug}.png`,
+    aspect: 1.2,
+    prevalence: {
+      winter: 0,
+      spring: 0,
+      summer: 0,
+      autumn: 0,
+    },
+    ...overrides,
+  };
+}
+
+describe("buildCollageLayouts Season membership", () => {
+  const flock: CollageSpecies[] = [
+    species({
+      slug: "passer-montanus",
+      sciName: "Passer montanus",
+      comNameEn: "Eurasian Tree Sparrow",
+      prevalence: { winter: 80, spring: 70, summer: 60, autumn: 75 },
+    }),
+    species({
+      slug: "anas-platyrhynchos",
+      sciName: "Anas platyrhynchos",
+      comNameEn: "Mallard",
+      prevalence: { winter: 50, spring: 10, summer: 0, autumn: 20 },
+    }),
+    species({
+      slug: "summer-only",
+      sciName: "Hirundo rustica",
+      prevalence: { winter: 0, spring: 5, summer: 55, autumn: 15 },
+    }),
+  ];
+
+  it("includes only species with Prevalence > 0 in the Season", () => {
+    const layouts = buildCollageLayouts(flock);
+    expect(layouts.seasons.winter.tiles.map((t) => t.slug).sort()).toEqual([
+      "anas-platyrhynchos",
+      "passer-montanus",
+    ]);
+    expect(layouts.seasons.summer.tiles.map((t) => t.slug).sort()).toEqual([
+      "passer-montanus",
+      "summer-only",
+    ]);
+  });
+
+  it("includes every species with seasonal-max > 0 for All-year", () => {
+    const layouts = buildCollageLayouts(flock);
+    expect(layouts.seasons.all.tiles.map((t) => t.slug).sort()).toEqual([
+      "anas-platyrhynchos",
+      "passer-montanus",
+      "summer-only",
+    ]);
+  });
+
+  it("lists art only for species that appear in some Season", () => {
+    const layouts = buildCollageLayouts(flock);
+    expect(layouts.art.map((a) => a.slug).sort()).toEqual([
+      "anas-platyrhynchos",
+      "passer-montanus",
+      "summer-only",
+    ]);
+    expect(layouts.art.find((a) => a.slug === "passer-montanus")?.url).toBe(
+      "https://example.com/passer-montanus.png",
+    );
+  });
+
+  it("returns empty seasons when nothing qualifies", () => {
+    const layouts = buildCollageLayouts([
+      species({ slug: "x", sciName: "X x" }),
+    ]);
+    expect(layouts.art).toEqual([]);
+    expect(layouts.seasons.winter).toEqual({ tiles: [] });
+  });
+});

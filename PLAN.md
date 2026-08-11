@@ -258,7 +258,7 @@ Budget: ~65 × 2 ≈ **130 images**; validate on a 20-species slice first.
 
 Port core logic from [`apt.js`](temp/avian/frontend/apt.js) to TypeScript React:
 
-**`components/collage/CollageView.tsx`**
+**`src/app/[locale]/CollageView.tsx`**
 
 - Fetch via `useQuery(api.species.listForCollage, { season })` — returns mask bits + dims per species alongside Prevalence (one round trip; no static masks.json)
 - Port `renderCollage()` bitmask packing as a **pure TS module** (unit-testable, no DOM)
@@ -268,7 +268,7 @@ Port core logic from [`apt.js`](temp/avian/frontend/apt.js) to TypeScript React:
 - Preserve: perched/flight pose randomization, hover tooltips (EN / JA / ZH-TW + scientific); dual fixed packs (portrait 600×1000 / landscape 1000×540) switched at 768px — not live resize reflow
 - Illustrations rendered from Convex storage URLs via `next/image`
 
-**`components/collage/SeasonPicker.tsx`**
+**`src/components/season/SeasonPicker.tsx`**
 
 - Replaces 1H/12H/24H/7D/ALL header
 - Tabs: 冬 Winter / 春 Spring / 夏 Summer / 秋 Autumn / All year

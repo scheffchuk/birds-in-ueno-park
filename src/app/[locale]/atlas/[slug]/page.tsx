@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { loadListedSpecies } from "@/lib/guide/load-listed-species";
 import { longFormForLocale, nameStackForLocale } from "@/lib/locale/species";
-import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
+import { AtlasDetailView } from "./AtlasDetailView";
 import { LocaleChromeBar, LocaleChromeBarFallback } from "@/components/site/LocaleChromeBar";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
@@ -21,9 +21,12 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const locale = (await getLocale()) as AppLocale;
-  const t = await getTranslations("AtlasDetail");
-  const species = await loadListedSpecies(slug);
+  const [localeRaw, t, species] = await Promise.all([
+    getLocale(),
+    getTranslations("AtlasDetail"),
+    loadListedSpecies(slug),
+  ]);
+  const locale = localeRaw as AppLocale;
   if (!species) {
     return { title: t("notFound") };
   }
@@ -63,11 +66,18 @@ async function AtlasSpeciesChrome() {
 
 async function AtlasSpeciesBody({ params }: PageProps) {
   const { slug } = await params;
-  const locale = (await getLocale()) as AppLocale;
-  const species = await loadListedSpecies(slug);
+  const [localeRaw, species] = await Promise.all([
+    getLocale(),
+    loadListedSpecies(slug),
+  ]);
   if (!species) notFound();
 
-  return <AtlasDetailView species={species} locale={locale} />;
+  return (
+    <AtlasDetailView
+      species={species}
+      locale={localeRaw as AppLocale}
+    />
+  );
 }
 
 export default function AtlasSpeciesPage({ params }: PageProps) {
