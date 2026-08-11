@@ -7,7 +7,7 @@ import { longFormForLocale, nameStackForLocale } from "@/lib/locale/species";
 import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
-import { SeasonLink } from "@/components/site/SeasonLink";
+import { SeasonLink } from "@/components/season/SeasonLink";
 import type { AppLocale } from "@/i18n/routing";
 
 type PageProps = {

@@ -6,7 +6,7 @@ import { CollageView } from "@/components/collage/CollageView";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
-import { SeasonLink } from "@/components/site/SeasonLink";
+import { SeasonLink } from "@/components/season/SeasonLink";
 import { Link } from "@/i18n/navigation";
 import { loadMessages } from "@/i18n/load-messages";
 import type { AppLocale } from "@/i18n/routing";

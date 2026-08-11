@@ -4,18 +4,19 @@ import { startTransition } from "react";
 import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import {
-  parseSeasonSearchParam,
   readSeasonSearchParam,
-} from "@/lib/collage/season";
-import type { SeasonFilter } from "@/lib/collage/types";
+  resolveSeasonFilter,
+} from "@/lib/season/url";
+import type { SeasonFilter } from "@/lib/season/types";
 
-/** Active Season filter — defaults to All when `?season=` is missing. */
+/** Effective Season filter — missing/invalid `?season=` → current Season in Tokyo. */
 export function useSeasonFilter() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
-  const season = parseSeasonSearchParam(
+  const season = resolveSeasonFilter(
     searchParams.get("season") ?? undefined,
+    Date.now(),
   );
 
   function setSeason(next: SeasonFilter) {

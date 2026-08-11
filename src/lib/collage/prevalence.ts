@@ -1,4 +1,5 @@
-import type { SeasonFilter, SeasonalPrevalence } from "./types";
+import type { SeasonFilter } from "@/lib/season/types";
+import type { SeasonalPrevalence } from "./types";
 
 export function prevalenceForFilter(
   record: { prevalence: SeasonalPrevalence },

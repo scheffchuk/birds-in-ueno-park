@@ -1,3 +1,4 @@
+import { seasonAt } from "./calendar";
 import type { SeasonFilter } from "./types";
 
 export const SEASON_FILTERS = [
@@ -23,17 +24,21 @@ export function readSeasonSearchParam(
   return undefined;
 }
 
-/** Atlas/collage `?season=` → Season filter; missing/invalid → All. */
-export function parseSeasonSearchParam(
+/**
+ * Effective Season filter for collage/atlas.
+ * Explicit values win; missing/invalid → current Season for `instant` (pass Tokyo wall clock from the client).
+ */
+export function resolveSeasonFilter(
   value: string | string[] | undefined,
+  instant: Date | number,
 ): SeasonFilter {
-  return readSeasonSearchParam(value) ?? "all";
+  return readSeasonSearchParam(value) ?? seasonAt(instant);
 }
 
 /** Paths that may carry a Season filter query. */
 export type SeasonHrefPath = "/" | "/atlas" | `/atlas/${string}`;
 
-/** Pathname, or pathname + `?season=` when a filter is present. */
+/** Pathname, or pathname + `?season=` when a filter is present (including all). */
 export function hrefWithSeason(
   pathname: SeasonHrefPath,
   season: SeasonFilter | undefined,

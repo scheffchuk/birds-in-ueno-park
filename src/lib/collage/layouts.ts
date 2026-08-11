@@ -1,5 +1,5 @@
 import { packCollage } from "./pack";
-import { SEASON_FILTERS } from "./season";
+import { SEASON_FILTERS } from "@/lib/season/url";
 import { selectForCollage } from "./select";
 import type {
   CollageArt,
@@ -8,49 +8,81 @@ import type {
   PackedBird,
   SeasonLayout,
   SeasonTile,
+  TileRect,
 } from "./types";
 
-/** Single pack canvas — stage CSS keeps this aspect and contains it in the slot. */
-export const COLLAGE_CANVAS = { width: 1000, height: 540 } as const;
+/**
+ * Stage shapes the collage packs against. Percentages only hold when the stage
+ * keeps each canvas aspect; CSS picks between portrait and landscape boxes.
+ */
+export const COLLAGE_CANVAS = {
+  portrait: { width: 600, height: 1000 },
+  landscape: { width: 1000, height: 540 },
+} as const;
 
-/** Tenths of a percent is sub-pixel on the canvas; the packer leaves 8px of gap. */
+/** Tenths of a percent is sub-pixel on either canvas; the packer leaves 8px of gap. */
 function round(value: number): number {
   return Math.round(value * 10) / 10;
 }
 
-function toPercent(tile: PackedBird): SeasonTile {
+function toPercent(
+  tile: PackedBird,
+  canvas: { width: number; height: number },
+): TileRect {
   return {
-    slug: tile.slug,
-    x: round((tile.x / COLLAGE_CANVAS.width) * 100),
-    y: round((tile.y / COLLAGE_CANVAS.height) * 100),
-    width: round((tile.width / COLLAGE_CANVAS.width) * 100),
-    height: round((tile.height / COLLAGE_CANVAS.height) * 100),
+    x: round((tile.x / canvas.width) * 100),
+    y: round((tile.y / canvas.height) * 100),
+    width: round((tile.width / canvas.width) * 100),
+    height: round((tile.height / canvas.height) * 100),
   };
 }
 
-function isFiniteTile(tile: SeasonTile): boolean {
+function isFiniteRect(rect: TileRect): boolean {
   return (
-    Number.isFinite(tile.x) &&
-    Number.isFinite(tile.y) &&
-    Number.isFinite(tile.width) &&
-    Number.isFinite(tile.height) &&
-    tile.width > 0 &&
-    tile.height > 0
+    Number.isFinite(rect.x) &&
+    Number.isFinite(rect.y) &&
+    Number.isFinite(rect.width) &&
+    Number.isFinite(rect.height) &&
+    rect.width > 0 &&
+    rect.height > 0
   );
 }
 
 const EMPTY_LAYOUT: SeasonLayout = { tiles: [] };
 
 function layoutForSeason(birds: ReturnType<typeof selectForCollage>): SeasonLayout {
-  const placed = packCollage(
+  const portrait = packCollage(
     birds,
-    COLLAGE_CANVAS.width,
-    COLLAGE_CANVAS.height,
+    COLLAGE_CANVAS.portrait.width,
+    COLLAGE_CANVAS.portrait.height,
   );
-  if (placed.length === 0) return EMPTY_LAYOUT;
+  const landscape = packCollage(
+    birds,
+    COLLAGE_CANVAS.landscape.width,
+    COLLAGE_CANVAS.landscape.height,
+  );
+  // Both canvases must agree on the flock, or a tile would have no box on one.
+  if (portrait.length === 0 || portrait.length !== landscape.length) {
+    return EMPTY_LAYOUT;
+  }
 
-  const tiles = placed.map(toPercent);
-  if (tiles.some((tile) => !isFiniteTile(tile))) return EMPTY_LAYOUT;
+  const portraitBySlug = new Map(portrait.map((tile) => [tile.slug, tile]));
+  const tiles: SeasonTile[] = [];
+  for (const tile of landscape) {
+    const other = portraitBySlug.get(tile.slug);
+    if (!other) return EMPTY_LAYOUT;
+    const portraitRect = toPercent(other, COLLAGE_CANVAS.portrait);
+    const landscapeRect = toPercent(tile, COLLAGE_CANVAS.landscape);
+    if (!isFiniteRect(portraitRect) || !isFiniteRect(landscapeRect)) {
+      return EMPTY_LAYOUT;
+    }
+    tiles.push({
+      slug: tile.slug,
+      portrait: portraitRect,
+      landscape: landscapeRect,
+    });
+  }
+
   return { tiles };
 }
 

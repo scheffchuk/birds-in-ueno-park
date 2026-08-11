@@ -111,8 +111,10 @@
 }
 
 /*
- * Frame is a size container so the stage can fit width-or-height without a
- * second packed layout. Stage aspect matches COLLAGE_CANVAS (1000×540).
+ * Stage keeps the aspect its tiles were packed against, so percentages hold.
+ * Size from whichever axis is binding — setting both fights `aspect-ratio`
+ * and stretches every tile. CSS custom properties pick portrait vs landscape
+ * boxes at the 768px breakpoint.
  */
 .collage-frame {
   position: absolute;
@@ -121,13 +123,36 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  container-type: size;
 }
 
 .collage-stage {
   position: relative;
-  aspect-ratio: 1000 / 540;
-  width: min(100cqw, calc(100cqh * 1000 / 540));
+  width: 100%;
+  height: auto;
+  aspect-ratio: 600 / 1000;
+}
+
+.collage-tile {
+  position: absolute;
+  left: var(--tile-x);
+  top: var(--tile-y);
+  width: var(--tile-w);
+  height: var(--tile-h);
+}
+
+@media (min-width: 768px) {
+  .collage-stage {
+    width: auto;
+    height: 100%;
+    aspect-ratio: 1000 / 540;
+  }
+
+  .collage-tile {
+    left: var(--tile-x-lg);
+    top: var(--tile-y-lg);
+    width: var(--tile-w-lg);
+    height: var(--tile-h-lg);
+  }
 }
 
 @keyframes atlas-card-in {

@@ -4,8 +4,8 @@ import type { ComponentProps, ReactNode } from "react";
 import { ArrowLeftIcon } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
-import { hrefWithSeason, type SeasonHrefPath } from "@/lib/collage/season";
-import { useSeasonQuery } from "@/lib/collage/use-season-filter";
+import { hrefWithSeason, type SeasonHrefPath } from "@/lib/season/url";
+import { useSeasonQuery } from "@/lib/season/use-season-filter";
 import { cn } from "@/lib/utils";
 
 type SeasonLinkProps = {

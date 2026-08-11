@@ -9,8 +9,12 @@ How frequently a species is encountered in Ueno Park during a given season, as a
 _Avoid_: commonness, commonness score, likelihood, abundance
 
 **Season**:
-One of the four collage filter windows, on meteorological boundaries: Winter (Dec–Feb), Spring (Mar–May), Summer (Jun–Aug), Autumn (Sep–Nov). The unit of granularity for Prevalence.
-_Avoid_: time window, period
+One of the four meteorological windows used for Prevalence: Winter (Dec–Feb), Spring (Mar–May), Summer (Jun–Aug), Autumn (Sep–Nov). Not a filter choice by itself — see Season filter.
+_Avoid_: time window, period, all-year
+
+**Season filter**:
+The collage/atlas filter: a Season or All-year. All-year sizes and includes species by seasonal-max Prevalence. When the visitor has not chosen a filter (or the choice is invalid), the effective filter is the current Season in Asia/Tokyo — not All-year. All-year is only active when explicitly chosen.
+_Avoid_: season param, default season, current season tab
 
 **Slug**:
 The canonical URL-safe identifier for a species, derived deterministically from the scientific name at create time (lowercase, non-alphanumerics to hyphens). Keys the illustration assets, masks, dims, and atlas routes. The flight-pose variant appends `-2`. Immutable after create — later scientific-name edits do not rewrite it.

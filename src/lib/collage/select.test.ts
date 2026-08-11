@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { selectForCollage } from "./select";
-import type { CollageSpecies, Season } from "./types";
+import type { CollageSpecies } from "./types";
+import type { Season } from "@/lib/season/types";
 
 function species(
   overrides: Partial<CollageSpecies> & Pick<CollageSpecies, "slug" | "sciName">,

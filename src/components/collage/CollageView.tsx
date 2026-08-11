@@ -2,12 +2,12 @@
 
 import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
-import { hrefWithSeason } from "@/lib/collage/season";
+import { useState, type CSSProperties } from "react";
+import { hrefWithSeason } from "@/lib/season/url";
 import {
   useSeasonFilter,
   useSeasonQuery,
-} from "@/lib/collage/use-season-filter";
+} from "@/lib/season/use-season-filter";
 import type { CollageArt, CollageLayouts } from "@/lib/collage/types";
 import { commonNameForLocale } from "@/lib/locale/species";
 import {
@@ -17,10 +17,10 @@ import {
   EmptyHeader,
   EmptyTitle,
 } from "@/components/ui/empty";
-import { SeasonLink } from "@/components/site/SeasonLink";
+import { SeasonFilterControl } from "@/components/season/SeasonFilterControl";
+import { SeasonLink } from "@/components/season/SeasonLink";
 import { Link } from "@/i18n/navigation";
 import type { AppLocale } from "@/i18n/routing";
-import { SeasonFilterPicker } from "./SeasonFilterPicker";
 
 /** One sizes hint for every tile — good enough; avoids per-tile packing math. */
 const COLLAGE_IMAGE_SIZES = "(max-width: 767px) 30vw, 12vw";
@@ -42,7 +42,7 @@ export function CollageView({ layouts }: CollageViewProps) {
 
   return (
     <>
-      <SeasonFilterPicker className="fixed top-4 left-4 z-30 md:top-5 md:left-7" />
+      <SeasonFilterControl className="fixed top-4 left-4 z-30 md:top-5 md:left-7" />
 
       <div
         className="collage-frame"
@@ -75,13 +75,19 @@ export function CollageView({ layouts }: CollageViewProps) {
                 <Link
                   key={tile.slug}
                   href={hrefWithSeason(`/atlas/${tile.slug}`, seasonQuery)}
-                  className="absolute hover:z-10"
-                  style={{
-                    left: `${tile.x}%`,
-                    top: `${tile.y}%`,
-                    width: `${tile.width}%`,
-                    height: `${tile.height}%`,
-                  }}
+                  className="collage-tile hover:z-10"
+                  style={
+                    {
+                      "--tile-x": `${tile.portrait.x}%`,
+                      "--tile-y": `${tile.portrait.y}%`,
+                      "--tile-w": `${tile.portrait.width}%`,
+                      "--tile-h": `${tile.portrait.height}%`,
+                      "--tile-x-lg": `${tile.landscape.x}%`,
+                      "--tile-y-lg": `${tile.landscape.y}%`,
+                      "--tile-w-lg": `${tile.landscape.width}%`,
+                      "--tile-h-lg": `${tile.landscape.height}%`,
+                    } as CSSProperties
+                  }
                   onMouseEnter={() => setHovered(art)}
                   onFocus={() => setHovered(art)}
                 >

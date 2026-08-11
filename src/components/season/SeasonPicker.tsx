@@ -2,18 +2,10 @@
 
 import { useLayoutEffect, useRef } from "react";
 import { useTranslations } from "next-intl";
-import { isSeasonFilter } from "@/lib/collage/season";
-import type { SeasonFilter } from "@/lib/collage/types";
+import { isSeasonFilter, SEASON_FILTERS } from "@/lib/season/url";
+import type { SeasonFilter } from "@/lib/season/types";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
-
-const SEASON_IDS: SeasonFilter[] = [
-  "winter",
-  "spring",
-  "summer",
-  "autumn",
-  "all",
-];
 
 type SeasonPickerProps = {
   value: SeasonFilter;
@@ -21,6 +13,7 @@ type SeasonPickerProps = {
   className?: string;
 };
 
+/** Presentational Season filter toggle — private to the Season UI module. */
 export function SeasonPicker({ value, onChange, className }: SeasonPickerProps) {
   const t = useTranslations("Season");
   const trackRef = useRef<HTMLDivElement>(null);
@@ -74,7 +67,7 @@ export function SeasonPicker({ value, onChange, className }: SeasonPickerProps) 
         aria-label={t("ariaLabel")}
         className="z-10 h-full items-stretch gap-0 rounded-full bg-transparent p-0 shadow-none"
       >
-        {SEASON_IDS.map((id) => (
+        {SEASON_FILTERS.map((id) => (
           <ToggleGroupItem
             key={id}
             value={id}

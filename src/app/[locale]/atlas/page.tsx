@@ -5,7 +5,7 @@ import { AtlasListView } from "@/components/atlas/AtlasListView";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
-import { SeasonLink } from "@/components/site/SeasonLink";
+import { SeasonLink } from "@/components/season/SeasonLink";
 import { loadAtlasList } from "@/lib/atlas/load-atlas-list";
 
 export async function generateMetadata(): Promise<Metadata> {

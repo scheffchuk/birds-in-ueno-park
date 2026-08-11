@@ -7,8 +7,8 @@ import {
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
-import { hrefWithSeason } from "@/lib/collage/season";
-import type { SeasonFilter } from "@/lib/collage/types";
+import { hrefWithSeason } from "@/lib/season/url";
+import type { SeasonFilter } from "@/lib/season/types";
 import { cn } from "@/lib/utils";
 
 type AtlasSpeciesCardProps = {
