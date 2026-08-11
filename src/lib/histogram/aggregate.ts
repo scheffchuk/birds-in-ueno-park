@@ -1,4 +1,4 @@
-import type { SeasonalPrevalence } from "@/lib/collage/types";
+import type { SeasonalPrevalence } from "@/lib/guide/types";
 import type { Season } from "@/lib/season/types";
 
 /** Month-week indices (0–47): Jan weeks 0–3 … Dec weeks 44–47. */

@@ -1,7 +1,7 @@
 import { cacheLife, cacheTag } from "next/cache";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "../../../convex/_generated/api";
-import { GUIDE_SPECIES_TAG } from "@/lib/atlas/cache-tags";
+import { GUIDE_SPECIES_TAG } from "@/lib/guide/cache-tags";
 import { buildCollageLayouts } from "@/lib/collage/layouts";
 import type { CollageLayouts } from "@/lib/collage/types";
 

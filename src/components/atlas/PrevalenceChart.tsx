@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { SeasonalPrevalence } from "@/lib/collage/types";
+import type { SeasonalPrevalence } from "@/lib/guide/types";
 import type { Season } from "@/lib/season/types";
 
 const SEASONS: Season[] = ["winter", "spring", "summer", "autumn"];

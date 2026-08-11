@@ -93,7 +93,7 @@ function writeFixtureTs(guide: GuideSpeciesSeed[]) {
     illustrationStatus: "queued" as const,
     prevalence: g.prevalence,
   }));
-  const body = `import type { SpeciesRecord } from "@/lib/collage/types";
+  const body = `import type { SpeciesRecord } from "@/lib/guide/types";
 
 /** Guide species seeded from merged eBird histograms (Ueno + Shinobazu). */
 export const FIXTURE_SPECIES: SpeciesRecord[] = ${JSON.stringify(records, null, 2)};

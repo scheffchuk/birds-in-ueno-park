@@ -1,6 +1,6 @@
-import type { SeasonFilter } from "@/lib/season/types";
+import { prevalenceForFilter } from "@/lib/guide/prevalence";
 import type { CollageBird, CollageSpecies } from "./types";
-import { prevalenceForFilter } from "./prevalence";
+import type { SeasonFilter } from "@/lib/season/types";
 
 /** Birds present in the Season — URL/aspect already resolved on the row. */
 export function selectForCollage(

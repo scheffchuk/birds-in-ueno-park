@@ -1,4 +1,4 @@
-import type { SeasonalPrevalence } from "@/lib/collage/types";
+import type { SeasonalPrevalence } from "@/lib/guide/types";
 
 export type ExoticFlag =
   | "Exotic: Escapee"

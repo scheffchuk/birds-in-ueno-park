@@ -1,7 +1,7 @@
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
 import { ebirdSpeciesUrl } from "@/lib/atlas/ebird";
-import type { SpeciesRecord } from "@/lib/collage/types";
+import type { SpeciesRecord } from "@/lib/guide/types";
 import {
   longFormForLocale,
   nameStackForLocale,

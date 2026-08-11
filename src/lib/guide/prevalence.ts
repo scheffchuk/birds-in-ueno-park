@@ -1,6 +1,7 @@
 import type { SeasonFilter } from "@/lib/season/types";
 import type { SeasonalPrevalence } from "./types";
 
+/** Prevalence for a Season filter — All-year is seasonal-max. */
 export function prevalenceForFilter(
   record: { prevalence: SeasonalPrevalence },
   filter: SeasonFilter,

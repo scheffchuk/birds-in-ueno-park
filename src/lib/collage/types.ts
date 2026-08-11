@@ -1,13 +1,5 @@
-import type { Season, SeasonFilter } from "@/lib/season/types";
-
-export type IllustrationStatus =
-  | "queued"
-  | "generating"
-  | "pendingReview"
-  | "approved"
-  | "failed";
-
-export type SeasonalPrevalence = Record<Season, number>;
+import type { SeasonFilter } from "@/lib/season/types";
+import type { SeasonalPrevalence } from "@/lib/guide/types";
 
 /** Row from `listForCollage` — one cutout URL + aspect, ready to pack. */
 export type CollageSpecies = {
@@ -31,25 +23,6 @@ export type CollageBird = {
   prevalence: number;
   url: string;
   aspect: number;
-};
-
-export type SpeciesRecord = {
-  slug: string;
-  sciName: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-  listed: boolean;
-  illustrationStatus: IllustrationStatus;
-  prevalence: SeasonalPrevalence;
-  descriptionEn?: string;
-  descriptionJa?: string;
-  descriptionZhTw?: string;
-  spottingTipsEn?: string;
-  spottingTipsJa?: string;
-  spottingTipsZhTw?: string;
-  perchUrl?: string;
-  flightUrl?: string;
 };
 
 export type PackedBird = CollageBird & {
