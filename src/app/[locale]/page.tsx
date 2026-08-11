@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { cacheLife } from "next/cache";
 import { getLocale, getTranslations } from "next-intl/server";
-import { CollageView } from "@/components/collage/CollageView";
+import { CollageView } from "./CollageView";
 import { LocaleChromeBar } from "@/components/site/LocaleChromeBar";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";

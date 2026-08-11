@@ -5,7 +5,7 @@ import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { loadListedSpecies } from "@/lib/guide/load-listed-species";
 import { longFormForLocale, nameStackForLocale } from "@/lib/locale/species";
-import { AtlasDetailView } from "@/components/atlas/AtlasDetailView";
+import { AtlasDetailView } from "./AtlasDetailView";
 import { LocaleChromeBar, LocaleChromeBarFallback } from "@/components/site/LocaleChromeBar";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";

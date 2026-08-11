@@ -1,8 +1,8 @@
 "use client";
 
 import { useLocale, useTranslations } from "next-intl";
-import { AtlasSpeciesCard } from "@/components/atlas/AtlasSpeciesCard";
 import { SeasonFilterControl } from "@/components/season/SeasonFilterControl";
+import { AtlasSpeciesCard } from "./AtlasSpeciesCard";
 import {
   Empty,
   EmptyDescription,
