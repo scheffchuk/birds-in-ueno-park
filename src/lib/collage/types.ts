@@ -1,6 +1,4 @@
-export type Season = "winter" | "spring" | "summer" | "autumn";
-
-export type SeasonFilter = Season | "all";
+import type { Season, SeasonFilter } from "@/lib/season/types";
 
 export type IllustrationStatus =
   | "queued"

@@ -2,7 +2,7 @@
 
 import { useLocale, useTranslations } from "next-intl";
 import { AtlasSpeciesCard } from "@/components/atlas/AtlasSpeciesCard";
-import { SeasonFilterPicker } from "@/components/collage/SeasonFilterPicker";
+import { SeasonFilterControl } from "@/components/season/SeasonFilterControl";
 import {
   Empty,
   EmptyDescription,
@@ -13,7 +13,7 @@ import { selectForAtlas, type AtlasListSource } from "@/lib/atlas/select";
 import {
   useSeasonFilter,
   useSeasonQuery,
-} from "@/lib/collage/use-season-filter";
+} from "@/lib/season/use-season-filter";
 import { commonNameForLocale } from "@/lib/locale/species";
 import type { AppLocale } from "@/i18n/routing";
 
@@ -37,7 +37,7 @@ export function AtlasListView({ species }: AtlasListViewProps) {
       </p>
 
       <div className="flex justify-center">
-        <SeasonFilterPicker />
+        <SeasonFilterControl />
       </div>
 
       {rows.length === 0 ? (

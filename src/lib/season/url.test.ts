@@ -1,9 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
   hrefWithSeason,
-  parseSeasonSearchParam,
   readSeasonSearchParam,
-} from "./season";
+  resolveSeasonFilter,
+} from "./url";
 
 describe("readSeasonSearchParam", () => {
   it("returns a valid Season filter as-is", () => {
@@ -23,25 +23,24 @@ describe("readSeasonSearchParam", () => {
   });
 });
 
-describe("parseSeasonSearchParam", () => {
+describe("resolveSeasonFilter", () => {
+  const now = Date.UTC(2025, 6, 15, 3); // mid-July → Summer in Tokyo
+
   it("returns a valid Season filter as-is", () => {
-    expect(parseSeasonSearchParam("winter")).toBe("winter");
-    expect(parseSeasonSearchParam("spring")).toBe("spring");
-    expect(parseSeasonSearchParam("summer")).toBe("summer");
-    expect(parseSeasonSearchParam("autumn")).toBe("autumn");
-    expect(parseSeasonSearchParam("all")).toBe("all");
+    expect(resolveSeasonFilter("winter", now)).toBe("winter");
+    expect(resolveSeasonFilter("all", now)).toBe("all");
   });
 
-  it("falls back to All when missing or invalid", () => {
-    expect(parseSeasonSearchParam(undefined)).toBe("all");
-    expect(parseSeasonSearchParam("fall")).toBe("all");
-    expect(parseSeasonSearchParam("")).toBe("all");
-    expect(parseSeasonSearchParam("WINTER")).toBe("all");
+  it("falls back to the current Season when missing or invalid", () => {
+    expect(resolveSeasonFilter(undefined, now)).toBe("summer");
+    expect(resolveSeasonFilter("fall", now)).toBe("summer");
+    expect(resolveSeasonFilter("", now)).toBe("summer");
+    expect(resolveSeasonFilter("WINTER", now)).toBe("summer");
+    expect(resolveSeasonFilter(["nope"], now)).toBe("summer");
   });
 
   it("uses the first value when the param is an array", () => {
-    expect(parseSeasonSearchParam(["autumn", "winter"])).toBe("autumn");
-    expect(parseSeasonSearchParam(["nope"])).toBe("all");
+    expect(resolveSeasonFilter(["autumn", "winter"], now)).toBe("autumn");
   });
 });
 
@@ -52,10 +51,14 @@ describe("hrefWithSeason", () => {
     expect(hrefWithSeason("/atlas/mallard", undefined)).toBe("/atlas/mallard");
   });
 
-  it("attaches ?season= when present", () => {
+  it("attaches ?season= when present, including all", () => {
     expect(hrefWithSeason("/atlas", "winter")).toEqual({
       pathname: "/atlas",
       query: { season: "winter" },
+    });
+    expect(hrefWithSeason("/atlas", "all")).toEqual({
+      pathname: "/atlas",
+      query: { season: "all" },
     });
     expect(hrefWithSeason("/atlas/mallard", "summer")).toEqual({
       pathname: "/atlas/mallard",

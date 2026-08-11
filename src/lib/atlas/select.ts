@@ -1,5 +1,6 @@
-import type { SeasonFilter, SeasonalPrevalence } from "@/lib/collage/types";
 import { prevalenceForFilter } from "@/lib/collage/prevalence";
+import type { SeasonalPrevalence } from "@/lib/collage/types";
+import type { SeasonFilter } from "@/lib/season/types";
 
 /** Lean Listed species row from `listAtlas` (card URL already preferred). */
 export type AtlasListSource = {

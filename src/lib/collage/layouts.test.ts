@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { FIXTURE_SPECIES } from "@/lib/fixtures/guide-species";
 import { buildCollageLayouts } from "./layouts";
-import { SEASON_FILTERS } from "./season";
+import { SEASON_FILTERS } from "@/lib/season/url";
 import type { CollageSpecies, SeasonTile, TileRect } from "./types";
 
 /** Fixture rows carry real Prevalence but no art — give them plausible cutouts. */

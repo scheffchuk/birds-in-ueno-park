@@ -1,5 +1,5 @@
 import { packCollage } from "./pack";
-import { SEASON_FILTERS } from "./season";
+import { SEASON_FILTERS } from "@/lib/season/url";
 import { selectForCollage } from "./select";
 import type {
   CollageArt,

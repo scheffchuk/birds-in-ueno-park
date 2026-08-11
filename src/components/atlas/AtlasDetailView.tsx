@@ -7,7 +7,7 @@ import {
   nameStackForLocale,
 } from "@/lib/locale/species";
 import { PrevalenceChart } from "@/components/atlas/PrevalenceChart";
-import { SeasonLink } from "@/components/site/SeasonLink";
+import { SeasonLink } from "@/components/season/SeasonLink";
 import type { AppLocale } from "@/i18n/routing";
 
 type AtlasDetailViewProps = {
