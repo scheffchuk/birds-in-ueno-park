@@ -50,7 +50,7 @@ async function HomeChrome() {
         }
       />
 
-      <header className="flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
+      <header className="fixed inset-x-0 top-0 z-20 flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
         <h1 className="font-heading text-[clamp(22px,2.8vw,34px)] leading-none tracking-tight text-ink">
           <Link
             href="/about"
@@ -74,7 +74,7 @@ function HomeChromeFallback() {
         <div className="h-8 w-20 rounded-full bg-background shadow-(--raised)" />
         <div className="size-8 rounded-lg bg-paper-2 shadow-(--recess)" />
       </div>
-      <header className="flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
+      <header className="fixed inset-x-0 top-0 z-20 flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
         <div className="h-9 w-56" aria-hidden />
       </header>
     </>
