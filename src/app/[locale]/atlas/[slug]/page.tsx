@@ -21,9 +21,12 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const locale = (await getLocale()) as AppLocale;
-  const t = await getTranslations("AtlasDetail");
-  const species = await loadListedSpecies(slug);
+  const [localeRaw, t, species] = await Promise.all([
+    getLocale(),
+    getTranslations("AtlasDetail"),
+    loadListedSpecies(slug),
+  ]);
+  const locale = localeRaw as AppLocale;
   if (!species) {
     return { title: t("notFound") };
   }
@@ -63,11 +66,18 @@ async function AtlasSpeciesChrome() {
 
 async function AtlasSpeciesBody({ params }: PageProps) {
   const { slug } = await params;
-  const locale = (await getLocale()) as AppLocale;
-  const species = await loadListedSpecies(slug);
+  const [localeRaw, species] = await Promise.all([
+    getLocale(),
+    loadListedSpecies(slug),
+  ]);
   if (!species) notFound();
 
-  return <AtlasDetailView species={species} locale={locale} />;
+  return (
+    <AtlasDetailView
+      species={species}
+      locale={localeRaw as AppLocale}
+    />
+  );
 }
 
 export default function AtlasSpeciesPage({ params }: PageProps) {
