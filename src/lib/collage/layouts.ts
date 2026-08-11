@@ -1,8 +1,10 @@
-import { packCollage } from "./pack";
+import { prevalenceForFilter } from "@/lib/guide/prevalence";
 import { SEASON_FILTERS } from "@/lib/season/url";
-import { selectForCollage } from "./select";
+import type { SeasonFilter } from "@/lib/season/types";
+import { packCollage } from "./pack";
 import type {
   CollageArt,
+  CollageBird,
   CollageLayouts,
   CollageSpecies,
   PackedBird,
@@ -10,6 +12,29 @@ import type {
   SeasonTile,
   TileRect,
 } from "./types";
+
+/** Birds present in the Season filter — URL/aspect already on the row. */
+function birdsForSeason(
+  species: CollageSpecies[],
+  filter: SeasonFilter,
+): CollageBird[] {
+  const selected: CollageBird[] = [];
+  for (const record of species) {
+    const prevalence = prevalenceForFilter(record, filter);
+    if (prevalence <= 0) continue;
+    selected.push({
+      slug: record.slug,
+      sciName: record.sciName,
+      comNameEn: record.comNameEn,
+      comNameJa: record.comNameJa,
+      comNameZhTw: record.comNameZhTw,
+      prevalence,
+      url: record.url,
+      aspect: record.aspect,
+    });
+  }
+  return selected;
+}
 
 /**
  * Stage shapes the collage packs against. Percentages only hold when the stage
@@ -50,7 +75,7 @@ function isFiniteRect(rect: TileRect): boolean {
 
 const EMPTY_LAYOUT: SeasonLayout = { tiles: [] };
 
-function layoutForSeason(birds: ReturnType<typeof selectForCollage>): SeasonLayout {
+function layoutForSeason(birds: CollageBird[]): SeasonLayout {
   const portrait = packCollage(
     birds,
     COLLAGE_CANVAS.portrait.width,
@@ -95,7 +120,7 @@ export function buildCollageLayouts(species: CollageSpecies[]): CollageLayouts {
   const seasons = {} as CollageLayouts["seasons"];
 
   for (const season of SEASON_FILTERS) {
-    const birds = selectForCollage(species, season);
+    const birds = birdsForSeason(species, season);
     for (const bird of birds) {
       art.set(bird.slug, {
         slug: bird.slug,
