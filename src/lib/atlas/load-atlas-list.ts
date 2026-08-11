@@ -6,7 +6,7 @@ import { GUIDE_SPECIES_TAG } from "./cache-tags";
 /**
  * Cached Atlas list payload for Listed Guide species.
  * Hourly TTL; busted via `guide-species` from illustration generate paths.
- * Season filtering stays outside this cache (searchParams hole).
+ * Season filtering stays client-side (`?season=`), same as the collage.
  */
 export async function loadAtlasList() {
   "use cache";
