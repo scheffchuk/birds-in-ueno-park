@@ -112,9 +112,9 @@
 
 /*
  * Stage keeps the aspect its tiles were packed against, so percentages hold.
- * Size from whichever axis is binding — setting both fights `aspect-ratio`
- * and stretches every tile. CSS custom properties pick portrait vs landscape
- * boxes at the 768px breakpoint.
+ * Container query units constrain it to both axes of the available frame:
+ * sizing from height alone can make the landscape canvas overflow horizontally.
+ * CSS custom properties pick portrait vs landscape boxes at the 768px breakpoint.
  */
 .collage-frame {
   position: absolute;
@@ -123,11 +123,12 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  container-type: size;
 }
 
 .collage-stage {
   position: relative;
-  width: 100%;
+  width: min(100cqw, 60cqh);
   height: auto;
   aspect-ratio: 600 / 1000;
 }
@@ -142,8 +143,8 @@
 
 @media (min-width: 768px) {
   .collage-stage {
-    width: auto;
-    height: 100%;
+    width: min(100cqw, 185.185cqh);
+    height: auto;
     aspect-ratio: 1000 / 540;
   }
 
