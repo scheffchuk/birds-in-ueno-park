@@ -15,9 +15,7 @@ import {
 } from "./pipeline-client";
 import { createPipelineStorage } from "./pipeline-storage";
 
-type PipelineHttpClient = ReturnType<typeof pipelineClient>;
-
-function authedPipelineClient(token: string): PipelineHttpClient {
+function authedPipelineClient(token: string) {
   const client = pipelineClient();
   client.setAuth(token);
   return client;
@@ -33,7 +31,7 @@ function revalidateAtlasTags(tags: string[]): void {
 /** Wire Convex anatomy ensure actions for the seed-anatomy HTTP entrypoint. */
 export function createIllustrationAnatomySeedAdapters(
   token: string,
-  client: PipelineHttpClient = authedPipelineClient(token),
+  client: ReturnType<typeof pipelineClient> = authedPipelineClient(token),
 ): IllustrationAnatomySeedAdapters {
   return {
     ensure: async ({ slug, sciName, comNameEn, pose }) => {
@@ -56,7 +54,7 @@ export function createIllustrationAnatomySeedAdapters(
 /** Wire real Convex / Gemini / Workflow adapters for the generate HTTP entrypoint. */
 export function createIllustrationGenerateAdapters(
   token: string,
-  client: PipelineHttpClient = authedPipelineClient(token),
+  client: ReturnType<typeof pipelineClient> = authedPipelineClient(token),
 ): IllustrationGenerateAdapters {
   const storage = createPipelineStorage({
     client,

@@ -1,9 +1,6 @@
-export type IllustrationStatus =
-  | "queued"
-  | "generating"
-  | "pendingReview"
-  | "approved"
-  | "failed";
+import type { Doc } from "../_generated/dataModel";
+
+export type IllustrationStatus = Doc<"species">["illustrationStatus"];
 
 export type GenerationCandidate = {
   slug: string;

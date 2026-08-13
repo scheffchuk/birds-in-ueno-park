@@ -13,13 +13,11 @@ import { SeasonLink } from "@/components/season/SeasonLink";
 import { loadMessages } from "@/i18n/load-messages";
 import type { AppLocale } from "@/i18n/routing";
 
-type PageProps = {
-  params: Promise<{ slug: string }>;
-};
-
 export async function generateMetadata({
   params,
-}: PageProps): Promise<Metadata> {
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
   const { slug } = await params;
   const [localeRaw, t, species] = await Promise.all([
     getLocale(),
@@ -64,7 +62,11 @@ async function AtlasSpeciesChrome() {
   );
 }
 
-async function AtlasSpeciesBody({ params }: PageProps) {
+async function AtlasSpeciesBody({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   const { slug } = await params;
   const [localeRaw, species] = await Promise.all([
     getLocale(),
@@ -80,7 +82,11 @@ async function AtlasSpeciesBody({ params }: PageProps) {
   );
 }
 
-export default function AtlasSpeciesPage({ params }: PageProps) {
+export default function AtlasSpeciesPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}) {
   return (
     <main className="min-h-screen bg-background text-foreground">
       <div className="flex min-h-screen flex-col bg-background">

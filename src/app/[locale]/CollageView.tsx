@@ -25,11 +25,7 @@ import type { AppLocale } from "@/i18n/routing";
 /** One sizes hint for every tile — good enough; avoids per-tile packing math. */
 const COLLAGE_IMAGE_SIZES = "(max-width: 767px) 30vw, 12vw";
 
-type CollageViewProps = {
-  layouts: CollageLayouts;
-};
-
-export function CollageView({ layouts }: CollageViewProps) {
+export function CollageView({ layouts }: { layouts: CollageLayouts }) {
   const t = useTranslations("Collage");
   const locale = useLocale() as AppLocale;
   const { season } = useSeasonFilter();

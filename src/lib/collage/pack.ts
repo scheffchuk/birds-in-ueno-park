@@ -5,9 +5,7 @@ const PACKING_BUDGET_FRAC = 0.55;
 const MIN_TILE_AREA_FRAC = 0.012;
 const GAP = 8;
 
-type Sized = CollageBird & { width: number; height: number };
-
-function sizeTiles(birds: CollageBird[], viewportW: number, viewportH: number): Sized[] {
+function sizeTiles(birds: CollageBird[], viewportW: number, viewportH: number) {
   const vpArea = viewportW * viewportH;
   const budget = vpArea * PACKING_BUDGET_FRAC;
   const minArea = vpArea * MIN_TILE_AREA_FRAC;
@@ -57,7 +55,7 @@ function overlaps(
 }
 
 function tryPlace(
-  tiles: Sized[],
+  tiles: ReturnType<typeof sizeTiles>,
   viewportW: number,
   viewportH: number,
 ): PackedBird[] | null {

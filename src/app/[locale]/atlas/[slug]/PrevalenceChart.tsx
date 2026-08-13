@@ -2,16 +2,14 @@
 
 import { useTranslations } from "next-intl";
 import type { SeasonalPrevalence } from "@/lib/guide/types";
-import type { Season } from "@/lib/season/types";
-
-const SEASONS: Season[] = ["winter", "spring", "summer", "autumn"];
-
-type PrevalenceChartProps = {
-  prevalence: SeasonalPrevalence;
-};
+import { SEASONS } from "@/lib/season/types";
 
 /** Four-bar Season Prevalence chart (0–100). */
-export function PrevalenceChart({ prevalence }: PrevalenceChartProps) {
+export function PrevalenceChart({
+  prevalence,
+}: {
+  prevalence: SeasonalPrevalence;
+}) {
   const t = useTranslations("Season");
   const tDetail = useTranslations("AtlasDetail");
 

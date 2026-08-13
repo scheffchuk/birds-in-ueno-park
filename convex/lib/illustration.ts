@@ -1,4 +1,8 @@
-export type MaskBits = { w: number; h: number; bits: string };
+import type { Doc } from "../_generated/dataModel";
+import type { IllustrationPose } from "./illustrationCustomId";
+
+export type { IllustrationPose };
+export type MaskBits = NonNullable<Doc<"species">["maskPerch"]>;
 
 export type AttachIllustrationsInput = {
   illustrationPerch: string;
@@ -80,8 +84,6 @@ export function planStartIllustrationRegen(): {
 } {
   return { illustrationStatus: "generating" };
 }
-
-export type IllustrationPose = "perch" | "flight";
 
 export type StagedPoseFields = {
   illustrationPerch?: string;
@@ -186,19 +188,12 @@ export function planClearForGeneration(
   };
 }
 
-export type IllustrationPipelineStatus =
-  | "queued"
-  | "generating"
-  | "pendingReview"
-  | "approved"
-  | "failed";
-
 /**
  * Park incomplete pairs as queued for later manual attach (no auto-regen).
  * Leaves complete pairs and already-queued incompletes unchanged.
  */
 export function planDeferIncompleteIllustrations(input: {
-  illustrationStatus: IllustrationPipelineStatus;
+  illustrationStatus: Doc<"species">["illustrationStatus"];
   illustrationPerch?: string;
   illustrationFlight?: string;
 }): { illustrationStatus: "queued" } | null {

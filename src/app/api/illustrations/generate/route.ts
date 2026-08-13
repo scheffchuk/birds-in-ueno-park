@@ -1,22 +1,16 @@
 import { createIllustrationGenerateAdapters } from "@/lib/illustrations/ops-adapters";
 import {
   generateIllustrations,
+  type GenerateIllustrationsInput,
   type IllustrationPose,
 } from "@/lib/illustrations/ops";
 import { requireAdminPipelineClient } from "@/lib/illustrations/require-admin";
 
 export const maxDuration = 300;
 
-type Body = {
-  limit?: number;
-  slugs?: string[];
-  /** Limit generation to these poses (default both). */
-  poses?: IllustrationPose[];
-  /** Convex Auth JWT from the admin session. */
-  token: string;
-};
-
-function parseGenerateBody(data: unknown): Body | null {
+function parseGenerateBody(
+  data: unknown,
+): (GenerateIllustrationsInput & { token: string }) | null {
   if (typeof data !== "object" || data === null) return null;
   if (
     !("token" in data) ||
@@ -25,7 +19,7 @@ function parseGenerateBody(data: unknown): Body | null {
   ) {
     return null;
   }
-  const body: Body = { token: data.token };
+  const body: GenerateIllustrationsInput & { token: string } = { token: data.token };
   if ("limit" in data && typeof data.limit === "number") {
     body.limit = data.limit;
   }

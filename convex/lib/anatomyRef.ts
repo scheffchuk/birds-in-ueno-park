@@ -8,13 +8,6 @@ import { boundAnatomyImageUrl } from "./anatomyImageUrl";
 const USER_AGENT =
   "birds-in-ueno/0.1 (anatomy-ref seed; https://github.com/scheffchuk/birds-in-ueno-park)";
 
-type WikiSummary = {
-  type?: string;
-  title?: string;
-  originalimage?: { source?: string };
-  thumbnail?: { source?: string };
-};
-
 export type AnatomyResolveResult =
   | { ok: true; imageUrl: string; source: string }
   | { ok: false; reason: string };
@@ -29,7 +22,11 @@ async function wikiFetch(url: string): Promise<Response> {
   });
 }
 
-function imageFromSummary(summary: WikiSummary): string | null {
+function imageFromSummary(summary: {
+  type?: string;
+  originalimage?: { source?: string };
+  thumbnail?: { source?: string };
+}): string | null {
   if (summary.type === "disambiguation") return null;
   // Prefer thumbnail — originalimage can be 20MB+ and blows Convex HTTP limits.
   const raw =
@@ -43,8 +40,13 @@ async function summaryImage(title: string): Promise<string | null> {
     `https://en.wikipedia.org/api/rest_v1/page/summary/${encoded}`,
   );
   if (!res.ok) return null;
-  const summary = (await res.json()) as WikiSummary;
-  return imageFromSummary(summary);
+  return imageFromSummary(
+    (await res.json()) as {
+      type?: string;
+      originalimage?: { source?: string };
+      thumbnail?: { source?: string };
+    },
+  );
 }
 
 async function wikidataP18(sciName: string): Promise<string | null> {

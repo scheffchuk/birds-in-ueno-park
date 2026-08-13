@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { Infer, v } from "convex/values";
 import {
   action,
   internalAction,
@@ -32,28 +32,8 @@ const gcResultValidator = v.object({
   totalBytes: v.number(),
 });
 
-type OrphanReport = {
-  storageCount: number;
-  referencedCount: number;
-  orphanCount: number;
-  orphanBytes: number;
-  referencedBytes: number;
-  totalBytes: number;
-  orphanIds: Id<"_storage">[];
-};
-
-type GcResult = {
-  dryRun: boolean;
-  deleted: number;
-  bytesFreed: number;
-  remaining: number;
-  storageCount: number;
-  referencedCount: number;
-  orphanCount: number;
-  orphanBytes: number;
-  referencedBytes: number;
-  totalBytes: number;
-};
+export type OrphanReport = Infer<typeof orphanReportValidator>;
+export type GcResult = Infer<typeof gcResultValidator>;
 
 /** Collect every `_storage` id referenced by species or stylePrints. */
 async function collectReferencedStorageIds(

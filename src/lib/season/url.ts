@@ -1,11 +1,8 @@
 import { seasonAt } from "./calendar";
-import type { SeasonFilter } from "./types";
+import { SEASONS, type SeasonFilter } from "./types";
 
 export const SEASON_FILTERS = [
-  "winter",
-  "spring",
-  "summer",
-  "autumn",
+  ...SEASONS,
   "all",
 ] as const satisfies readonly SeasonFilter[];
 

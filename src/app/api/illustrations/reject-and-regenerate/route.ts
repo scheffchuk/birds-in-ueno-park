@@ -1,20 +1,15 @@
 import { createIllustrationRejectRegenAdapters } from "@/lib/illustrations/ops-adapters";
 import {
   rejectAndRegenerateIllustrations,
-  type IllustrationPose,
+  type RejectAndRegenerateInput,
 } from "@/lib/illustrations/ops";
 import { requireAdminPipelineClient } from "@/lib/illustrations/require-admin";
 
 export const maxDuration = 300;
 
-type Body = {
-  speciesId: string;
-  pose?: IllustrationPose;
-  /** Convex Auth JWT from the admin session. */
-  token: string;
-};
-
-function parseRejectRegenBody(data: unknown): Body | null {
+function parseRejectRegenBody(
+  data: unknown,
+): (RejectAndRegenerateInput & { token: string }) | null {
   if (typeof data !== "object" || data === null) return null;
   if (
     !("token" in data) ||
@@ -30,7 +25,7 @@ function parseRejectRegenBody(data: unknown): Body | null {
   ) {
     return null;
   }
-  const body: Body = { token: data.token, speciesId: data.speciesId };
+  const body: RejectAndRegenerateInput & { token: string } = { token: data.token, speciesId: data.speciesId };
   if (
     "pose" in data &&
     (data.pose === "perch" || data.pose === "flight")

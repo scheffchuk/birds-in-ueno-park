@@ -9,11 +9,9 @@ export const CLIENT_MESSAGE_NAMESPACES = [
 
 export type ClientMessageNamespace = (typeof CLIENT_MESSAGE_NAMESPACES)[number];
 
-type MessageTree = Record<string, unknown>;
-
 /** Slice of the Locale catalog safe to serialize into NextIntlClientProvider. */
 export function pickClientMessages(
-  messages: MessageTree,
+  messages: Record<string, unknown>,
 ): Partial<Record<ClientMessageNamespace, unknown>> {
   const picked: Partial<Record<ClientMessageNamespace, unknown>> = {};
   for (const key of CLIENT_MESSAGE_NAMESPACES) {

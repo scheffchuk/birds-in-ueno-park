@@ -1,25 +1,29 @@
 import type { AppLocale } from "@/i18n/routing";
+import type { SpeciesRecord } from "@/lib/guide/types";
 
-export type SpeciesNames = {
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-};
+export type SpeciesNames = Pick<
+  SpeciesRecord,
+  "comNameEn" | "comNameJa" | "comNameZhTw"
+>;
 
-export type SpeciesNameStack = SpeciesNames & {
-  sciName: string;
-};
+export type SpeciesNameStack = Pick<
+  SpeciesRecord,
+  "comNameEn" | "comNameJa" | "comNameZhTw" | "sciName"
+>;
 
-type LongFormKind = "description" | "spottingTips";
+export type LongFormKind = "description" | "spottingTips";
 
-type LongFormFields = {
-  descriptionEn?: string;
-  descriptionJa?: string;
-  descriptionZhTw?: string;
-  spottingTipsEn?: string;
-  spottingTipsJa?: string;
-  spottingTipsZhTw?: string;
-};
+export type LongFormFields = Partial<
+  Pick<
+    SpeciesRecord,
+    | "descriptionEn"
+    | "descriptionJa"
+    | "descriptionZhTw"
+    | "spottingTipsEn"
+    | "spottingTipsJa"
+    | "spottingTipsZhTw"
+  >
+>;
 
 function hasText(value: string | undefined): value is string {
   return typeof value === "string" && value.trim().length > 0;
@@ -77,17 +81,11 @@ export function longFormForLocale(
   return hasText(en) ? en.trim() : undefined;
 }
 
-export type NameStack = {
-  primary: string;
-  secondary: string[];
-  scientific: string;
-};
-
 /** Detail header: Locale h1, other commons (EN first when Locale ≠ EN), sciName. */
 export function nameStackForLocale(
   species: SpeciesNameStack,
   locale: AppLocale,
-): NameStack {
+) {
   const primary = commonNameForLocale(species, locale);
   const all: { locale: AppLocale; name: string }[] = [
     { locale: "en", name: species.comNameEn },
@@ -108,3 +106,5 @@ export function nameStackForLocale(
     scientific: species.sciName,
   };
 }
+
+export type NameStack = ReturnType<typeof nameStackForLocale>;

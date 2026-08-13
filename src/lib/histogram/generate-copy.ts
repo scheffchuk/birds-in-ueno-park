@@ -1,6 +1,7 @@
 import { generateText, Output, gateway } from "ai";
 import { z } from "zod";
 import type { SpeciesCopy } from "./copy-plan";
+import type { GuideSpeciesSeed } from "./seed-plan";
 
 const speciesCopySchema = z.object({
   descriptionEn: z.string(),
@@ -11,12 +12,10 @@ const speciesCopySchema = z.object({
   spottingTipsZhTw: z.string(),
 });
 
-export type GenerateCopyInput = {
-  sciName: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-};
+export type GenerateCopyInput = Pick<
+  GuideSpeciesSeed,
+  "sciName" | "comNameEn" | "comNameJa" | "comNameZhTw"
+>;
 
 /** Call xAI Grok via Vercel AI Gateway for trilingual copy. */
 export async function generateSpeciesCopy(

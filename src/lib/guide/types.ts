@@ -1,11 +1,7 @@
 import type { Season } from "@/lib/season/types";
+import type { IllustrationStatus } from "../../../convex/lib/selectForGeneration";
 
-export type IllustrationStatus =
-  | "queued"
-  | "generating"
-  | "pendingReview"
-  | "approved"
-  | "failed";
+export type { IllustrationStatus };
 
 export type SeasonalPrevalence = Record<Season, number>;
 

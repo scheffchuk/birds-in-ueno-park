@@ -2,59 +2,6 @@ import type { QueryCtx } from "../_generated/server";
 import type { Doc, Id } from "../_generated/dataModel";
 import { SEASONS, type SeasonalPrevalence } from "./seedPlan";
 
-export type MaskBits = { w: number; h: number; bits: string };
-
-export type ListedSpeciesRecord = {
-  slug: string;
-  sciName: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-  listed: true;
-  illustrationStatus:
-    | "queued"
-    | "generating"
-    | "pendingReview"
-    | "approved"
-    | "failed";
-  prevalence: SeasonalPrevalence;
-  descriptionEn?: string;
-  descriptionJa?: string;
-  descriptionZhTw?: string;
-  spottingTipsEn?: string;
-  spottingTipsJa?: string;
-  spottingTipsZhTw?: string;
-  perchUrl?: string;
-  flightUrl?: string;
-};
-
-/** Lean Listed row for the Atlas list page (one card URL). */
-export type AtlasListSpeciesRecord = {
-  slug: string;
-  sciName: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-  listed: true;
-  prevalence: SeasonalPrevalence;
-  imageUrl?: string;
-};
-
-/**
- * Collage row: approved art with one cutout (perch preferred). Masks stay
- * server-side — the collage packs by bounding box.
- */
-export type CollageSpeciesRecord = {
-  slug: string;
-  sciName: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-  prevalence: SeasonalPrevalence;
-  url: string;
-  aspect: number;
-};
-
 export async function loadPrevalenceForSpecies(
   ctx: QueryCtx,
   speciesId: Id<"species">,
@@ -77,10 +24,7 @@ export async function loadPrevalenceForSpecies(
   return prevalence;
 }
 
-function baseListedFields(sp: Doc<"species">): Omit<
-  ListedSpeciesRecord,
-  "prevalence" | "perchUrl" | "flightUrl"
-> {
+function baseListedFields(sp: Doc<"species">) {
   return {
     slug: sp.slug,
     sciName: sp.sciName,
@@ -128,49 +72,43 @@ async function resolveCardIllustrationUrl(
   return undefined;
 }
 
-export async function loadListedSpecies(
-  ctx: QueryCtx,
-): Promise<ListedSpeciesRecord[]> {
+export async function loadListedSpecies(ctx: QueryCtx) {
   const listed = await ctx.db
     .query("species")
     .withIndex("by_listed", (q) => q.eq("listed", true))
     .collect();
 
-  const out: ListedSpeciesRecord[] = [];
-  for (const sp of listed) {
-    out.push({
+  return await Promise.all(
+    listed.map(async (sp) => ({
       ...baseListedFields(sp),
       prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
       ...(await resolveIllustrationUrls(ctx, sp)),
-    });
-  }
-  return out;
+    })),
+  );
 }
 
 /** Listed Guide species for Atlas list — one card URL, no copy fields. */
-export async function loadAtlasListSpecies(
-  ctx: QueryCtx,
-): Promise<AtlasListSpeciesRecord[]> {
+export async function loadAtlasListSpecies(ctx: QueryCtx) {
   const listed = await ctx.db
     .query("species")
     .withIndex("by_listed", (q) => q.eq("listed", true))
     .collect();
 
-  const out: AtlasListSpeciesRecord[] = [];
-  for (const sp of listed) {
-    const imageUrl = await resolveCardIllustrationUrl(ctx, sp);
-    out.push({
-      slug: sp.slug,
-      sciName: sp.sciName,
-      comNameEn: sp.comNameEn,
-      comNameJa: sp.comNameJa,
-      comNameZhTw: sp.comNameZhTw,
-      listed: true,
-      prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
-      ...(imageUrl ? { imageUrl } : {}),
-    });
-  }
-  return out;
+  return await Promise.all(
+    listed.map(async (sp) => {
+      const imageUrl = await resolveCardIllustrationUrl(ctx, sp);
+      return {
+        slug: sp.slug,
+        sciName: sp.sciName,
+        comNameEn: sp.comNameEn,
+        comNameJa: sp.comNameJa,
+        comNameZhTw: sp.comNameZhTw,
+        listed: true,
+        prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
+        ...(imageUrl ? { imageUrl } : {}),
+      };
+    }),
+  );
 }
 
 /** Fallback shape for art attached before dims were recorded. */
@@ -193,31 +131,29 @@ function aspectFromDims(dims: number[] | undefined): number {
 }
 
 /** Listed species ready for the collage — approved, at least one cutout. */
-export async function loadSpeciesForCollage(
-  ctx: QueryCtx,
-): Promise<CollageSpeciesRecord[]> {
+export async function loadSpeciesForCollage(ctx: QueryCtx) {
   const listed = await ctx.db
     .query("species")
     .withIndex("by_listed", (q) => q.eq("listed", true))
     .collect();
 
-  const out: CollageSpeciesRecord[] = [];
-  for (const sp of listed) {
-    if (sp.illustrationStatus !== "approved") continue;
-    const { perchUrl, flightUrl } = await resolveIllustrationUrls(ctx, sp);
-    const url = perchUrl ?? flightUrl;
-    if (!url) continue;
-
-    out.push({
-      slug: sp.slug,
-      sciName: sp.sciName,
-      comNameEn: sp.comNameEn,
-      comNameJa: sp.comNameJa,
-      comNameZhTw: sp.comNameZhTw,
-      prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
-      url,
-      aspect: aspectFromDims(perchUrl ? sp.dimsPerch : sp.dimsFlight),
-    });
-  }
-  return out;
+  const rows = await Promise.all(
+    listed.map(async (sp) => {
+      if (sp.illustrationStatus !== "approved") return null;
+      const { perchUrl, flightUrl } = await resolveIllustrationUrls(ctx, sp);
+      const url = perchUrl ?? flightUrl;
+      if (!url) return null;
+      return {
+        slug: sp.slug,
+        sciName: sp.sciName,
+        comNameEn: sp.comNameEn,
+        comNameJa: sp.comNameJa,
+        comNameZhTw: sp.comNameZhTw,
+        prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
+        url,
+        aspect: aspectFromDims(perchUrl ? sp.dimsPerch : sp.dimsFlight),
+      };
+    }),
+  );
+  return rows.filter((row) => row !== null);
 }

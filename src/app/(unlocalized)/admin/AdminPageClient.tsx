@@ -7,17 +7,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import { api } from "../../../../convex/_generated/api";
+import type { AdminSpecies } from "../../../../convex/admin";
 import type { Id } from "../../../../convex/_generated/dataModel";
+import type { IllustrationPose } from "../../../../convex/lib/illustrationCustomId";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-
-const SEASONS = ["winter", "spring", "summer", "autumn"] as const;
-
-type Season = (typeof SEASONS)[number];
+import { SEASONS } from "@/lib/season/types";
 
 export function AdminPageClient() {
   const { isAuthenticated, isLoading } = useConvexAuth();
@@ -75,16 +74,7 @@ export function AdminPageClient() {
 function IllustrationPipelinePanel({
   species,
 }: {
-  species: Array<{
-    _id: Id<"species">;
-    slug: string;
-    sciName: string;
-    comNameEn: string;
-    listed: boolean;
-    illustrationStatus: string;
-    anatomyRef?: Id<"_storage">;
-    anatomyRefFlight?: Id<"_storage">;
-  }>;
+  species: AdminSpecies[];
 }) {
   const summary = useQuery(api.illustrationPipeline.illustrationStatusSummary);
   const pending = useQuery(api.illustrationPipeline.listPendingReview);
@@ -146,7 +136,7 @@ function IllustrationPipelinePanel({
     }`;
   }
 
-  async function seedAnatomySlice(pose: "perch" | "flight") {
+  async function seedAnatomySlice(pose: IllustrationPose) {
     if (!token) {
       setError("No auth token");
       return;
@@ -246,7 +236,7 @@ function IllustrationPipelinePanel({
 
   async function rejectOne(
     speciesId: Id<"species">,
-    pose?: "perch" | "flight",
+    pose?: IllustrationPose,
   ) {
     if (!token) {
       setError("No auth token");
@@ -532,40 +522,7 @@ function ProvenanceMark({ curated }: { curated: boolean }) {
   );
 }
 
-function SpeciesEditor({
-  species,
-}: {
-  species: {
-    _id: Id<"species">;
-    slug: string;
-    sciName: string;
-    comNameEn: string;
-    comNameJa: string;
-    comNameZhTw: string;
-    listed: boolean;
-    curatedFields: string[];
-    prevalence: Record<Season, number>;
-    prevalenceCurated: Record<Season, boolean>;
-    descriptionEn?: string;
-    descriptionJa?: string;
-    descriptionZhTw?: string;
-    spottingTipsEn?: string;
-    spottingTipsJa?: string;
-    spottingTipsZhTw?: string;
-    illustrationStatus:
-      | "queued"
-      | "generating"
-      | "pendingReview"
-      | "approved"
-      | "failed";
-    perchUrl?: string;
-    flightUrl?: string;
-    dimsPerch?: number[];
-    dimsFlight?: number[];
-    anatomyPerchUrl?: string;
-    anatomyFlightUrl?: string;
-  };
-}) {
+function SpeciesEditor({ species }: { species: AdminSpecies }) {
   const updateNames = useMutation(api.admin.updateNames);
   const updateCopy = useMutation(api.admin.updateCopy);
   const updatePrevalence = useMutation(api.admin.updatePrevalence);
@@ -784,15 +741,7 @@ function SpeciesEditor({
   );
 }
 
-function AnatomyControls({
-  species,
-}: {
-  species: {
-    _id: Id<"species">;
-    anatomyPerchUrl?: string;
-    anatomyFlightUrl?: string;
-  };
-}) {
+function AnatomyControls({ species }: { species: AdminSpecies }) {
   const generateUploadUrl = useMutation(api.admin.generateUploadUrl);
   const attachAnatomyRef = useMutation(
     api.illustrationPipeline.attachAnatomyRef,
@@ -816,7 +765,7 @@ function AnatomyControls({
     return json.storageId;
   }
 
-  async function savePose(pose: "perch" | "flight", file: File | null) {
+  async function savePose(pose: IllustrationPose, file: File | null) {
     if (!file) {
       setError(`Choose a ${pose} anatomy photo first`);
       return;
@@ -922,18 +871,7 @@ function AnatomyControls({
   );
 }
 
-function IllustrationControls({
-  species,
-}: {
-  species: {
-    _id: Id<"species">;
-    illustrationStatus: string;
-    perchUrl?: string;
-    flightUrl?: string;
-    dimsPerch?: number[];
-    dimsFlight?: number[];
-  };
-}) {
+function IllustrationControls({ species }: { species: AdminSpecies }) {
   const generateUploadUrl = useMutation(api.admin.generateUploadUrl);
   const attachIllustrations = useMutation(api.admin.attachIllustrations);
   const approveIllustrations = useMutation(api.admin.approveIllustrations);
@@ -986,7 +924,7 @@ function IllustrationControls({
     }
   }
 
-  async function rejectPose(pose?: "perch" | "flight") {
+  async function rejectPose(pose?: IllustrationPose) {
     if (!token) {
       setError("No auth token");
       return;

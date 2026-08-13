@@ -3,13 +3,14 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 import { rootFontClassName } from "@/components/site/root-fonts";
 import "@/app/globals.css";
 
-type RootShellProps = {
+/** Shared document shell for dual root layouts and global-not-found. */
+export function RootShell({
+  lang,
+  children,
+}: {
   lang: string;
   children: ReactNode;
-};
-
-/** Shared document shell for dual root layouts and global-not-found. */
-export function RootShell({ lang, children }: RootShellProps) {
+}) {
   return (
     <html
       lang={lang}

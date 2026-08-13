@@ -8,13 +8,10 @@
  */
 
 import { boundAnatomyImageUrl } from "./anatomyImageUrl";
+import type { AnatomyResolveResult } from "./anatomyRef";
 
 const USER_AGENT =
   "birds-in-ueno/0.1 (anatomy-ref seed; https://github.com/scheffchuk/birds-in-ueno-park)";
-
-export type AnatomyResolveResult =
-  | { ok: true; imageUrl: string; source: string }
-  | { ok: false; reason: string };
 
 async function wikiFetch(url: string): Promise<Response> {
   return fetch(url, {
@@ -40,8 +37,6 @@ function isRasterImageTitle(title: string): boolean {
 
 // --- iNaturalist -----------------------------------------------------------
 
-type InatPhotoHit = { imageUrl: string; source: string };
-
 /** Prefer large still from iNat photo URL templates (`square` → `large`). */
 export function inatLargePhotoUrl(squareOrMediumUrl: string): string {
   return squareOrMediumUrl
@@ -54,7 +49,7 @@ export function inatLargePhotoUrl(squareOrMediumUrl: string): string {
 async function inatFlightPhotos(input: {
   sciName: string;
   comNameEn: string;
-}): Promise<InatPhotoHit | null> {
+}): Promise<{ imageUrl: string; source: string } | null> {
   const queries = ["flying", "in flight", "flight"];
   for (const q of queries) {
     const hit = await inatSearch(input.sciName, q);
@@ -73,7 +68,7 @@ async function inatFlightPhotos(input: {
 async function inatSearch(
   taxonName: string,
   q: string,
-): Promise<InatPhotoHit | null> {
+): Promise<{ imageUrl: string; source: string } | null> {
   const params = new URLSearchParams({
     taxon_name: taxonName,
     q,
@@ -116,7 +111,7 @@ async function inatSearch(
 
 // --- Commons fallback ------------------------------------------------------
 
-type CommonsHit = {
+export type CommonsHit = {
   title: string;
   url: string;
   description?: string;

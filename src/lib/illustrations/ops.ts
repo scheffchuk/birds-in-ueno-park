@@ -1,12 +1,13 @@
 import { GUIDE_SPECIES_TAG, speciesCacheTag } from "@/lib/guide/cache-tags";
 import { mapPool } from "./map-pool";
+import type { IllustrationPose } from "../../../convex/lib/illustrationCustomId";
+
+export type { IllustrationPose };
 
 export const GEMINI_ILLUSTRATION_MODEL = "google/gemini-2.5-flash-image";
 
 /** Concurrent Gemini Flash Image calls. */
 const EDIT_CONCURRENCY = 3;
-
-export type IllustrationPose = "perch" | "flight";
 
 export type GenerateIllustrationsInput = {
   limit?: number;

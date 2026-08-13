@@ -17,12 +17,12 @@ import {
 import { commonNameForLocale } from "@/lib/locale/species";
 import type { AppLocale } from "@/i18n/routing";
 
-type AtlasListViewProps = {
-  species: AtlasListSource[];
-};
-
 /** Client Season filter + list — same `?season=` model as the collage. */
-export function AtlasListView({ species }: AtlasListViewProps) {
+export function AtlasListView({
+  species,
+}: {
+  species: AtlasListSource[];
+}) {
   const t = useTranslations("Atlas");
   const tSeason = useTranslations("Season");
   const locale = useLocale() as AppLocale;

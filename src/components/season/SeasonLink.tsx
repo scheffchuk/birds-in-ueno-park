@@ -8,7 +8,7 @@ import { hrefWithSeason, type SeasonHrefPath } from "@/lib/season/url";
 import { useSeasonQuery } from "@/lib/season/use-season-filter";
 import { cn } from "@/lib/utils";
 
-type SeasonLinkProps = {
+export type SeasonLinkProps = {
   pathname: SeasonHrefPath;
   className?: string;
 } & (

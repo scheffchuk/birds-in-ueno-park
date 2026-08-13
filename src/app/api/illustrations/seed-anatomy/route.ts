@@ -2,18 +2,11 @@ import { createIllustrationAnatomySeedAdapters } from "@/lib/illustrations/ops-a
 import {
   seedAnatomyReferences,
   type AnatomySeedSpecies,
-  type IllustrationPose,
+  type SeedAnatomyReferencesInput,
 } from "@/lib/illustrations/ops";
 import { requireAdminPipelineClient } from "@/lib/illustrations/require-admin";
 
 export const maxDuration = 300;
-
-type Body = {
-  pose: IllustrationPose;
-  species: AnatomySeedSpecies[];
-  /** Convex Auth JWT from the admin session. */
-  token: string;
-};
 
 function parseSpecies(value: unknown): AnatomySeedSpecies[] | null {
   if (!Array.isArray(value)) return null;
@@ -50,7 +43,9 @@ function parseSpecies(value: unknown): AnatomySeedSpecies[] | null {
   return species;
 }
 
-function parseSeedAnatomyBody(data: unknown): Body | null {
+function parseSeedAnatomyBody(
+  data: unknown,
+): (SeedAnatomyReferencesInput & { token: string }) | null {
   if (typeof data !== "object" || data === null) return null;
   if (
     !("token" in data) ||

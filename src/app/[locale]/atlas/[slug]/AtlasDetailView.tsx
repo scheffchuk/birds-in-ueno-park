@@ -10,11 +10,6 @@ import { SeasonLink } from "@/components/season/SeasonLink";
 import { PrevalenceChart } from "./PrevalenceChart";
 import type { AppLocale } from "@/i18n/routing";
 
-type AtlasDetailViewProps = {
-  species: SpeciesRecord;
-  locale: AppLocale;
-};
-
 function hasText(value: string | undefined): value is string {
   return typeof value === "string" && value.trim().length > 0;
 }
@@ -22,7 +17,10 @@ function hasText(value: string | undefined): value is string {
 export async function AtlasDetailView({
   species,
   locale,
-}: AtlasDetailViewProps) {
+}: {
+  species: SpeciesRecord;
+  locale: AppLocale;
+}) {
   const t = await getTranslations("AtlasDetail");
   const tNav = await getTranslations("Nav");
   const stack = nameStackForLocale(species, locale);

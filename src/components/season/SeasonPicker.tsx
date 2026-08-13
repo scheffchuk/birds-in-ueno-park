@@ -7,14 +7,16 @@ import type { SeasonFilter } from "@/lib/season/types";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { cn } from "@/lib/utils";
 
-type SeasonPickerProps = {
+/** Presentational Season filter toggle — private to the Season UI module. */
+export function SeasonPicker({
+  value,
+  onChange,
+  className,
+}: {
   value: SeasonFilter;
   onChange: (next: SeasonFilter) => void;
   className?: string;
-};
-
-/** Presentational Season filter toggle — private to the Season UI module. */
-export function SeasonPicker({ value, onChange, className }: SeasonPickerProps) {
+}) {
   const t = useTranslations("Season");
   const trackRef = useRef<HTMLDivElement>(null);
   const pillRef = useRef<HTMLSpanElement>(null);
