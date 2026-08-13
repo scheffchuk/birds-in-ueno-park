@@ -1,21 +1,11 @@
 import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
-import { generateSpeciesCopy } from "../src/lib/histogram/generate-copy";
+import { generateSpeciesCopy, type GenerateCopyInput } from "../src/lib/histogram/generate-copy";
 import { selectSpeciesForCopy } from "../src/lib/histogram/select-for-copy";
 import type { SpeciesCopy } from "../src/lib/histogram/copy-plan";
 
 const root = resolve(import.meta.dirname, "..");
-
-type GuideRow = {
-  slug: string;
-  sciName: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-};
-
-type CopyRow = SpeciesCopy & { slug: string };
 
 function parseArgs(argv: string[]): { limit?: number; slug?: string; dryRun: boolean } {
   let limit: number | undefined;
@@ -70,7 +60,9 @@ async function main() {
   }
 
   const guidePath = resolve(root, "data/guide-species.json");
-  const guide = JSON.parse(readFileSync(guidePath, "utf8")) as GuideRow[];
+  const guide = JSON.parse(readFileSync(guidePath, "utf8")) as Array<
+    GenerateCopyInput & { slug: string }
+  >;
   const selected = selectSpeciesForCopy(guide, { limit, slug });
 
   if (selected.length === 0) {
@@ -92,7 +84,7 @@ async function main() {
     return;
   }
 
-  const copies: CopyRow[] = [];
+  const copies: Array<SpeciesCopy & { slug: string }> = [];
   for (const [index, species] of selected.entries()) {
     console.log(`[${index + 1}/${selected.length}] ${species.slug}…`);
     const copy = await generateSpeciesCopy(species);

@@ -2,12 +2,8 @@ import { loadMessages } from "@/i18n/load-messages";
 import type { AppLocale } from "@/i18n/routing";
 import { SITE_FOOTER } from "@/lib/site/attribution";
 
-type SiteFooterProps = {
-  locale: AppLocale;
-};
-
 /** Footer copy from the cached message catalog (per Locale). */
-export async function SiteFooter({ locale }: SiteFooterProps) {
+export async function SiteFooter({ locale }: { locale: AppLocale }) {
   const messages = await loadMessages(locale);
   const t = messages.Footer;
 

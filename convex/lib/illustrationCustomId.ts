@@ -1,4 +1,6 @@
-export type IllustrationPose = "perch" | "flight";
+import type { Doc } from "../_generated/dataModel";
+
+export type IllustrationPose = Doc<"stylePrints">["pose"];
 
 const POSES = new Set<IllustrationPose>(["perch", "flight"]);
 

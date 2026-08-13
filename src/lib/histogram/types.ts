@@ -1,3 +1,4 @@
+import type { GuideSpeciesSeed } from "./seed-plan";
 import type { SeasonalPrevalence } from "@/lib/guide/types";
 
 export type ExoticFlag =
@@ -18,11 +19,4 @@ export type SeedCandidate = {
   maxWeekFreq: number;
 };
 
-export type GuideSpeciesSeed = {
-  sciName: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-  slug: string;
-  prevalence: SeasonalPrevalence;
-};
+export type { GuideSpeciesSeed };

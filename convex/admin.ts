@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { v, Infer } from "convex/values";
 import { mutation, query, internalMutation } from "./_generated/server";
 import type { MutationCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
@@ -70,6 +70,8 @@ const adminSpeciesValidator = v.object({
   anatomyPerchUrl: v.optional(v.string()),
   anatomyFlightUrl: v.optional(v.string()),
 });
+
+export type AdminSpecies = Infer<typeof adminSpeciesValidator>;
 
 /** Whether the caller is an allowlisted admin (for UI gating). */
 export const viewerIsAdmin = query({

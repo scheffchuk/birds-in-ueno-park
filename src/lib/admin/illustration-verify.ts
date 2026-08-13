@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { IllustrationPose } from "../../../convex/lib/illustrationCustomId";
 
 export const verifyResultSchema = z.object({
   matchesTarget: z.boolean(),
@@ -12,8 +13,6 @@ export const verifyResultSchema = z.object({
 });
 
 export type VerifyResult = z.infer<typeof verifyResultSchema>;
-
-export type VerifyPose = "perch" | "flight";
 
 /** True when the model reported no real anatomy problem. */
 export function hasRealAnatomyIssues(issues: string): boolean {
@@ -30,7 +29,7 @@ export function hasRealAnatomyIssues(issues: string): boolean {
  */
 export function passesIllustrationVerify(
   result: VerifyResult,
-  pose: VerifyPose = "perch",
+  pose: IllustrationPose = "perch",
 ): boolean {
   if (!result.matchesTarget) return false;
   if (result.hasStickOrPerch) return false;

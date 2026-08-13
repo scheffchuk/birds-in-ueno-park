@@ -1,11 +1,8 @@
 import { COPY_FIELDS, type CopyField } from "./copyPlan";
 import { slugFromSciName } from "./slug";
+import { SEASONS, type Season, type SeasonalPrevalence } from "./seedPlan";
 
-export type Season = "winter" | "spring" | "summer" | "autumn";
-
-export type SeasonalPrevalence = Record<Season, number>;
-
-const SEASONS: Season[] = ["winter", "spring", "summer", "autumn"];
+export type { Season, SeasonalPrevalence };
 
 const NAME_FIELDS = ["comNameEn", "comNameJa", "comNameZhTw"] as const;
 

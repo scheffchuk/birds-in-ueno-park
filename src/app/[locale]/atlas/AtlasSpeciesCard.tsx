@@ -11,15 +11,6 @@ import { hrefWithSeason } from "@/lib/season/url";
 import type { SeasonFilter } from "@/lib/season/types";
 import { cn } from "@/lib/utils";
 
-type AtlasSpeciesCardProps = {
-  slug: string;
-  comName: string;
-  sciName: string;
-  imageUrl?: string;
-  index: number;
-  season?: SeasonFilter;
-};
-
 export function AtlasSpeciesCard({
   slug,
   comName,
@@ -27,7 +18,14 @@ export function AtlasSpeciesCard({
   imageUrl,
   index,
   season,
-}: AtlasSpeciesCardProps) {
+}: {
+  slug: string;
+  comName: string;
+  sciName: string;
+  imageUrl?: string;
+  index: number;
+  season?: SeasonFilter;
+}) {
   const delayMs = Math.min(index, 12) * 40;
 
   return (

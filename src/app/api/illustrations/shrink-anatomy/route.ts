@@ -3,13 +3,9 @@ import { requireAdminPipelineClient } from "@/lib/illustrations/require-admin";
 
 export const maxDuration = 300;
 
-type Body = {
-  limit?: number;
-  /** Convex Auth JWT from the admin session. */
-  token: string;
-};
-
-function parseShrinkAnatomyBody(data: unknown): Body | null {
+function parseShrinkAnatomyBody(
+  data: unknown,
+): { token: string; limit?: number } | null {
   if (typeof data !== "object" || data === null) return null;
   if (
     !("token" in data) ||
@@ -18,7 +14,7 @@ function parseShrinkAnatomyBody(data: unknown): Body | null {
   ) {
     return null;
   }
-  const body: Body = { token: data.token };
+  const body: { token: string; limit?: number } = { token: data.token };
   if ("limit" in data && typeof data.limit === "number") {
     body.limit = data.limit;
   }

@@ -1,6 +1,7 @@
 import type { ConvexHttpClient } from "convex/browser";
 import type { Id } from "../../../convex/_generated/dataModel";
 import type { IllustrationPose } from "../../../convex/lib/illustrationCustomId";
+import type { MaskBits } from "../../../convex/lib/illustration";
 import { api } from "./pipeline-client";
 
 export type PipelineStorageClient = Pick<ConvexHttpClient, "mutation">;
@@ -9,7 +10,7 @@ export type StagePoseInput = {
   slug: string;
   pose: IllustrationPose;
   pngBytes: Buffer;
-  mask: { w: number; h: number; bits: string };
+  mask: MaskBits;
   dims: number[];
 };
 

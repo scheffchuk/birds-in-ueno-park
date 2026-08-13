@@ -1,4 +1,6 @@
-export type Season = "winter" | "spring" | "summer" | "autumn";
+import type { Doc } from "../_generated/dataModel";
+
+export type Season = Doc<"prevalence">["season"];
 
 export type SeasonalPrevalence = Record<Season, number>;
 
@@ -48,7 +50,12 @@ const NAME_FIELDS = [
   "comNameZhTw",
 ] as const;
 
-export const SEASONS: Season[] = ["winter", "spring", "summer", "autumn"];
+export const SEASONS = [
+  "winter",
+  "spring",
+  "summer",
+  "autumn",
+] as const satisfies readonly Season[];
 
 /**
  * Pure re-seed plan: skip curatedFields / curated prevalence; never flip Listed.

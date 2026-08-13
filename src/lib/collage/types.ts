@@ -13,16 +13,9 @@ export type CollageSpecies = {
   aspect: number;
 };
 
-export type CollageBird = {
-  slug: string;
-  sciName: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
+export type CollageBird = Omit<CollageSpecies, "prevalence"> & {
   /** Prevalence for the selected Season filter (0–100). */
   prevalence: number;
-  url: string;
-  aspect: number;
 };
 
 export type PackedBird = CollageBird & {
@@ -51,13 +44,10 @@ export type SeasonLayout = {
 };
 
 /** Everything needed to draw a tile, listed once and shared across Seasons. */
-export type CollageArt = {
-  slug: string;
-  comNameEn: string;
-  comNameJa: string;
-  comNameZhTw: string;
-  url: string;
-};
+export type CollageArt = Pick<
+  CollageSpecies,
+  "slug" | "comNameEn" | "comNameJa" | "comNameZhTw" | "url"
+>;
 
 export type CollageLayouts = {
   art: CollageArt[];

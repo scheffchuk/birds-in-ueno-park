@@ -2,13 +2,6 @@ import { Suspense, type ReactNode } from "react";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { cn } from "@/lib/utils";
 
-type LocaleChromeBarProps = {
-  leading?: ReactNode;
-  /** Defaults to LocaleSwitcher. */
-  trailing?: ReactNode;
-  className?: string;
-};
-
 function LeadingFallback() {
   return <div className="size-8 shrink-0" aria-hidden />;
 }
@@ -53,7 +46,12 @@ export function LocaleChromeBar({
   leading,
   trailing,
   className,
-}: LocaleChromeBarProps) {
+}: {
+  leading?: ReactNode;
+  /** Defaults to LocaleSwitcher. */
+  trailing?: ReactNode;
+  className?: string;
+}) {
   const end = trailing ?? <LocaleSwitcher />;
 
   return (

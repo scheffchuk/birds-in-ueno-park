@@ -16,15 +16,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
 
-type LocaleSwitcherProps = {
-  className?: string;
-};
-
 function isAppLocale(value: string): value is AppLocale {
   return (routing.locales as readonly string[]).includes(value);
 }
 
-export function LocaleSwitcher({ className }: LocaleSwitcherProps) {
+export function LocaleSwitcher({ className }: { className?: string }) {
   const t = useTranslations("LocaleSwitcher");
   const locale = useLocale() as AppLocale;
   const pathname = usePathname();

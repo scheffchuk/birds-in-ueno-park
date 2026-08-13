@@ -2,12 +2,12 @@ import { getAuthUserId } from "@convex-dev/auth/server";
 import type { MutationCtx, QueryCtx } from "../_generated/server";
 import { isGitHubIdAllowlisted } from "./allowlist";
 
-type AuthCtx = QueryCtx | MutationCtx;
-
 /**
  * Require Convex Auth session whose GitHub account id is in ADMIN_GITHUB_IDS.
  */
-export async function requireAdmin(ctx: AuthCtx): Promise<void> {
+export async function requireAdmin(
+  ctx: QueryCtx | MutationCtx,
+): Promise<void> {
   const userId = await getAuthUserId(ctx);
   if (userId === null) {
     throw new Error("Not authenticated");

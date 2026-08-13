@@ -1,8 +1,9 @@
-export type CopyCandidate = {
-  slug: string;
-  sciName: string;
-  comNameEn: string;
-};
+import type { GuideSpeciesSeed } from "./seed-plan";
+
+export type CopyCandidate = Pick<
+  GuideSpeciesSeed,
+  "slug" | "sciName" | "comNameEn"
+>;
 
 /** Pick Guide species for copy generation (spot-check via limit or slug). */
 export function selectSpeciesForCopy<T extends CopyCandidate>(
