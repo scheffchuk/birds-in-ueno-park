@@ -15,7 +15,7 @@ export type SeasonLinkProps = {
   | { backLabel: string; children?: never }
   | { backLabel?: undefined; children: ReactNode }
 ) &
-  Omit<ComponentProps<typeof Link>, "href" | "children" | "aria-label">;
+  Omit<ComponentProps<typeof Link>, "href" | "children">;
 
 /** next-intl Link that carries `?season=` when present in the current URL. */
 export function SeasonLink({
@@ -32,13 +32,13 @@ export function SeasonLink({
     return (
       <Link
         href={href}
-        aria-label={backLabel}
         className={cn(
           buttonVariants({ variant: "ghost", size: "icon" }),
           "text-ink-soft hover:text-ink",
           className,
         )}
         {...rest}
+        aria-label={backLabel}
       >
         <ArrowLeftIcon />
       </Link>
