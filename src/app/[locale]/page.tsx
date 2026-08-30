@@ -2,16 +2,19 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import { cacheLife } from "next/cache";
 import { getLocale, getTranslations } from "next-intl/server";
+import { BookOpenIcon } from "lucide-react";
 import { CollageView } from "./CollageView";
 import { LocaleChromeBar } from "@/components/site/LocaleChromeBar";
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { LocaleSwitcher } from "@/components/site/LocaleSwitcher";
 import { SeasonLink } from "@/components/season/SeasonLink";
+import { buttonVariants } from "@/components/ui/button";
 import { Link } from "@/i18n/navigation";
 import { loadMessages } from "@/i18n/load-messages";
 import type { AppLocale } from "@/i18n/routing";
 import { loadForCollage } from "@/lib/collage/load-for-collage";
+import { cn } from "@/lib/utils";
 
 export async function generateMetadata(): Promise<Metadata> {
   const t = await getTranslations("Meta");
@@ -41,9 +44,14 @@ async function HomeChrome() {
           <>
             <SeasonLink
               pathname="/atlas"
-              className="inline-flex h-8 items-center rounded-full bg-background px-3.5 font-mono text-[10px] leading-none tracking-[0.18em] text-ink uppercase shadow-(--raised)"
+              aria-label={copy.atlas}
+              className={cn(
+                buttonVariants({ variant: "outline", size: "icon" }),
+                "size-8 rounded-lg border-0 bg-paper-2 text-ink-soft shadow-(--recess)",
+                "hover:bg-paper-2 hover:text-ink",
+              )}
             >
-              {copy.atlas}
+              <BookOpenIcon />
             </SeasonLink>
             <LocaleSwitcher />
           </>
@@ -72,7 +80,7 @@ function HomeChromeFallback() {
         className="fixed top-4 right-4 z-30 flex items-center gap-2 md:top-5 md:right-7"
         aria-hidden
       >
-        <div className="h-8 w-20 rounded-full bg-background shadow-(--raised)" />
+        <div className="size-8 rounded-lg bg-paper-2 shadow-(--recess)" />
         <div className="size-8 rounded-lg bg-paper-2 shadow-(--recess)" />
       </div>
       <header className="fixed inset-x-0 top-0 z-20 flex flex-col items-center px-4 pt-16 pb-4 text-center md:pt-20">
