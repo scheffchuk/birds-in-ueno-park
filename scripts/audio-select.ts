@@ -11,6 +11,7 @@ import {
   generateAudioManifest,
   type AudioGeneratorAdapters,
 } from "../src/lib/audio/generator";
+import { xenoCantoQueryForSpecies } from "../src/lib/audio/xeno";
 import type {
   AudioManifest,
   DownloadedAudio,
@@ -119,7 +120,7 @@ function createAdapters(): AudioGeneratorAdapters {
       do {
         await pace();
         const url = new URL("https://xeno-canto.org/api/3/recordings");
-        url.searchParams.set("query", scientificName);
+        url.searchParams.set("query", xenoCantoQueryForSpecies(scientificName));
         url.searchParams.set("key", xenoKey);
         url.searchParams.set("page", String(page));
         const body = asRecord(await jsonFromResponse(await fetch(url)));
