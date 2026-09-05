@@ -189,4 +189,36 @@ describe("generateAudioManifest", () => {
       sha256: "passer-montanus-hash",
     });
   });
+
+  it("keeps existing eBird links when optional taxonomy enrichment is unavailable", async () => {
+    const previous: AudioManifest = {
+      version: 1,
+      generatedAt: "before",
+      species: species.map((entry) => ({
+        ...entry,
+        audio: {
+          status: "available",
+          file: `data/audio/${entry.slug}.mp3`,
+          sourceUrl: "https://xeno-canto.org/1",
+          catalogueNumber: "1",
+          recordist: "Recordist",
+          licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+          license: "CC BY",
+          nonCommercial: false,
+          durationSeconds: 12,
+          sha256: "same",
+          bytes: 3,
+        },
+        ebird: { speciesCode: "existing1", url: "https://ebird.org/species/existing1" },
+      })),
+    };
+
+    const result = await generateAudioManifest(
+      species,
+      adapters({ loadEbirdTaxonomy: undefined }),
+      { generatedAt: "after", previous, refresh: true },
+    );
+
+    expect(result.manifest.species[0]?.ebird).toEqual(previous.species[0]?.ebird);
+  });
 });

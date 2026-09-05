@@ -27,7 +27,7 @@ export type AudioGeneratorAdapters = {
   searchXenoCanto: (
     scientificName: string,
   ) => Promise<readonly XenoCantoRecording[]>;
-  loadEbirdTaxonomy: () => Promise<readonly EbirdTaxon[]>;
+  loadEbirdTaxonomy?: () => Promise<readonly EbirdTaxon[]>;
   lookupWikipedia: (scientificName: string) => Promise<WikipediaTaxon | null>;
   download: (sourceUrl: string) => Promise<DownloadedAudio>;
   store: (input: {
@@ -155,7 +155,9 @@ export async function generateAudioManifest(
 ): Promise<GenerateAudioManifestResult> {
   const refresh = options.refresh ?? false;
   const previous = previousBySlug(options.previous);
-  const ebirdTaxonomy = await adapters.loadEbirdTaxonomy();
+  const ebirdTaxonomy = adapters.loadEbirdTaxonomy
+    ? await adapters.loadEbirdTaxonomy()
+    : undefined;
   const entries: AudioManifestEntry[] = [];
   let selected = 0;
   let unavailable = 0;
@@ -206,9 +208,15 @@ export async function generateAudioManifest(
       }
     }
 
-    const ebird = exactTaxon(species.sciName, ebirdTaxonomy);
+    const ebird = ebirdTaxonomy
+      ? exactTaxon(species.sciName, ebirdTaxonomy)
+      : undefined;
     const wikipedia = await adapters.lookupWikipedia(species.sciName);
     const wikipediaUrls = wikipedia ? wikipediaUrlsForTaxon(wikipedia) : undefined;
+    const preservedEbird =
+      old?.ebird && (!refresh || ebirdTaxonomy === undefined)
+        ? old.ebird
+        : undefined;
     const links = {
       ...(ebird
         ? {
@@ -217,8 +225,8 @@ export async function generateAudioManifest(
               url: ebirdSpeciesUrl(ebird.speciesCode),
             },
           }
-        : !refresh && old?.ebird
-          ? { ebird: old.ebird }
+        : preservedEbird
+          ? { ebird: preservedEbird }
           : {}),
       ...(wikipediaUrls
         ? { wikipedia: wikipediaUrls }

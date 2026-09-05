@@ -79,7 +79,9 @@ function createAdapters(): AudioGeneratorAdapters {
   const xenoKey = process.env.XENO_CANTO_API_KEY;
   const ebirdKey = process.env.EBIRD_API_KEY;
   if (!xenoKey) throw new Error("XENO_CANTO_API_KEY is required in .env.local");
-  if (!ebirdKey) throw new Error("EBIRD_API_KEY is required in .env.local");
+  if (!ebirdKey) {
+    console.warn("EBIRD_API_KEY not set; skipping eBird link enrichment.");
+  }
 
   let nextRequestAt = 0;
   async function pace() {
@@ -87,6 +89,27 @@ function createAdapters(): AudioGeneratorAdapters {
     if (wait > 0) await new Promise((resolveWait) => setTimeout(resolveWait, wait));
     nextRequestAt = Date.now() + 600;
   }
+
+  const loadEbirdTaxonomy = ebirdKey
+    ? async (): Promise<readonly EbirdTaxon[]> => {
+        const apiKey = ebirdKey;
+        await pace();
+        const url = new URL("https://api.ebird.org/v2/ref/taxonomy/ebird");
+        url.searchParams.set("fmt", "json");
+        const body = await jsonFromResponse(
+          await fetch(url, { headers: { "X-eBirdApiToken": apiKey } }),
+        );
+        if (!Array.isArray(body)) throw new Error("eBird taxonomy response was not an array");
+        return body.filter((row): row is EbirdTaxon => {
+          const value = asRecord(row);
+          return (
+            typeof value?.sciName === "string" &&
+            typeof value.speciesCode === "string" &&
+            typeof value.category === "string"
+          );
+        });
+      }
+    : undefined;
 
   return {
     searchXenoCanto: async (scientificName) => {
@@ -122,23 +145,7 @@ function createAdapters(): AudioGeneratorAdapters {
       return allRecordings;
     },
 
-    loadEbirdTaxonomy: async () => {
-      await pace();
-      const url = new URL("https://api.ebird.org/v2/ref/taxonomy/ebird");
-      url.searchParams.set("fmt", "json");
-      const body = await jsonFromResponse(
-        await fetch(url, { headers: { "X-eBirdApiToken": ebirdKey } }),
-      );
-      if (!Array.isArray(body)) throw new Error("eBird taxonomy response was not an array");
-      return body.filter((row): row is EbirdTaxon => {
-        const value = asRecord(row);
-        return (
-          typeof value?.sciName === "string" &&
-          typeof value.speciesCode === "string" &&
-          typeof value.category === "string"
-        );
-      });
-    },
+    ...(loadEbirdTaxonomy ? { loadEbirdTaxonomy } : {}),
 
     lookupWikipedia: async (scientificName): Promise<WikipediaTaxon | null> => {
       await pace();
