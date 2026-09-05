@@ -1,5 +1,6 @@
 "use client";
 
+import { useCallback, useEffect, useRef } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { SeasonFilterControl } from "@/components/season/SeasonFilterControl";
 import { AtlasSpeciesCard } from "./AtlasSpeciesCard";
@@ -16,6 +17,7 @@ import {
 } from "@/lib/season/use-season-filter";
 import { commonNameForLocale } from "@/lib/locale/species";
 import type { AppLocale } from "@/i18n/routing";
+import { AudioPlaybackCoordinator } from "@/lib/audio/playback";
 
 /** Client Season filter + list — same `?season=` model as the collage. */
 export function AtlasListView({
@@ -29,6 +31,35 @@ export function AtlasListView({
   const { season } = useSeasonFilter();
   const seasonQuery = useSeasonQuery();
   const rows = selectForAtlas(species, season);
+  const playback = useRef(new AudioPlaybackCoordinator());
+
+  const registerAudio = useCallback(
+    (slug: string, audio: HTMLAudioElement | null) => {
+      playback.current.register(slug, audio);
+    },
+    [],
+  );
+
+  const requestPlay = useCallback(
+    (slug: string) => {
+      playback.current.requestPlay(slug);
+    },
+    [],
+  );
+
+  const releasePlayback = useCallback(
+    (slug: string) => {
+      playback.current.release(slug);
+    },
+    [],
+  );
+
+  useEffect(
+    () => () => {
+      playback.current.dispose();
+    },
+    [],
+  );
 
   return (
     <div className="flex flex-col gap-8">
@@ -60,6 +91,15 @@ export function AtlasListView({
                 imageUrl={row.imageUrl}
                 index={index}
                 season={seasonQuery}
+                locale={locale}
+                audio={row.audio}
+                ebird={row.ebird}
+                wikipedia={row.wikipedia}
+                onPlayRequest={() => requestPlay(row.slug)}
+                onPause={() => releasePlayback(row.slug)}
+                onEnded={() => releasePlayback(row.slug)}
+                onError={() => releasePlayback(row.slug)}
+                onAudioElement={(audio) => registerAudio(row.slug, audio)}
               />
             </li>
           ))}

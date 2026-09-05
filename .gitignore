@@ -15,6 +15,7 @@
 .scratch/
 /temp/
 /tmp/
+/data/audio/
 
 # testing
 /coverage

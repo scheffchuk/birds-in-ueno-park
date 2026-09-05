@@ -1,5 +1,10 @@
 import type { Season } from "@/lib/season/types";
 import type { IllustrationStatus } from "../../../convex/lib/selectForGeneration";
+import type {
+  PublicAudio,
+  PublicEbirdLink,
+  PublicWikipediaLinks,
+} from "@/lib/audio/types";
 
 export type { IllustrationStatus };
 
@@ -23,4 +28,7 @@ export type SpeciesRecord = {
   spottingTipsZhTw?: string;
   perchUrl?: string;
   flightUrl?: string;
+  audio?: PublicAudio;
+  ebird?: PublicEbirdLink;
+  wikipedia?: PublicWikipediaLinks;
 };

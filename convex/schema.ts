@@ -1,6 +1,11 @@
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 import { authTables } from "@convex-dev/auth/server";
+import {
+  speciesAudioValidator,
+  speciesEbirdValidator,
+  speciesWikipediaValidator,
+} from "./lib/audio";
 
 export default defineSchema({
   ...authTables,
@@ -36,6 +41,12 @@ export default defineSchema({
     anatomyRef: v.optional(v.id("_storage")),
     /** Flight-pose anatomy photo (Commons); perch uses anatomyRef. */
     anatomyRefFlight: v.optional(v.id("_storage")),
+    /** Generated xeno-canto provenance and the Convex Storage copy. */
+    audio: v.optional(speciesAudioValidator),
+    /** Generated direct eBird taxonomy link. */
+    ebird: v.optional(speciesEbirdValidator),
+    /** Generated EN / JA / ZH-TW Wikipedia destinations. */
+    wikipedia: v.optional(speciesWikipediaValidator),
     slug: v.string(),
     listed: v.boolean(),
     curatedFields: v.array(v.string()),

@@ -1,4 +1,4 @@
-/** Public eBird search deep-link for a scientific name (no species-code required). */
-export function ebirdSpeciesUrl(sciName: string): string {
-  return `https://ebird.org/search?keyword=${encodeURIComponent(sciName)}`;
+/** Direct eBird species page from the official taxonomy species code. */
+export function ebirdSpeciesUrl(speciesCode: string): string {
+  return `https://ebird.org/species/${encodeURIComponent(speciesCode)}`;
 }

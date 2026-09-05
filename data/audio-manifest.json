@@ -1,0 +1,754 @@
+{
+  "version": 1,
+  "generatedAt": "not-generated",
+  "species": [
+    {
+      "slug": "accipiter-nisus",
+      "sciName": "Accipiter nisus",
+      "comNameEn": "Eurasian Sparrowhawk",
+      "comNameJa": "ハイタカ",
+      "comNameZhTw": "北雀鷹",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "aegithalos-caudatus",
+      "sciName": "Aegithalos caudatus",
+      "comNameEn": "Long-tailed Tit",
+      "comNameJa": "エナガ",
+      "comNameZhTw": "Long-tailed Tit",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "alcedo-atthis",
+      "sciName": "Alcedo atthis",
+      "comNameEn": "Common Kingfisher",
+      "comNameJa": "カワセミ",
+      "comNameZhTw": "翠鳥",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "anas-acuta",
+      "sciName": "Anas acuta",
+      "comNameEn": "Northern Pintail",
+      "comNameJa": "オナガガモ",
+      "comNameZhTw": "尖尾鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "anas-crecca",
+      "sciName": "Anas crecca",
+      "comNameEn": "Green-winged Teal",
+      "comNameJa": "コガモ",
+      "comNameZhTw": "小水鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "anas-platyrhynchos",
+      "sciName": "Anas platyrhynchos",
+      "comNameEn": "Mallard",
+      "comNameJa": "マガモ",
+      "comNameZhTw": "綠頭鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "anas-zonorhyncha",
+      "sciName": "Anas zonorhyncha",
+      "comNameEn": "Eastern Spot-billed Duck",
+      "comNameJa": "カルガモ",
+      "comNameZhTw": "花嘴鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "apus-nipalensis",
+      "sciName": "Apus nipalensis",
+      "comNameEn": "House Swift",
+      "comNameJa": "ヒメアマツバメ",
+      "comNameZhTw": "小雨燕",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "ardea-alba",
+      "sciName": "Ardea alba",
+      "comNameEn": "Great Egret",
+      "comNameJa": "ダイサギ",
+      "comNameZhTw": "大白鷺",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "ardea-cinerea",
+      "sciName": "Ardea cinerea",
+      "comNameEn": "Gray Heron",
+      "comNameJa": "アオサギ",
+      "comNameZhTw": "蒼鷺",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "ardea-intermedia",
+      "sciName": "Ardea intermedia",
+      "comNameEn": "Medium Egret",
+      "comNameJa": "チュウサギ",
+      "comNameZhTw": "中白鷺",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "aythya-baeri",
+      "sciName": "Aythya baeri",
+      "comNameEn": "Baer's Pochard",
+      "comNameJa": "Baer's Pochard",
+      "comNameZhTw": "Baer's Pochard",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "aythya-ferina",
+      "sciName": "Aythya ferina",
+      "comNameEn": "Common Pochard",
+      "comNameJa": "ホシハジロ",
+      "comNameZhTw": "紅頭潛鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "aythya-fuligula",
+      "sciName": "Aythya fuligula",
+      "comNameEn": "Tufted Duck",
+      "comNameJa": "キンクロハジロ",
+      "comNameZhTw": "鳳頭潛鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "aythya-marila",
+      "sciName": "Aythya marila",
+      "comNameEn": "Greater Scaup",
+      "comNameJa": "スズガモ",
+      "comNameZhTw": "斑背潛鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "bucephala-clangula",
+      "sciName": "Bucephala clangula",
+      "comNameEn": "Common Goldeneye",
+      "comNameJa": "ホオジロガモ",
+      "comNameZhTw": "鵲鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "buteo-japonicus",
+      "sciName": "Buteo japonicus",
+      "comNameEn": "Eastern Buzzard",
+      "comNameJa": "ノスリ",
+      "comNameZhTw": "東方鵟",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "cecropis-daurica",
+      "sciName": "Cecropis daurica",
+      "comNameEn": "Eastern Red-rumped Swallow",
+      "comNameJa": "コシアカツバメ",
+      "comNameZhTw": "金腰燕",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "chloris-sinica",
+      "sciName": "Chloris sinica",
+      "comNameEn": "Oriental Greenfinch",
+      "comNameJa": "カワラヒワ",
+      "comNameZhTw": "金翅雀",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "chroicocephalus-ridibundus",
+      "sciName": "Chroicocephalus ridibundus",
+      "comNameEn": "Black-headed Gull",
+      "comNameJa": "ユリカモメ",
+      "comNameZhTw": "紅嘴鷗",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "coccothraustes-coccothraustes",
+      "sciName": "Coccothraustes coccothraustes",
+      "comNameEn": "Hawfinch",
+      "comNameJa": "シメ",
+      "comNameZhTw": "臘嘴雀",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "columba-livia",
+      "sciName": "Columba livia",
+      "comNameEn": "Rock Pigeon",
+      "comNameJa": "カワラバト",
+      "comNameZhTw": "野鴿",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "corvus-corone",
+      "sciName": "Corvus corone",
+      "comNameEn": "Carrion Crow",
+      "comNameJa": "ハシボソガラス",
+      "comNameZhTw": "小嘴烏鴉",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "corvus-macrorhynchos",
+      "sciName": "Corvus macrorhynchos",
+      "comNameEn": "Large-billed Crow",
+      "comNameJa": "ハシブトガラス",
+      "comNameZhTw": "巨嘴鴉",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "cyanopica-cyanus",
+      "sciName": "Cyanopica cyanus",
+      "comNameEn": "Azure-winged Magpie",
+      "comNameJa": "オナガ",
+      "comNameZhTw": "灰喜鵲",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "cygnus-olor",
+      "sciName": "Cygnus olor",
+      "comNameEn": "Mute Swan",
+      "comNameJa": "コブハクチョウ",
+      "comNameZhTw": "疣鼻天鵝",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "delichon-dasypus",
+      "sciName": "Delichon dasypus",
+      "comNameEn": "Asian House-Martin",
+      "comNameJa": "イワツバメ",
+      "comNameZhTw": "東方毛腳燕",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "egretta-garzetta",
+      "sciName": "Egretta garzetta",
+      "comNameEn": "Little Egret",
+      "comNameJa": "コサギ",
+      "comNameZhTw": "小白鷺",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "emberiza-personata",
+      "sciName": "Emberiza personata",
+      "comNameEn": "Masked Bunting",
+      "comNameJa": "Masked Bunting",
+      "comNameZhTw": "Masked Bunting",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "falco-tinnunculus",
+      "sciName": "Falco tinnunculus",
+      "comNameEn": "Eurasian Kestrel",
+      "comNameJa": "チョウゲンボウ",
+      "comNameZhTw": "紅隼",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "fringilla-montifringilla",
+      "sciName": "Fringilla montifringilla",
+      "comNameEn": "Brambling",
+      "comNameJa": "アトリ",
+      "comNameZhTw": "花雀",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "fulica-atra",
+      "sciName": "Fulica atra",
+      "comNameEn": "Eurasian Coot",
+      "comNameJa": "オオバン",
+      "comNameZhTw": "白冠雞",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "gallinula-chloropus",
+      "sciName": "Gallinula chloropus",
+      "comNameEn": "Eurasian Moorhen",
+      "comNameJa": "バン",
+      "comNameZhTw": "紅冠水雞",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "garrulax-canorus",
+      "sciName": "Garrulax canorus",
+      "comNameEn": "Chinese Hwamei",
+      "comNameJa": "ガビチョウ",
+      "comNameZhTw": "大陸畫眉",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "hirundo-rustica",
+      "sciName": "Hirundo rustica",
+      "comNameEn": "Barn Swallow",
+      "comNameJa": "ツバメ",
+      "comNameZhTw": "家燕",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "horornis-diphone",
+      "sciName": "Horornis diphone",
+      "comNameEn": "Japanese Bush Warbler",
+      "comNameJa": "ウグイス",
+      "comNameZhTw": "日本樹鶯",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "hypsipetes-amaurotis",
+      "sciName": "Hypsipetes amaurotis",
+      "comNameEn": "Brown-eared Bulbul",
+      "comNameJa": "ヒヨドリ",
+      "comNameZhTw": "棕耳鵯",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "lanius-bucephalus",
+      "sciName": "Lanius bucephalus",
+      "comNameEn": "Bull-headed Shrike",
+      "comNameJa": "モズ",
+      "comNameZhTw": "紅頭伯勞",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "larus-canus",
+      "sciName": "Larus canus",
+      "comNameEn": "Common Gull",
+      "comNameJa": "カモメ",
+      "comNameZhTw": "歐亞海鷗",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "larus-crassirostris",
+      "sciName": "Larus crassirostris",
+      "comNameEn": "Black-tailed Gull",
+      "comNameJa": "ウミネコ",
+      "comNameZhTw": "黑尾鷗",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "larus-schistisagus",
+      "sciName": "Larus schistisagus",
+      "comNameEn": "Slaty-backed Gull",
+      "comNameJa": "オオセグロカモメ",
+      "comNameZhTw": "灰背鷗",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "larus-vegae",
+      "sciName": "Larus vegae",
+      "comNameEn": "Vega Gull",
+      "comNameJa": "セグロカモメ",
+      "comNameZhTw": "Vega Gull",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "mareca-penelope",
+      "sciName": "Mareca penelope",
+      "comNameEn": "Eurasian Wigeon",
+      "comNameJa": "ヒドリガモ",
+      "comNameZhTw": "赤頸鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "mareca-strepera",
+      "sciName": "Mareca strepera",
+      "comNameEn": "Gadwall",
+      "comNameJa": "オカヨシガモ",
+      "comNameZhTw": "赤膀鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "milvus-migrans",
+      "sciName": "Milvus migrans",
+      "comNameEn": "Black Kite",
+      "comNameJa": "トビ",
+      "comNameZhTw": "黑鳶",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "motacilla-alba",
+      "sciName": "Motacilla alba",
+      "comNameEn": "White Wagtail",
+      "comNameJa": "ハクセキレイ",
+      "comNameZhTw": "白鶺鴒",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "motacilla-cinerea",
+      "sciName": "Motacilla cinerea",
+      "comNameEn": "Gray Wagtail",
+      "comNameJa": "キセキレイ",
+      "comNameZhTw": "灰鶺鴒",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "motacilla-grandis",
+      "sciName": "Motacilla grandis",
+      "comNameEn": "Japanese Wagtail",
+      "comNameJa": "セグロセキレイ",
+      "comNameZhTw": "日本鶺鴒",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "nycticorax-nycticorax",
+      "sciName": "Nycticorax nycticorax",
+      "comNameEn": "Black-crowned Night Heron",
+      "comNameJa": "ゴイサギ",
+      "comNameZhTw": "夜鷺",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "parus-cinereus",
+      "sciName": "Parus cinereus",
+      "comNameEn": "Asian Tit",
+      "comNameJa": "クロシジュウカラ",
+      "comNameZhTw": "Cinereous Tit",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "passer-montanus",
+      "sciName": "Passer montanus",
+      "comNameEn": "Eurasian Tree Sparrow",
+      "comNameJa": "スズメ",
+      "comNameZhTw": "麻雀",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "periparus-ater",
+      "sciName": "Periparus ater",
+      "comNameEn": "Coal Tit",
+      "comNameJa": "ヒガラ",
+      "comNameZhTw": "煤山雀",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "phalacrocorax-carbo",
+      "sciName": "Phalacrocorax carbo",
+      "comNameEn": "Great Cormorant",
+      "comNameJa": "カワウ",
+      "comNameZhTw": "鸕鷀",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "phoenicurus-auroreus",
+      "sciName": "Phoenicurus auroreus",
+      "comNameEn": "Daurian Redstart",
+      "comNameJa": "ジョウビタキ",
+      "comNameZhTw": "黃尾鴝",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "phylloscopus-coronatus",
+      "sciName": "Phylloscopus coronatus",
+      "comNameEn": "Eastern Crowned Warbler",
+      "comNameJa": "センダイムシクイ",
+      "comNameZhTw": "冠羽柳鶯",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "psittacula-krameri",
+      "sciName": "Psittacula krameri",
+      "comNameEn": "Rose-ringed Parakeet",
+      "comNameJa": "ホンセイインコ",
+      "comNameZhTw": "紅領綠鸚鵡",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "sittiparus-varius",
+      "sciName": "Sittiparus varius",
+      "comNameEn": "Varied Tit",
+      "comNameJa": "ヤマガラ",
+      "comNameZhTw": "雜色山雀",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "spatula-clypeata",
+      "sciName": "Spatula clypeata",
+      "comNameEn": "Northern Shoveler",
+      "comNameJa": "ハシビロガモ",
+      "comNameZhTw": "琵嘴鴨",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "spodiopsar-cineraceus",
+      "sciName": "Spodiopsar cineraceus",
+      "comNameEn": "White-cheeked Starling",
+      "comNameJa": "ムクドリ",
+      "comNameZhTw": "灰椋鳥",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "streptopelia-orientalis",
+      "sciName": "Streptopelia orientalis",
+      "comNameEn": "Oriental Turtle-Dove",
+      "comNameJa": "キジバト",
+      "comNameZhTw": "金背鳩",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "tachybaptus-ruficollis",
+      "sciName": "Tachybaptus ruficollis",
+      "comNameEn": "Little Grebe",
+      "comNameJa": "カイツブリ",
+      "comNameZhTw": "小鸊鷉",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "tachyspiza-gularis",
+      "sciName": "Tachyspiza gularis",
+      "comNameEn": "Japanese Sparrowhawk",
+      "comNameJa": "Japanese Sparrowhawk",
+      "comNameZhTw": "Japanese Sparrowhawk",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "treron-sieboldii",
+      "sciName": "Treron sieboldii",
+      "comNameEn": "White-bellied Green-Pigeon",
+      "comNameJa": "アオバト",
+      "comNameZhTw": "綠鳩",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "turdus-chrysolaus",
+      "sciName": "Turdus chrysolaus",
+      "comNameEn": "Brown-headed Thrush",
+      "comNameJa": "アカハラ",
+      "comNameZhTw": "赤腹鶇",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "turdus-eunomus",
+      "sciName": "Turdus eunomus",
+      "comNameEn": "Dusky Thrush",
+      "comNameJa": "ツグミ",
+      "comNameZhTw": "斑點鶇",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "turdus-pallidus",
+      "sciName": "Turdus pallidus",
+      "comNameEn": "Pale Thrush",
+      "comNameJa": "シロハラ",
+      "comNameZhTw": "白腹鶇",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "yungipicus-kizuki",
+      "sciName": "Yungipicus kizuki",
+      "comNameEn": "Japanese Pygmy Woodpecker",
+      "comNameJa": "コゲラ",
+      "comNameZhTw": "Japanese Pygmy Woodpecker",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    },
+    {
+      "slug": "zosterops-japonicus",
+      "sciName": "Zosterops japonicus",
+      "comNameEn": "Warbling White-eye",
+      "comNameJa": "メジロ",
+      "comNameZhTw": "日菲繡眼",
+      "audio": {
+        "status": "unavailable",
+        "reason": "Audio has not been selected yet; run pnpm audio:select."
+      }
+    }
+  ]
+}

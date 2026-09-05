@@ -17,12 +17,21 @@
     "title": "Atlas",
     "subtitle": "Birds you can see in {season}",
     "emptyTitle": "No Guide species for this Season",
-    "emptyDescription": "Try another season, or browse All."
+    "emptyDescription": "Try another season, or browse All.",
+    "playAudio": "Play audio",
+    "pauseAudio": "Pause audio",
+    "loadingAudio": "Loading audio",
+    "retryAudio": "Retry audio",
+    "audioUnavailable": "Audio unavailable",
+    "wikipedia": "Wikipedia",
+    "ebird": "eBird",
+    "opensNewTab": "opens in a new tab"
   },
   "AtlasDetail": {
     "about": "About",
     "spottingTips": "Spotting tips",
     "prevalence": "Prevalence by Season",
+    "viewOnWikipedia": "View on Wikipedia",
     "viewOnEbird": "View on eBird",
     "perched": "Perched",
     "flight": "Flight",
@@ -54,7 +63,8 @@
   },
   "Footer": {
     "credit": "Inspired by",
-    "createdBy": "Created by"
+    "createdBy": "Created by",
+    "audioCredits": "Audio credits"
   },
   "LocaleSwitcher": {
     "label": "Language",
@@ -77,6 +87,15 @@
       "art": {
         "title": "Illustrations",
         "body": "The cutouts use a bird-and-flower print style. They’re AI-generated from anatomy references and reviewed by hand. The page layout and interaction also take cues from AvianVisitors."
+      },
+      "audio": {
+        "title": "Audio credits",
+        "body": "Bird recordings are selected from xeno-canto and remain unchanged from the source. Each recording’s recordist, catalogue number, source, and exact Creative Commons licence are listed below.",
+        "recordist": "Recordist",
+        "catalogue": "Catalogue",
+        "source": "Source recording",
+        "license": "Licence",
+        "none": "Audio credits will appear here after the first selection run."
       }
     }
   }

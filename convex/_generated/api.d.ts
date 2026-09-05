@@ -9,6 +9,7 @@
  */
 
 import type * as admin from "../admin.js";
+import type * as audio from "../audio.js";
 import type * as auth from "../auth.js";
 import type * as http from "../http.js";
 import type * as illustrationAnatomy from "../illustrationAnatomy.js";
@@ -17,6 +18,7 @@ import type * as lib_allowlist from "../lib/allowlist.js";
 import type * as lib_anatomyFlightRef from "../lib/anatomyFlightRef.js";
 import type * as lib_anatomyImageUrl from "../lib/anatomyImageUrl.js";
 import type * as lib_anatomyRef from "../lib/anatomyRef.js";
+import type * as lib_audio from "../lib/audio.js";
 import type * as lib_auth from "../lib/auth.js";
 import type * as lib_copyPlan from "../lib/copyPlan.js";
 import type * as lib_curation from "../lib/curation.js";
@@ -40,6 +42,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   admin: typeof admin;
+  audio: typeof audio;
   auth: typeof auth;
   http: typeof http;
   illustrationAnatomy: typeof illustrationAnatomy;
@@ -48,6 +51,7 @@ declare const fullApi: ApiFromModules<{
   "lib/anatomyFlightRef": typeof lib_anatomyFlightRef;
   "lib/anatomyImageUrl": typeof lib_anatomyImageUrl;
   "lib/anatomyRef": typeof lib_anatomyRef;
+  "lib/audio": typeof lib_audio;
   "lib/auth": typeof lib_auth;
   "lib/copyPlan": typeof lib_copyPlan;
   "lib/curation": typeof lib_curation;

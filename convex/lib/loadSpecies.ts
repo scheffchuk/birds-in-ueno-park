@@ -72,6 +72,46 @@ async function resolveCardIllustrationUrl(
   return undefined;
 }
 
+export async function resolveAudio(
+  ctx: QueryCtx,
+  sp: Doc<"species">,
+) {
+  const audio = sp.audio;
+  if (!audio) return undefined;
+  if (audio.status === "unavailable") {
+    return {
+      status: audio.status,
+      ...(audio.unavailableReason
+        ? { unavailableReason: audio.unavailableReason }
+        : {}),
+    };
+  }
+
+  const url = audio.storageId
+    ? ((await ctx.storage.getUrl(audio.storageId)) ?? undefined)
+    : undefined;
+  return {
+    status: audio.status,
+    ...(url ? { url } : {}),
+    ...(audio.sourceUrl ? { sourceUrl: audio.sourceUrl } : {}),
+    ...(audio.catalogueNumber
+      ? { catalogueNumber: audio.catalogueNumber }
+      : {}),
+    ...(audio.recordist ? { recordist: audio.recordist } : {}),
+    ...(audio.licenseUrl ? { licenseUrl: audio.licenseUrl } : {}),
+    ...(audio.license ? { license: audio.license } : {}),
+    ...(audio.nonCommercial !== undefined
+      ? { nonCommercial: audio.nonCommercial }
+      : {}),
+    ...(audio.durationSeconds !== undefined
+      ? { durationSeconds: audio.durationSeconds }
+      : {}),
+    ...(audio.sha256 ? { sha256: audio.sha256 } : {}),
+    ...(audio.bytes !== undefined ? { bytes: audio.bytes } : {}),
+    ...(audio.contentType ? { contentType: audio.contentType } : {}),
+  };
+}
+
 export async function loadListedSpecies(ctx: QueryCtx) {
   const listed = await ctx.db
     .query("species")
@@ -97,6 +137,7 @@ export async function loadAtlasListSpecies(ctx: QueryCtx) {
   return await Promise.all(
     listed.map(async (sp) => {
       const imageUrl = await resolveCardIllustrationUrl(ctx, sp);
+      const audio = await resolveAudio(ctx, sp);
       return {
         slug: sp.slug,
         sciName: sp.sciName,
@@ -106,6 +147,9 @@ export async function loadAtlasListSpecies(ctx: QueryCtx) {
         listed: true,
         prevalence: await loadPrevalenceForSpecies(ctx, sp._id),
         ...(imageUrl ? { imageUrl } : {}),
+        ...(audio ? { audio } : {}),
+        ...(sp.ebird ? { ebird: sp.ebird } : {}),
+        ...(sp.wikipedia ? { wikipedia: sp.wikipedia } : {}),
       };
     }),
   );

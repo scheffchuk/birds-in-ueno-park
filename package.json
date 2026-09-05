@@ -11,7 +11,9 @@
     "typecheck": "tsc --noEmit",
     "seed:histogram": "tsx --env-file=.env.local scripts/seed-histogram.ts",
     "seed:copy": "tsx --env-file=.env.local scripts/generate-copy.ts",
-    "seed:style-refs": "tsx --env-file=.env.local scripts/seed-style-refs.ts"
+    "seed:style-refs": "tsx --env-file=.env.local scripts/seed-style-refs.ts",
+    "audio:select": "tsx --env-file=.env.local scripts/audio-select.ts",
+    "audio:sync": "tsx --env-file=.env.local scripts/audio-sync.ts"
   },
   "dependencies": {
     "@ai-sdk/xai": "^4.0.16",

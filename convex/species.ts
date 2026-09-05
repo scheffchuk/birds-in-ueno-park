@@ -13,7 +13,13 @@ import {
   loadAtlasListSpecies,
   loadPrevalenceForSpecies,
   loadSpeciesForCollage,
+  resolveAudio,
 } from "./lib/loadSpecies";
+import {
+  publicAudioValidator,
+  speciesEbirdValidator,
+  speciesWikipediaValidator,
+} from "./lib/audio";
 
 const prevalenceValidator = v.object({
   winter: v.number(),
@@ -54,6 +60,9 @@ const speciesRecordValidator = v.object({
   spottingTipsZhTw: v.optional(v.string()),
   perchUrl: v.optional(v.string()),
   flightUrl: v.optional(v.string()),
+  audio: v.optional(publicAudioValidator),
+  ebird: v.optional(speciesEbirdValidator),
+  wikipedia: v.optional(speciesWikipediaValidator),
 });
 
 const atlasListRecordValidator = v.object({
@@ -65,6 +74,9 @@ const atlasListRecordValidator = v.object({
   listed: v.boolean(),
   prevalence: prevalenceValidator,
   imageUrl: v.optional(v.string()),
+  audio: v.optional(publicAudioValidator),
+  ebird: v.optional(speciesEbirdValidator),
+  wikipedia: v.optional(speciesWikipediaValidator),
 });
 
 const collageSpeciesValidator = v.object({
@@ -127,6 +139,7 @@ export const getSpecies = query({
     const flightUrl = sp.illustrationFlight
       ? ((await ctx.storage.getUrl(sp.illustrationFlight)) ?? undefined)
       : undefined;
+    const audio = await resolveAudio(ctx, sp);
 
     return {
       slug: sp.slug,
@@ -145,6 +158,9 @@ export const getSpecies = query({
       spottingTipsZhTw: sp.spottingTipsZhTw,
       perchUrl,
       flightUrl,
+      ...(audio ? { audio } : {}),
+      ...(sp.ebird ? { ebird: sp.ebird } : {}),
+      ...(sp.wikipedia ? { wikipedia: sp.wikipedia } : {}),
     };
   },
 });

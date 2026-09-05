@@ -1,6 +1,6 @@
 import Image from "next/image";
+import { ExternalLinkIcon } from "lucide-react";
 import { getTranslations } from "next-intl/server";
-import { ebirdSpeciesUrl } from "@/lib/atlas/ebird";
 import type { SpeciesRecord } from "@/lib/guide/types";
 import {
   longFormForLocale,
@@ -9,6 +9,7 @@ import {
 import { SeasonLink } from "@/components/season/SeasonLink";
 import { PrevalenceChart } from "./PrevalenceChart";
 import type { AppLocale } from "@/i18n/routing";
+import { wikipediaUrlForLocale } from "@/lib/audio/links";
 
 function hasText(value: string | undefined): value is string {
   return typeof value === "string" && value.trim().length > 0;
@@ -27,6 +28,7 @@ export async function AtlasDetailView({
   const description = longFormForLocale(species, "description", locale);
   const spottingTips = longFormForLocale(species, "spottingTips", locale);
   const hasArt = Boolean(species.perchUrl || species.flightUrl);
+  const wikipediaUrl = wikipediaUrlForLocale(species.wikipedia, locale);
 
   return (
     <div className="flex flex-1 flex-col gap-10">
@@ -109,16 +111,32 @@ export async function AtlasDetailView({
         <PrevalenceChart prevalence={species.prevalence} />
       </section>
 
-      <p>
-        <a
-          href={ebirdSpeciesUrl(species.sciName)}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex rounded-full bg-paper-2 px-4 py-2 font-mono text-[10px] tracking-[0.14em] text-ink uppercase shadow-[var(--recess)] transition-colors hover:text-ink-2"
-        >
-          {t("viewOnEbird")}
-        </a>
-      </p>
+      {wikipediaUrl || species.ebird?.url ? (
+        <div className="flex flex-wrap gap-2">
+          {wikipediaUrl ? (
+            <a
+              href={wikipediaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-full bg-paper-2 px-4 py-2 font-mono text-[10px] tracking-[0.14em] text-ink uppercase shadow-[var(--recess)] transition-colors hover:text-ink-2"
+            >
+              {t("viewOnWikipedia")}
+              <ExternalLinkIcon aria-hidden className="size-3" />
+            </a>
+          ) : null}
+          {species.ebird?.url ? (
+            <a
+              href={species.ebird.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 rounded-full bg-paper-2 px-4 py-2 font-mono text-[10px] tracking-[0.14em] text-ink uppercase shadow-[var(--recess)] transition-colors hover:text-ink-2"
+            >
+              {t("viewOnEbird")}
+              <ExternalLinkIcon aria-hidden className="size-3" />
+            </a>
+          ) : null}
+        </div>
+      ) : null}
 
       <SeasonLink pathname="/" backLabel={tNav("backToCollage")} />
     </div>

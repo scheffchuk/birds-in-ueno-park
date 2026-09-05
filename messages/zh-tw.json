@@ -17,12 +17,21 @@
     "title": "圖鑑",
     "subtitle": "在{season}能見到的鳥",
     "emptyTitle": "此季節沒有導覽物種",
-    "emptyDescription": "試試其他季節，或瀏覽全年。"
+    "emptyDescription": "試試其他季節，或瀏覽全年。",
+    "playAudio": "播放聲音",
+    "pauseAudio": "暫停聲音",
+    "loadingAudio": "載入聲音中",
+    "retryAudio": "重試聲音",
+    "audioUnavailable": "沒有聲音",
+    "wikipedia": "Wikipedia",
+    "ebird": "eBird",
+    "opensNewTab": "在新分頁開啟"
   },
   "AtlasDetail": {
     "about": "簡介",
     "spottingTips": "觀察提示",
     "prevalence": "各季節出現度",
+    "viewOnWikipedia": "在 Wikipedia 查看",
     "viewOnEbird": "在 eBird 查看",
     "perched": "棲息",
     "flight": "飛行",
@@ -54,7 +63,8 @@
   },
   "Footer": {
     "credit": "靈感來自",
-    "createdBy": "製作"
+    "createdBy": "製作",
+    "audioCredits": "聲音致謝"
   },
   "LocaleSwitcher": {
     "label": "語言",
@@ -77,6 +87,15 @@
       "art": {
         "title": "插圖",
         "body": "剪影插圖採用花鳥畫風格，基於解剖參考圖由 AI 生成，並經過人工審核。頁面排版與互動同樣參考了 AvianVisitors。"
+      },
+      "audio": {
+        "title": "聲音致謝",
+        "body": "鳥類錄音選自 xeno-canto，並保持來源音檔不變。以下列出每段錄音的錄音者、目錄編號、來源與完整 Creative Commons 授權。",
+        "recordist": "錄音者",
+        "catalogue": "目錄編號",
+        "source": "來源錄音",
+        "license": "授權",
+        "none": "完成第一次選擇後，聲音致謝會顯示在這裡。"
       }
     }
   }

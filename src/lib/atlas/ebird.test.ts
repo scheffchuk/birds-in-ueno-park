@@ -2,9 +2,9 @@ import { describe, expect, it } from "vitest";
 import { ebirdSpeciesUrl } from "./ebird";
 
 describe("ebirdSpeciesUrl", () => {
-  it("builds a searchable eBird URL from the scientific name", () => {
-    expect(ebirdSpeciesUrl("Passer montanus")).toBe(
-      "https://ebird.org/search?keyword=Passer%20montanus",
+  it("builds a direct eBird URL from the official species code", () => {
+    expect(ebirdSpeciesUrl("eurtrs1")).toBe(
+      "https://ebird.org/species/eurtrs1",
     );
   });
 });

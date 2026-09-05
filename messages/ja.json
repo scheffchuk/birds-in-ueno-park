@@ -17,12 +17,21 @@
     "title": "図鑑",
     "subtitle": "{season}に見られる鳥",
     "emptyTitle": "この季節に該当する案内種はありません",
-    "emptyDescription": "別の季節を試すか、「通年」を選んでください。"
+    "emptyDescription": "別の季節を試すか、「通年」を選んでください。",
+    "playAudio": "音声を再生",
+    "pauseAudio": "音声を一時停止",
+    "loadingAudio": "音声を読み込み中",
+    "retryAudio": "音声を再試行",
+    "audioUnavailable": "音声なし",
+    "wikipedia": "Wikipedia",
+    "ebird": "eBird",
+    "opensNewTab": "新しいタブで開きます"
   },
   "AtlasDetail": {
     "about": "概要",
     "spottingTips": "観察のヒント",
     "prevalence": "季節ごとの出現度",
+    "viewOnWikipedia": "Wikipedia で見る",
     "viewOnEbird": "eBird で見る",
     "perched": "止まり",
     "flight": "飛翔",
@@ -54,7 +63,8 @@
   },
   "Footer": {
     "credit": "着想元",
-    "createdBy": "制作"
+    "createdBy": "制作",
+    "audioCredits": "音声クレジット"
   },
   "LocaleSwitcher": {
     "label": "言語",
@@ -77,6 +87,15 @@
       "art": {
         "title": "イラストについて",
         "body": "切り抜きイラストは花鳥画のスタイルで、解剖の参考図をもとに AI で生成し、人の手で確認しています。ページのレイアウトと操作感も同様に AvianVisitors を参考にしています。"
+      },
+      "audio": {
+        "title": "音声クレジット",
+        "body": "鳥の録音は xeno-canto から選び、元の音源をそのまま使用しています。録音者、カタログ番号、出典、正確な Creative Commons ライセンスを以下に記載しています。",
+        "recordist": "録音者",
+        "catalogue": "カタログ番号",
+        "source": "音源",
+        "license": "ライセンス",
+        "none": "音声クレジットは、最初の選択実行後にここへ表示されます。"
       }
     }
   }

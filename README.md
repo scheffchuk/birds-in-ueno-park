@@ -18,6 +18,19 @@ pnpm test
 pnpm typecheck
 ```
 
+## Species audio and references
+
+Audio selection and link enrichment run locally and are recorded in [`data/audio-manifest.json`](data/audio-manifest.json). They never run during a build or visitor request.
+
+```bash
+pnpm audio:select                 # preserve pinned recordings
+pnpm audio:select -- --refresh    # explicitly recompute selections
+pnpm audio:sync                   # sync to the development deployment
+pnpm audio:sync -- --prod         # explicitly sync to CONVEX_PROD_URL
+```
+
+Selection needs `XENO_CANTO_API_KEY` and `EBIRD_API_KEY` in `.env.local`. Sync needs `AUDIO_SYNC_SECRET` in `.env.local` and the same value as a Convex environment variable. Audio binaries are written to ignored `data/audio/` and then uploaded to Convex Storage; they are not committed to Git. The production URL is intentionally separate from `NEXT_PUBLIC_CONVEX_URL`.
+
 Histogram inputs: [`data/ebird/`](data/ebird/). Domain language: [`CONTEXT.md`](CONTEXT.md). Plan: [`PLAN.md`](PLAN.md).
 
 ## Species copy (xAI via AI Gateway)

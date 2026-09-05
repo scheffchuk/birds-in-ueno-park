@@ -1,6 +1,11 @@
 import { prevalenceForFilter } from "@/lib/guide/prevalence";
 import type { SeasonalPrevalence } from "@/lib/guide/types";
 import type { SeasonFilter } from "@/lib/season/types";
+import type {
+  PublicAudio,
+  PublicEbirdLink,
+  PublicWikipediaLinks,
+} from "@/lib/audio/types";
 
 /** Lean Listed species row from `listAtlas` (card URL already preferred). */
 export type AtlasListSource = {
@@ -13,6 +18,9 @@ export type AtlasListSource = {
   prevalence: SeasonalPrevalence;
   /** Perch art, else flight; omitted when neither exists. */
   imageUrl?: string;
+  audio?: PublicAudio;
+  ebird?: PublicEbirdLink;
+  wikipedia?: PublicWikipediaLinks;
 };
 
 /**
@@ -37,6 +45,9 @@ export function selectForAtlas(
           comNameZhTw: record.comNameZhTw,
           prevalence,
           ...(record.imageUrl ? { imageUrl: record.imageUrl } : {}),
+          ...(record.audio ? { audio: record.audio } : {}),
+          ...(record.ebird ? { ebird: record.ebird } : {}),
+          ...(record.wikipedia ? { wikipedia: record.wikipedia } : {}),
         },
       ];
     })
