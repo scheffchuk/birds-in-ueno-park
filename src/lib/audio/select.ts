@@ -1,4 +1,4 @@
-import type { XenoCantoRecording } from "./types";
+import type { AudioQuality, XenoCantoRecording } from "./types";
 
 const MAX_PREFERRED_DURATION_SECONDS = 90;
 
@@ -14,6 +14,9 @@ const LICENSES = [
 export type EligibleRecording = {
   recording: XenoCantoRecording;
   durationSeconds: number;
+  soundType: string;
+  quality: AudioQuality;
+  originalFilename: string;
   licenseUrl: string;
   license: (typeof LICENSES)[number]["name"];
   nonCommercial: boolean;
@@ -26,6 +29,11 @@ export function normalizeScientificName(value: string): string {
 function recordingScientificName(recording: XenoCantoRecording): string {
   if (recording.scientificName) return recording.scientificName;
   return [recording.gen, recording.sp].filter(Boolean).join(" ");
+}
+
+function nonEmptyText(value: string | readonly string[] | undefined): boolean {
+  if (Array.isArray(value)) return value.some((part) => part.trim() !== "");
+  return typeof value === "string" && value.trim() !== "";
 }
 
 export function parseDurationSeconds(value: string | number | undefined): number | undefined {
@@ -65,6 +73,9 @@ function licenseOf(recording: XenoCantoRecording) {
 }
 
 function isQuestionable(recording: XenoCantoRecording): boolean {
+  if (nonEmptyText(recording.background) || nonEmptyText(recording.also)) {
+    return true;
+  }
   const searchable = [
     recording.type,
     recording.remarks,
@@ -74,9 +85,37 @@ function isQuestionable(recording: XenoCantoRecording): boolean {
     .filter(Boolean)
     .join(" ")
     .toLocaleLowerCase();
-  return /background|uncertain|questionable|unknown|not sure|possibly|probable/.test(
-    searchable,
-  );
+  return /ambiguous|background|identity under discussion|mystery|not sure|possibly|probable|questionable|uncertain|unknown|unidentified/.test(searchable);
+}
+
+function soundTypeOf(recording: XenoCantoRecording): string {
+  return recording.type?.trim() || "unknown";
+}
+
+function qualityOf(recording: XenoCantoRecording): AudioQuality {
+  const value = recording.q?.trim().toLocaleUpperCase();
+  return value && /^[A-E]$/.test(value)
+    ? (value as Exclude<AudioQuality, "unknown">)
+    : "unknown";
+}
+
+function originalFilenameOf(recording: XenoCantoRecording): string | undefined {
+  const provided = [
+    recording["file-name"],
+    recording.filename,
+    recording.originalFilename,
+  ].find((value) => value?.trim());
+  if (provided) return provided.trim();
+
+  const sourceUrl = sourceUrlFor(recording);
+  try {
+    const pathname = new URL(sourceUrl).pathname;
+    const filename = decodeURIComponent(pathname.split("/").at(-1) ?? "").trim();
+    if (filename && filename !== "download") return filename;
+  } catch {
+    // The API should return a URL, but catalogue identity is still a useful fallback.
+  }
+  return undefined;
 }
 
 export function eligibleRecordings(
@@ -94,9 +133,14 @@ export function eligibleRecordings(
     if (durationSeconds === undefined) continue;
     const license = licenseOf(recording);
     if (!license) continue;
+    const originalFilename = originalFilenameOf(recording);
+    if (!originalFilename) continue;
     eligible.push({
       recording,
       durationSeconds,
+      soundType: soundTypeOf(recording),
+      quality: qualityOf(recording),
+      originalFilename,
       ...license,
     });
   }
@@ -112,8 +156,8 @@ function soundTypeRank(type: string | undefined): number {
 
 function qualityRank(quality: string | undefined): number {
   const letter = quality?.trim().toLocaleUpperCase();
-  if (!letter) return 9;
-  const rank = "ABCDE".indexOf(letter[0] ?? "");
+  if (!letter || !/^[A-E]$/.test(letter)) return 9;
+  const rank = "ABCDE".indexOf(letter);
   return rank >= 0 ? rank : 9;
 }
 

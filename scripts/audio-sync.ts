@@ -108,6 +108,11 @@ async function main() {
                 sourceUrl: audio.sourceUrl,
                 catalogueNumber: audio.catalogueNumber,
                 recordist: audio.recordist,
+                ...(audio.soundType ? { soundType: audio.soundType } : {}),
+                ...(audio.quality ? { quality: audio.quality } : {}),
+                ...(audio.originalFilename
+                  ? { originalFilename: audio.originalFilename }
+                  : {}),
                 licenseUrl: audio.licenseUrl,
                 license: audio.license,
                 nonCommercial: audio.nonCommercial,

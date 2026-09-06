@@ -98,6 +98,11 @@ export async function resolveAudio(
       ? { catalogueNumber: audio.catalogueNumber }
       : {}),
     ...(audio.recordist ? { recordist: audio.recordist } : {}),
+    ...(audio.soundType ? { soundType: audio.soundType } : {}),
+    ...(audio.quality ? { quality: audio.quality } : {}),
+    ...(audio.originalFilename
+      ? { originalFilename: audio.originalFilename }
+      : {}),
     ...(audio.licenseUrl ? { licenseUrl: audio.licenseUrl } : {}),
     ...(audio.license ? { license: audio.license } : {}),
     ...(audio.nonCommercial !== undefined

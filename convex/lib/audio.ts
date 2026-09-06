@@ -1,11 +1,18 @@
 import { v } from "convex/values";
 
+export const audioSourceMetadataFields = {
+  soundType: v.optional(v.string()),
+  quality: v.optional(v.string()),
+  originalFilename: v.optional(v.string()),
+};
+
 export const speciesAudioValidator = v.object({
   status: v.union(v.literal("available"), v.literal("unavailable")),
   storageId: v.optional(v.id("_storage")),
   sourceUrl: v.optional(v.string()),
   catalogueNumber: v.optional(v.string()),
   recordist: v.optional(v.string()),
+  ...audioSourceMetadataFields,
   licenseUrl: v.optional(v.string()),
   license: v.optional(v.string()),
   nonCommercial: v.optional(v.boolean()),
@@ -33,6 +40,7 @@ export const publicAudioValidator = v.object({
   sourceUrl: v.optional(v.string()),
   catalogueNumber: v.optional(v.string()),
   recordist: v.optional(v.string()),
+  ...audioSourceMetadataFields,
   licenseUrl: v.optional(v.string()),
   license: v.optional(v.string()),
   nonCommercial: v.optional(v.boolean()),

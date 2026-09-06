@@ -1,6 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import {
+  audioSourceMetadataFields,
   speciesEbirdValidator,
   speciesWikipediaValidator,
 } from "./lib/audio";
@@ -11,6 +12,7 @@ const availableAudioValidator = v.object({
   sourceUrl: v.string(),
   catalogueNumber: v.string(),
   recordist: v.string(),
+  ...audioSourceMetadataFields,
   licenseUrl: v.string(),
   license: v.string(),
   nonCommercial: v.boolean(),

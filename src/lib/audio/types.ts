@@ -1,11 +1,16 @@
 export type AudioStatus = "available" | "unavailable";
 
+export type AudioQuality = "A" | "B" | "C" | "D" | "E" | "unknown";
+
 export type AudioManifestAvailable = {
   status: "available";
   file: string;
   sourceUrl: string;
   catalogueNumber: string;
   recordist: string;
+  soundType?: string;
+  quality?: AudioQuality;
+  originalFilename?: string;
   licenseUrl: string;
   license: string;
   nonCommercial: boolean;
@@ -72,10 +77,15 @@ export type XenoCantoRecording = {
   licenseUrl?: string;
   url?: string;
   file?: string;
+  "file-name"?: string;
+  filename?: string;
+  originalFilename?: string;
   rec?: string;
   remarks?: string;
   rmk?: string;
   "bird-seen"?: string;
+  background?: string | readonly string[];
+  also?: string | readonly string[];
 };
 
 export type EbirdTaxon = {
@@ -102,6 +112,9 @@ export type PublicAudio = {
   sourceUrl?: string;
   catalogueNumber?: string;
   recordist?: string;
+  soundType?: string;
+  quality?: string;
+  originalFilename?: string;
   licenseUrl?: string;
   license?: string;
   nonCommercial?: boolean;

@@ -3,14 +3,16 @@ import {
   existsSync,
   mkdirSync,
   readFileSync,
-  renameSync,
+  rmSync,
   writeFileSync,
 } from "node:fs";
 import { resolve } from "node:path";
 import {
+  AudioGenerationError,
   generateAudioManifest,
   type AudioGeneratorAdapters,
 } from "../src/lib/audio/generator";
+import { commitAudioManifest } from "../src/lib/audio/commit";
 import {
   retryForbiddenRequest,
   xenoCantoQueryForSpecies,
@@ -27,6 +29,7 @@ import type {
 
 const root = resolve(import.meta.dirname, "..");
 const manifestPath = resolve(root, "data/audio-manifest.json");
+const audioDirectory = resolve(root, "data/audio");
 
 function parseArgs(argv: string[]) {
   return { refresh: argv.includes("--refresh") };
@@ -86,7 +89,10 @@ function bindingValue(
   return typeof value?.value === "string" ? value.value : undefined;
 }
 
-function createAdapters(): AudioGeneratorAdapters {
+function createAdapters(
+  stagingDirectory: string,
+  stagedFiles: Map<string, string>,
+): AudioGeneratorAdapters {
   const xenoKey = process.env.XENO_CANTO_API_KEY;
   const ebirdKey = process.env.EBIRD_API_KEY;
   if (!xenoKey) throw new Error("XENO_CANTO_API_KEY is required in .env.local");
@@ -223,13 +229,15 @@ function createAdapters(): AudioGeneratorAdapters {
           : contentType.includes("wav")
             ? ".wav"
             : ".mp3";
-      const relative = `data/audio/${slug}${extension}`;
-      const absolute = resolve(root, relative);
-      mkdirSync(resolve(root, "data/audio"), { recursive: true });
-      writeFileSync(absolute, Buffer.from(downloaded.bytes));
+      const sha256 = createHash("sha256").update(downloaded.bytes).digest("hex");
+      const relative = `data/audio/${slug}-${sha256.slice(0, 16)}${extension}`;
+      const staged = resolve(stagingDirectory, `${slug}-${sha256.slice(0, 16)}${extension}`);
+      mkdirSync(stagingDirectory, { recursive: true });
+      writeFileSync(staged, Buffer.from(downloaded.bytes));
+      stagedFiles.set(relative, staged);
       return {
         file: relative,
-        sha256: createHash("sha256").update(downloaded.bytes).digest("hex"),
+        sha256,
         bytes: downloaded.bytes.byteLength,
         contentType,
       };
@@ -240,24 +248,63 @@ function createAdapters(): AudioGeneratorAdapters {
 async function main() {
   const { refresh } = parseArgs(process.argv.slice(2));
   const guideSpecies = readGuideSpecies();
-  const result = await generateAudioManifest(guideSpecies, createAdapters(), {
-    generatedAt: new Date().toISOString(),
-    refresh,
-    previous: readPrevious(),
-  });
+  const stagingDirectory = resolve(audioDirectory, `.staging-${process.pid}`);
+  const stagedFiles = new Map<string, string>();
+  mkdirSync(stagingDirectory, { recursive: true });
+  try {
+    const result = await generateAudioManifest(
+      guideSpecies,
+      createAdapters(stagingDirectory, stagedFiles),
+      {
+        generatedAt: new Date().toISOString(),
+        refresh,
+        previous: readPrevious(),
+      },
+    );
 
-  const temporaryPath = `${manifestPath}.tmp-${process.pid}`;
-  writeFileSync(temporaryPath, JSON.stringify(result.manifest, null, 2) + "\n");
-  renameSync(temporaryPath, manifestPath);
-  console.log(
-    `Audio selection: ${result.report.species} species, ${result.report.selected} selected, ` +
-      `${result.report.unavailable} unavailable, ${result.report.bytes} downloaded bytes` +
-      (refresh ? " [refresh]" : ""),
-  );
-  console.log(`Wrote ${manifestPath}`);
+    commitAudioManifest({
+      root,
+      manifestPath,
+      stagedFiles,
+      manifest: result.manifest,
+      processId: process.pid,
+    });
+    console.log(
+      `Audio selection: ${result.report.species} species, ${result.report.selected} selected, ` +
+        `${result.report.unavailable} unavailable, ${result.report.bytes} downloaded bytes` +
+        (refresh ? " [refresh]" : ""),
+    );
+    console.log(`Wrote ${manifestPath}`);
+  } finally {
+    rmSync(stagingDirectory, { recursive: true, force: true });
+  }
 }
 
 main().catch((error: unknown) => {
+  if (error instanceof AudioGenerationError) {
+    const { progress } = error;
+    console.error(error.message);
+    console.error(
+      `Audio selection incomplete: ${progress.completed}/${progress.species} species completed; ` +
+        `${progress.selected} selected, ${progress.unavailable} unavailable, ` +
+        `${progress.bytes} downloaded bytes.`,
+    );
+    if (progress.completedSlugs.length > 0) {
+      console.error(`Completed species: ${progress.completedSlugs.join(", ")}`);
+    }
+    for (const failure of progress.failed) {
+      if (failure.scope === "species") {
+        console.error(`Failed ${failure.slug} (${failure.stage}): ${failure.message}`);
+      } else {
+        console.error(`Failed during ${failure.stage}: ${failure.message}`);
+      }
+    }
+    const retry = process.argv.includes("--refresh")
+      ? "pnpm audio:select -- --refresh"
+      : "pnpm audio:select";
+    console.error(`Manifest unchanged. Retry with: ${retry}`);
+    process.exit(1);
+  }
   console.error(error instanceof Error ? error.message : error);
   process.exit(1);
 });

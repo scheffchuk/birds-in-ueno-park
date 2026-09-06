@@ -16,6 +16,7 @@ function recording(
     type: "song",
     q: "A",
     length: "0:24",
+    "file-name": "XC100.mp3",
     lic: "https://creativecommons.org/licenses/by/4.0/",
     rec: "A. Recordist",
     url: "https://xeno-canto.org/100/download",
@@ -30,6 +31,7 @@ describe("selectRecording", () => {
       recording({ id: "2", rmk: "possibly a background species" }),
       recording({ id: "3", lic: "https://example.com/custom-license" }),
       recording({ id: "4", "bird-seen": "unknown" }),
+      recording({ id: "6", background: ["Corvus corone"] }),
       recording({ id: "5" }),
     ]);
 
@@ -81,11 +83,40 @@ describe("selectRecording", () => {
     });
   });
 
+  it.each([
+    ["https://creativecommons.org/publicdomain/zero/1.0/", "CC0", false],
+    ["https://creativecommons.org/licenses/by/4.0/", "CC BY", false],
+    ["https://creativecommons.org/licenses/by-sa/4.0/", "CC BY-SA", false],
+    ["https://creativecommons.org/licenses/by-nc/4.0/", "CC BY-NC", true],
+    [
+      "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+      "CC BY-NC-SA",
+      true,
+    ],
+    [
+      "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+      "CC BY-NC-ND",
+      true,
+    ],
+  ])("accepts %s as %s", (licenseUrl, license, nonCommercial) => {
+    expect(
+      selectRecording("Passer montanus", [recording({ lic: licenseUrl })]),
+    ).toMatchObject({ licenseUrl, license, nonCommercial });
+  });
+
   it("keeps the catalogue provenance URL separate from the download URL", () => {
     const selected = recording({ id: "123", file: "https://cdn.example/bird.mp3" });
 
     expect(selectRecording("Passer montanus", [selected])).toBeDefined();
     expect(sourceUrlFor(selected)).toBe("https://cdn.example/bird.mp3");
     expect(catalogueUrlFor(selected)).toBe("https://xeno-canto.org/123");
+  });
+
+  it("rejects recordings without an original filename", () => {
+    expect(
+      selectRecording("Passer montanus", [
+        recording({ "file-name": undefined }),
+      ]),
+    ).toBeUndefined();
   });
 });

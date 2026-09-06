@@ -34,6 +34,7 @@ function adapters(
         type: "song",
         q: "A",
         length: "0:20",
+        "file-name": `${scientificName.replaceAll(" ", "_")}.mp3`,
         rec: "A. Recordist",
         lic: "https://creativecommons.org/licenses/by/4.0/",
         url: `https://xeno-canto.org/${scientificName}/download`,
@@ -70,6 +71,9 @@ describe("generateAudioManifest", () => {
       audio: {
         status: "available",
         catalogueNumber: "10",
+        soundType: "song",
+        quality: "A",
+        originalFilename: "Passer_montanus.mp3",
         file: "data/audio/passer-montanus.mp3",
       },
       ebird: {
@@ -120,6 +124,9 @@ describe("generateAudioManifest", () => {
           sourceUrl: `https://old.example/${entry.slug}`,
           catalogueNumber: "999",
           recordist: "Pinned Recordist",
+          soundType: "song",
+          quality: "A",
+          originalFilename: "pinned.mp3",
           licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
           license: "CC BY",
           nonCommercial: false,
@@ -168,6 +175,9 @@ describe("generateAudioManifest", () => {
           sourceUrl: "https://old.example/audio",
           catalogueNumber: "999",
           recordist: "Old Recordist",
+          soundType: "song",
+          quality: "A",
+          originalFilename: "old.mp3",
           licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
           license: "CC BY",
           nonCommercial: false,
@@ -202,6 +212,9 @@ describe("generateAudioManifest", () => {
           sourceUrl: "https://xeno-canto.org/1",
           catalogueNumber: "1",
           recordist: "Recordist",
+          soundType: "song",
+          quality: "A",
+          originalFilename: "same.mp3",
           licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
           license: "CC BY",
           nonCommercial: false,
@@ -220,5 +233,70 @@ describe("generateAudioManifest", () => {
     );
 
     expect(result.manifest.species[0]?.ebird).toEqual(previous.species[0]?.ebird);
+  });
+
+  it("reports resumable progress without returning a partial manifest", async () => {
+    const lookupWikipedia = adapters().lookupWikipedia;
+    const error = await generateAudioManifest(species, adapters({
+      lookupWikipedia: async (scientificName) => {
+        if (scientificName === "Alcedo atthis") {
+          throw new Error("Wikidata is temporarily unavailable");
+        }
+        return lookupWikipedia(scientificName);
+      },
+    }), { generatedAt: "now" }).catch((failure: unknown) => failure);
+
+    expect(error).toMatchObject({
+      name: "AudioGenerationError",
+      progress: {
+        completed: 1,
+        completedSlugs: ["passer-montanus"],
+        selected: 2,
+        unavailable: 0,
+        downloaded: 2,
+        bytes: 6,
+        failed: [
+          {
+            slug: "alcedo-atthis",
+            stage: "wikipedia",
+          },
+        ],
+      },
+    });
+  });
+
+  it("continues independent species and reports every failure", async () => {
+    const thirdSpecies: GuideSpeciesForAudio = {
+      slug: "cettia-diphone",
+      sciName: "Cettia diphone",
+      comNameEn: "Japanese Bush Warbler",
+      comNameJa: "ウグイス",
+      comNameZhTw: "日本樹鶯",
+    };
+    const lookupWikipedia = adapters().lookupWikipedia;
+    const error = await generateAudioManifest(
+      [...species, thirdSpecies],
+      adapters({
+        lookupWikipedia: async (scientificName) => {
+          if (scientificName !== "Alcedo atthis") {
+            throw new Error("Wikidata is temporarily unavailable");
+          }
+          return lookupWikipedia(scientificName);
+        },
+      }),
+      { generatedAt: "now" },
+    ).catch((failure: unknown) => failure);
+
+    expect(error).toMatchObject({
+      name: "AudioGenerationError",
+      progress: {
+        completed: 1,
+        completedSlugs: ["alcedo-atthis"],
+        failed: [
+          { slug: "passer-montanus", stage: "wikipedia" },
+          { slug: "cettia-diphone", stage: "wikipedia" },
+        ],
+      },
+    });
   });
 });
