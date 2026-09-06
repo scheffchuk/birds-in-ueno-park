@@ -75,6 +75,7 @@ describe("AtlasAudioControl", () => {
     const audio = () => container.querySelector("audio") as HTMLAudioElement;
 
     expect(audio().getAttribute("src")).toBeNull();
+    expect(audio().getAttribute("preload")).toBe("none");
     expect(button().getAttribute("aria-label")).toBe("Play audio");
 
     await act(async () => {
@@ -128,5 +129,16 @@ describe("AtlasAudioControl", () => {
     expect(button.disabled).toBe(true);
     expect(button.getAttribute("aria-label")).toBe("Audio unavailable");
     expect(audio.getAttribute("src")).toBeNull();
+  });
+
+  it("keeps the labeled audio action keyboard reachable", () => {
+    const container = renderControl();
+    const button = container.querySelector("button") as HTMLButtonElement;
+
+    button.focus();
+
+    expect(document.activeElement).toBe(button);
+    expect(button.type).toBe("button");
+    expect(button.getAttribute("aria-label")).toBe("Play audio");
   });
 });

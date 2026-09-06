@@ -101,11 +101,13 @@ export function AtlasSpeciesCard({
           <CardTitle className="line-clamp-2 text-sm leading-snug text-ink">
             {comName}
           </CardTitle>
-          <CardDescription className="truncate text-xs text-ink-soft italic">
-            {sciName}
-          </CardDescription>
         </CardHeader>
       </Link>
+      <div className="px-(--card-spacing)">
+        <CardDescription className="truncate text-xs text-ink-soft italic">
+          {sciName}
+        </CardDescription>
+      </div>
       <Separator className="mx-auto w-[90%] self-center bg-hairline opacity-50 data-horizontal:w-[90%]" />
       <div className="flex flex-wrap items-center gap-1 px-3 py-2">
         <AtlasAudioControl
