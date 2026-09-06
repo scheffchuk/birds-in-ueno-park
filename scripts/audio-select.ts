@@ -11,7 +11,10 @@ import {
   generateAudioManifest,
   type AudioGeneratorAdapters,
 } from "../src/lib/audio/generator";
-import { xenoCantoQueryForSpecies } from "../src/lib/audio/xeno";
+import {
+  retryForbiddenRequest,
+  xenoCantoQueryForSpecies,
+} from "../src/lib/audio/xeno";
 import type {
   AudioManifest,
   DownloadedAudio,
@@ -34,9 +37,15 @@ function asRecord(value: unknown): Record<string, unknown> | undefined {
     : undefined;
 }
 
-async function jsonFromResponse(response: Response): Promise<unknown> {
+async function jsonFromResponse(
+  response: Response,
+  context?: string,
+): Promise<unknown> {
   const text = await response.text();
-  if (!response.ok) throw new Error(`Upstream request failed: ${response.status} ${text}`);
+  if (!response.ok) {
+    const prefix = context ? `${context}: ` : "";
+    throw new Error(`${prefix}Upstream request failed: ${response.status} ${text}`);
+  }
   try {
     return JSON.parse(text) as unknown;
   } catch {
@@ -88,7 +97,7 @@ function createAdapters(): AudioGeneratorAdapters {
   async function pace() {
     const wait = Math.max(0, nextRequestAt - Date.now());
     if (wait > 0) await new Promise((resolveWait) => setTimeout(resolveWait, wait));
-    nextRequestAt = Date.now() + 600;
+    nextRequestAt = Date.now() + 1_000;
   }
 
   const loadEbirdTaxonomy = ebirdKey
@@ -118,12 +127,23 @@ function createAdapters(): AudioGeneratorAdapters {
       let page = 1;
       let pageCount = 1;
       do {
-        await pace();
         const url = new URL("https://xeno-canto.org/api/3/recordings");
         url.searchParams.set("query", xenoCantoQueryForSpecies(scientificName));
         url.searchParams.set("key", xenoKey);
         url.searchParams.set("page", String(page));
-        const body = asRecord(await jsonFromResponse(await fetch(url)));
+        url.searchParams.set("per_page", "500");
+        const response = await retryForbiddenRequest(
+          async () => {
+            await pace();
+            return fetch(url);
+          },
+        );
+        const body = asRecord(
+          await jsonFromResponse(
+            response,
+            `xeno-canto ${scientificName} page ${page}`,
+          ),
+        );
         const recordings = body?.recordings;
         if (!Array.isArray(recordings)) {
           throw new Error("xeno-canto response did not contain recordings");
