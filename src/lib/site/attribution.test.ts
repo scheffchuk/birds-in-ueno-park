@@ -22,6 +22,12 @@ describe("site attribution", () => {
         expect(section.title.length).toBeGreaterThan(0);
         expect(section.body.length).toBeGreaterThan(40);
       }
+      expect(sections.audio.recordist.length).toBeGreaterThan(0);
+      expect(sections.audio.catalogue.length).toBeGreaterThan(0);
+      expect(sections.audio.source.length).toBeGreaterThan(0);
+      expect(sections.audio.license.length).toBeGreaterThan(0);
+      expect(sections.audio.none.length).toBeGreaterThan(0);
+      expect(catalog.Footer.audioCredits.length).toBeGreaterThan(0);
     }
   });
 });
