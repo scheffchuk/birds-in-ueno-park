@@ -55,24 +55,32 @@ export const listSyncState = query({
   handler: async (ctx, args) => {
     requireAudioSyncSecret(args.secret);
     const rows = [];
+    const missing: string[] = [];
     for (const slug of args.slugs) {
       const species = await ctx.db
         .query("species")
         .withIndex("by_slug", (q) => q.eq("slug", slug))
         .unique();
-      if (!species) continue;
+      if (!species) {
+        missing.push(slug);
+        continue;
+      }
+      const audio = species.audio;
       rows.push({
         slug,
-        ...(species.audio
+        ...(audio
           ? {
               audio: {
-                status: species.audio.status,
-                sha256: species.audio.sha256,
-                storageId: species.audio.storageId,
+                status: audio.status,
+                ...(audio.sha256 ? { sha256: audio.sha256 } : {}),
+                ...(audio.storageId ? { storageId: audio.storageId } : {}),
               },
             }
           : {}),
       });
+    }
+    if (missing.length > 0) {
+      throw new Error(`Species not found: ${missing.join(", ")}`);
     }
     return rows;
   },
@@ -107,20 +115,30 @@ export const syncSpeciesMedia = mutation({
           unavailableReason: args.audio.reason,
         };
 
-    await ctx.db.patch(species._id, {
-      audio: nextAudio,
-      ...(args.ebird !== undefined ? { ebird: args.ebird ?? undefined } : {}),
-      ...(args.wikipedia !== undefined
-        ? { wikipedia: args.wikipedia ?? undefined }
-        : {}),
-    });
-
     const nextStorageId = args.audio.status === "available"
       ? args.audio.storageId
       : undefined;
-    if (previousStorageId && previousStorageId !== nextStorageId) {
-      await ctx.storage.delete(previousStorageId);
-      return { deletedPreviousStorage: true };
+    const hasNewUpload =
+      nextStorageId !== undefined && previousStorageId !== nextStorageId;
+
+    try {
+      await ctx.db.patch(species._id, {
+        audio: nextAudio,
+        ...(args.ebird !== undefined ? { ebird: args.ebird ?? undefined } : {}),
+        ...(args.wikipedia !== undefined
+          ? { wikipedia: args.wikipedia ?? undefined }
+          : {}),
+      });
+
+      if (previousStorageId && previousStorageId !== nextStorageId) {
+        await ctx.storage.delete(previousStorageId);
+        return { deletedPreviousStorage: true };
+      }
+    } catch (error) {
+      if (hasNewUpload && nextStorageId) {
+        await ctx.storage.delete(nextStorageId);
+      }
+      throw error;
     }
     return { deletedPreviousStorage: false };
   },

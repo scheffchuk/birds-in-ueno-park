@@ -29,7 +29,7 @@ pnpm audio:sync                   # sync to the development deployment
 pnpm audio:sync -- --prod         # explicitly sync to CONVEX_PROD_URL
 ```
 
-Selection needs `XENO_CANTO_API_KEY` in `.env.local`. `EBIRD_API_KEY` is optional and only enriches the manifest with direct eBird links; without it, existing eBird links are preserved. Sync needs `AUDIO_SYNC_SECRET` in `.env.local` and the same value as a Convex environment variable. Audio binaries are written to ignored `data/audio/` and then uploaded to Convex Storage; they are not committed to Git. The production URL is intentionally separate from `NEXT_PUBLIC_CONVEX_URL`. If an upstream request fails, the command leaves the committed manifest unchanged, prints completed and failed species, and shows the command to rerun.
+Selection needs `XENO_CANTO_API_KEY` in `.env.local`. `EBIRD_API_KEY` is optional and only enriches the manifest with direct eBird links; without it, existing eBird links are preserved. Sync needs `AUDIO_SYNC_SECRET` in `.env.local` and the same value as a Convex environment variable. Audio binaries are written to ignored `data/audio/` and then uploaded to Convex Storage; they are not committed to Git. The production URL is intentionally separate from `NEXT_PUBLIC_CONVEX_URL`; sync rejects missing or identical deployment URLs and only selects production with `--prod`. If an upstream request fails, the command leaves the committed manifest unchanged, prints completed and failed species, and shows the command to rerun.
 
 Histogram inputs: [`data/ebird/`](data/ebird/). Domain language: [`CONTEXT.md`](CONTEXT.md). Plan: [`PLAN.md`](PLAN.md).
 

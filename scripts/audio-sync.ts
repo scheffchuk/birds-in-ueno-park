@@ -4,14 +4,15 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { assertManifestCoverage } from "../src/lib/audio/generator";
-import { syncAudioManifest, type ExistingAudioState } from "../src/lib/audio/sync";
+import {
+  parseAudioSyncArgs,
+  resolveAudioSyncTarget,
+  syncAudioManifest,
+  type ExistingAudioState,
+} from "../src/lib/audio/sync";
 import type { AudioManifest, GuideSpeciesForAudio } from "../src/lib/audio/types";
 
 const root = resolve(import.meta.dirname, "..");
-
-function parseArgs(argv: string[]) {
-  return { production: argv.includes("--prod") };
-}
 
 function readManifest(): AudioManifest {
   return JSON.parse(
@@ -33,23 +34,18 @@ function readGuideSpecies(): GuideSpeciesForAudio[] {
 }
 
 async function main() {
-  const { production } = parseArgs(process.argv.slice(2));
-  const url = production
-    ? process.env.CONVEX_PROD_URL
-    : process.env.NEXT_PUBLIC_CONVEX_URL;
-  if (!url) {
-    throw new Error(
-      production
-        ? "CONVEX_PROD_URL is required with --prod"
-        : "NEXT_PUBLIC_CONVEX_URL is required for development sync",
-    );
-  }
+  const { production } = parseAudioSyncArgs(process.argv.slice(2));
+  const target = resolveAudioSyncTarget({
+    production,
+    developmentUrl: process.env.NEXT_PUBLIC_CONVEX_URL,
+    productionUrl: process.env.CONVEX_PROD_URL,
+  });
   const secret = process.env.AUDIO_SYNC_SECRET;
   if (!secret) throw new Error("AUDIO_SYNC_SECRET is required in .env.local");
 
   const manifest = readManifest();
   assertManifestCoverage(manifest, readGuideSpecies());
-  const client = new ConvexHttpClient(url);
+  const client = new ConvexHttpClient(target.url);
 
   const report = await syncAudioManifest(manifest, {
     listExisting: async (slugs): Promise<Record<string, ExistingAudioState>> => {
@@ -68,18 +64,20 @@ async function main() {
       );
     },
     readFile: async (file) => new Uint8Array(readFileSync(resolve(root, file))),
-    upload: async ({ file, bytes }) => {
+    upload: async ({ file, bytes, contentType }) => {
       const uploadUrl = await client.mutation(api.audio.generateAudioUploadUrl, {
         secret,
       });
       const response = await fetch(uploadUrl, {
         method: "POST",
         headers: {
-          "Content-Type": file.endsWith(".ogg")
-            ? "audio/ogg"
-            : file.endsWith(".wav")
-              ? "audio/wav"
-              : "audio/mpeg",
+          "Content-Type":
+            contentType ??
+            (file.endsWith(".ogg")
+              ? "audio/ogg"
+              : file.endsWith(".wav")
+                ? "audio/wav"
+                : "audio/mpeg"),
         },
         body: new Uint8Array(bytes),
       });
@@ -132,7 +130,7 @@ async function main() {
     console.log(`${file.status.padEnd(11)} ${file.slug} ${file.bytes} bytes`);
   }
   console.log(
-    `Audio sync (${production ? "production" : "development"}): ` +
+    `Audio sync (${target.environment}): ` +
       `${report.uploaded} uploaded, ${report.skipped} skipped, ` +
       `${report.unavailable} unavailable, ${report.totalBytes} bytes`,
   );
