@@ -15,6 +15,7 @@ import {
   retryForbiddenRequest,
   xenoCantoQueryForSpecies,
 } from "../src/lib/audio/xeno";
+import { fetchWikidata } from "../src/lib/audio/wikidata";
 import type {
   AudioManifest,
   DownloadedAudio,
@@ -182,9 +183,12 @@ function createAdapters(): AudioGeneratorAdapters {
       const url = new URL("https://query.wikidata.org/sparql");
       url.searchParams.set("query", sparql);
       url.searchParams.set("format", "json");
-      const body = asRecord(await jsonFromResponse(await fetch(url, {
-        headers: { Accept: "application/sparql-results+json" },
-      })));
+      const body = asRecord(
+        await jsonFromResponse(
+          await fetchWikidata(url),
+          `Wikidata ${scientificName}`,
+        ),
+      );
       const results = asRecord(body?.results);
       const bindings = results?.bindings;
       if (!Array.isArray(bindings) || bindings.length === 0) return null;
