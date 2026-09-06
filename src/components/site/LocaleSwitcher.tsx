@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { LanguagesIcon } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { usePathname, useRouter } from "@/i18n/navigation";
@@ -25,12 +25,20 @@ export function LocaleSwitcher({ className }: { className?: string }) {
   const locale = useLocale() as AppLocale;
   const pathname = usePathname();
   const router = useRouter();
-  const mountedAtRef = useRef(performance.now());
+  const mountedAtRef = useRef<number | null>(null);
+
+  useEffect(() => {
+    mountedAtRef.current = performance.now();
+  }, []);
 
   return (
     <DropdownMenu
       onOpenChange={(open, eventDetails) => {
-        if (open && performance.now() - mountedAtRef.current < 400) {
+        if (
+          open &&
+          mountedAtRef.current !== null &&
+          performance.now() - mountedAtRef.current < 400
+        ) {
           eventDetails.cancel();
         }
       }}

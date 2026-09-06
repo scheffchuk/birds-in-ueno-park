@@ -15,12 +15,16 @@ Open [http://localhost:3000](http://localhost:3000).
 
 ```bash
 pnpm test
+pnpm exec playwright install chromium  # once per machine
+pnpm test:browser   # real Chromium Atlas interaction tests; uses a dev-only fixture
 pnpm typecheck
 ```
 
 ## Species audio and references
 
 Audio selection and link enrichment run locally and are recorded in [`data/audio-manifest.json`](data/audio-manifest.json). They never run during a build or visitor request.
+
+The complete operator workflow, including account verification, manifest review, development/production sync, attribution, unavailable entries, and Convex egress monitoring is in [`docs/audio-operations.md`](docs/audio-operations.md).
 
 ```bash
 pnpm audio:select                 # preserve pinned recordings

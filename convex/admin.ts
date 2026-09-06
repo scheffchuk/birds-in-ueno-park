@@ -492,7 +492,7 @@ export const deferIncompleteIllustrationsNow = internalMutation({
 async function deferIncompleteIllustrationsInternal(
   ctx: MutationCtx,
 ): Promise<{ deferred: number; slugs: string[] }> {
-  // eslint-disable-next-line @convex-dev/no-query-collect -- bounded Guide list (~65)
+  // This is a bounded Guide list (~65), so the inventory is intentionally complete.
   const all = await ctx.db.query("species").collect();
   const slugs: string[] = [];
   for (const sp of all) {

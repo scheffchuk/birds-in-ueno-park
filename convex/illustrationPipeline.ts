@@ -57,7 +57,7 @@ export const illustrationStatusSummary = query({
   }),
   handler: async (ctx) => {
     await requireAdmin(ctx);
-    // eslint-disable-next-line @convex-dev/no-query-collect -- Guide species set is bounded (~130)
+    // This Guide species set is bounded (~130), so the inventory is intentional.
     const all = await ctx.db.query("species").collect();
     const summary = {
       queued: 0,
@@ -162,7 +162,7 @@ export const prepareIllustrationGenerate = mutation({
         ? [...new Set(args.poses)]
         : ["perch", "flight"];
 
-    // eslint-disable-next-line @convex-dev/no-query-collect -- Guide species set is bounded (~130)
+    // This Guide species set is bounded (~130), so the inventory is intentional.
     const all = await ctx.db.query("species").collect();
     const candidates = all.map((sp) => ({
       slug: sp.slug,
@@ -512,7 +512,7 @@ export const resetApprovedWithoutCutoutsNow = internalMutation({
 async function resetApprovedWithoutCutoutsInternal(
   ctx: MutationCtx,
 ): Promise<{ reset: number }> {
-  // eslint-disable-next-line @convex-dev/no-query-collect -- bounded Guide set
+  // This Guide set is bounded, so the inventory is intentional.
   const all = await ctx.db.query("species").collect();
   let reset = 0;
   for (const sp of all) {
@@ -561,7 +561,7 @@ export const listAnatomyRefsInternal = internalQuery({
     }),
   ),
   handler: async (ctx) => {
-    // eslint-disable-next-line @convex-dev/no-query-collect -- Guide species set is bounded
+    // This Guide species set is bounded, so the inventory is intentional.
     const all = await ctx.db.query("species").collect();
     const out = [];
     for (const sp of all) {

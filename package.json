@@ -4,10 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
+    "test:browser": "playwright test",
+    "test:all": "pnpm test && pnpm test:browser",
     "typecheck": "tsc --noEmit",
     "seed:histogram": "tsx --env-file=.env.local scripts/seed-histogram.ts",
     "seed:copy": "tsx --env-file=.env.local scripts/generate-copy.ts",
@@ -39,6 +41,7 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",

@@ -1,6 +1,6 @@
 "use client";
 
-import { startTransition } from "react";
+import { startTransition, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { usePathname, useRouter } from "@/i18n/navigation";
 import {
@@ -14,9 +14,10 @@ export function useSeasonFilter() {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [now] = useState(() => Date.now());
   const season = resolveSeasonFilter(
     searchParams.get("season") ?? undefined,
-    Date.now(),
+    now,
   );
 
   function setSeason(next: SeasonFilter) {

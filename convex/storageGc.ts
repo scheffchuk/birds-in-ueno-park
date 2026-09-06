@@ -40,7 +40,7 @@ async function collectReferencedStorageIds(
   ctx: QueryCtx,
 ): Promise<Set<Id<"_storage">>> {
   const referenced = new Set<Id<"_storage">>();
-  // eslint-disable-next-line @convex-dev/no-query-collect -- bounded guide catalog
+  // The guide catalog is intentionally inventoried in full for garbage collection.
   const species = await ctx.db.query("species").collect();
   for (const sp of species) {
     if (sp.illustrationPerch) referenced.add(sp.illustrationPerch);
@@ -48,7 +48,7 @@ async function collectReferencedStorageIds(
     if (sp.anatomyRef) referenced.add(sp.anatomyRef);
     if (sp.anatomyRefFlight) referenced.add(sp.anatomyRefFlight);
   }
-  // eslint-disable-next-line @convex-dev/no-query-collect -- tiny style-print table
+  // The style-print table is intentionally inventoried in full for garbage collection.
   const stylePrints = await ctx.db.query("stylePrints").collect();
   for (const row of stylePrints) {
     referenced.add(row.storageId);
@@ -60,7 +60,7 @@ export const listOrphanStorage = internalQuery({
   args: {},
   returns: orphanReportValidator,
   handler: async (ctx): Promise<OrphanReport> => {
-    // eslint-disable-next-line @convex-dev/no-query-collect -- one-shot GC inventory
+    // Storage is intentionally inventoried in full for garbage collection.
     const files = await ctx.db.system.query("_storage").collect();
     const referenced = await collectReferencedStorageIds(ctx);
 
