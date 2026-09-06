@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "not-generated",
+  "generatedAt": "2026-09-06T01:40:52.028Z",
   "species": [
     {
       "slug": "accipiter-nisus",
@@ -9,8 +9,23 @@
       "comNameJa": "ハイタカ",
       "comNameZhTw": "北雀鷹",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/accipiter-nisus.mp3",
+        "sourceUrl": "https://xeno-canto.org/983633",
+        "catalogueNumber": "983633",
+        "recordist": "SonoNatura",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 10,
+        "sha256": "1e26a7e84dc9528fb0d5dc07c6cffbfaa0dc5fb630706f1ebe543fd8ecf21c41",
+        "bytes": 429935,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Eurasian_sparrowhawk",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%8F%E3%82%A4%E3%82%BF%E3%82%AB",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%9B%80%E9%B9%B0"
       }
     },
     {
@@ -20,8 +35,23 @@
       "comNameJa": "エナガ",
       "comNameZhTw": "Long-tailed Tit",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/aegithalos-caudatus.mp3",
+        "sourceUrl": "https://xeno-canto.org/372813",
+        "catalogueNumber": "372813",
+        "recordist": "Roby",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "d76e90d1662975093c8360a0375c21fd8dda3b983bb14a1fb0b1f4db69dd743f",
+        "bytes": 81256,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Long-tailed_tit",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%A8%E3%83%8A%E3%82%AC",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%8C%97%E9%95%BF%E5%B0%BE%E5%B1%B1%E9%9B%80"
       }
     },
     {
@@ -31,8 +61,23 @@
       "comNameJa": "カワセミ",
       "comNameZhTw": "翠鳥",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/alcedo-atthis.wav",
+        "sourceUrl": "https://xeno-canto.org/927565",
+        "catalogueNumber": "927565",
+        "recordist": "Jorge Leitão",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "ff8d1a673cd0e15ef8dd7c68b02556a0a3640881734578e20a865406c2f633db",
+        "bytes": 334022,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Common_kingfisher",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%AF%E3%82%BB%E3%83%9F",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%99%AE%E9%80%9A%E7%BF%A0%E9%B8%9F"
       }
     },
     {
@@ -42,8 +87,23 @@
       "comNameJa": "オナガガモ",
       "comNameZhTw": "尖尾鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/anas-acuta.mp3",
+        "sourceUrl": "https://xeno-canto.org/721976",
+        "catalogueNumber": "721976",
+        "recordist": "Lars Edenius",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 7,
+        "sha256": "5cb31b38ccc952f79e4c2490066faad7605aa1a1db4a8a93ceae63e7e298af16",
+        "bytes": 247557,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Northern_pintail",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%8A%E3%82%AC%E3%82%AC%E3%83%A2",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%92%88%E5%B0%BE%E9%B8%AD"
       }
     },
     {
@@ -53,8 +113,23 @@
       "comNameJa": "コガモ",
       "comNameZhTw": "小水鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/anas-crecca.mp3",
+        "sourceUrl": "https://xeno-canto.org/190744",
+        "catalogueNumber": "190744",
+        "recordist": "Jarek Matusiak",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "38be1c8bddeb0ad9f513c2ccaba5f9ed3c6f08a685ecc2b564046a645e191394",
+        "bytes": 31816,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Eurasian_teal",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%82%AC%E3%83%A2",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%BB%BF%E7%BF%85%E9%B8%AD"
       }
     },
     {
@@ -64,8 +139,23 @@
       "comNameJa": "マガモ",
       "comNameZhTw": "綠頭鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/anas-platyrhynchos.mp3",
+        "sourceUrl": "https://xeno-canto.org/539012",
+        "catalogueNumber": "539012",
+        "recordist": "Guillaume Marchais",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 4,
+        "sha256": "7b6ecdf23b4d15504dd72dd59caa3d4894b8a1712187d95fd59a6fbf7c39961f",
+        "bytes": 27425,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Mallard",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%9E%E3%82%AC%E3%83%A2",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%BB%BF%E5%A4%B4%E9%B8%AD"
       }
     },
     {
@@ -75,8 +165,23 @@
       "comNameJa": "カルガモ",
       "comNameZhTw": "花嘴鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/anas-zonorhyncha.mp3",
+        "sourceUrl": "https://xeno-canto.org/266817",
+        "catalogueNumber": "266817",
+        "recordist": "Albert Lastukhin",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 4,
+        "sha256": "c07da1188ffbb873b5777b0c202714024680bb215303c76580776cbadcf82dab",
+        "bytes": 134169,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Eastern_spot-billed_duck",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%AB%E3%82%AC%E3%83%A2",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E8%8F%AF%E6%96%91%E5%98%B4%E9%B4%A8"
       }
     },
     {
@@ -86,8 +191,23 @@
       "comNameJa": "ヒメアマツバメ",
       "comNameZhTw": "小雨燕",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/apus-nipalensis.mp3",
+        "sourceUrl": "https://xeno-canto.org/182847",
+        "catalogueNumber": "182847",
+        "recordist": "Ding Li Yong",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 11,
+        "sha256": "69aaf2f37286ef538b6bfc771c50e37a4de40be84822ac2944967c4c437a5de3",
+        "bytes": 189420,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/House_swift",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%92%E3%83%A1%E3%82%A2%E3%83%9E%E3%83%84%E3%83%90%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%AE%B6%E9%9B%A8%E7%87%95"
       }
     },
     {
@@ -97,8 +217,23 @@
       "comNameJa": "ダイサギ",
       "comNameZhTw": "大白鷺",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/ardea-alba.mp3",
+        "sourceUrl": "https://xeno-canto.org/422107",
+        "catalogueNumber": "422107",
+        "recordist": "JAYRSON ARAUJO DE OLIVEIRA",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 3,
+        "sha256": "bab6a00b0cd251bacf3db7eb476ed69a8e554eacca28fe694ea7958cd5e19fbd",
+        "bytes": 99706,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Great_egret",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%80%E3%82%A4%E3%82%B5%E3%82%AE",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E7%99%BD%E9%B9%AD"
       }
     },
     {
@@ -108,8 +243,23 @@
       "comNameJa": "アオサギ",
       "comNameZhTw": "蒼鷺",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/ardea-cinerea.wav",
+        "sourceUrl": "https://xeno-canto.org/1097293",
+        "catalogueNumber": "1097293",
+        "recordist": "Norman Schiwora",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 4,
+        "sha256": "a344a451c73a3b87a438600d17f7edfc806ee445341ac467727a0274f7b6d3d3",
+        "bytes": 429512,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Grey_heron",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AA%E3%82%B5%E3%82%AE",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E8%8B%8D%E9%B9%AD"
       }
     },
     {
@@ -119,8 +269,23 @@
       "comNameJa": "チュウサギ",
       "comNameZhTw": "中白鷺",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/ardea-intermedia.mp3",
+        "sourceUrl": "https://xeno-canto.org/397702",
+        "catalogueNumber": "397702",
+        "recordist": "Werzik",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "6b6712f4909241a0dc126f289a23b47696bb534e2591c0af381f3b85619ec7e8",
+        "bytes": 35185,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Medium_egret",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%81%E3%83%A5%E3%82%A6%E3%82%B5%E3%82%AE",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E4%B8%AD%E7%99%BD%E9%B9%AD"
       }
     },
     {
@@ -131,7 +296,12 @@
       "comNameZhTw": "Baer's Pochard",
       "audio": {
         "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "reason": "No exact-name xeno-canto recording with an accepted licence was found."
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Baer's_pochard",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AB%E3%83%8F%E3%82%B8%E3%83%AD",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%9D%92%E5%A4%B4%E6%BD%9C%E9%B8%AD"
       }
     },
     {
@@ -141,8 +311,23 @@
       "comNameJa": "ホシハジロ",
       "comNameZhTw": "紅頭潛鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/aythya-ferina.mp3",
+        "sourceUrl": "https://xeno-canto.org/506865",
+        "catalogueNumber": "506865",
+        "recordist": "Nelson Conceição",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "30dc004d87bd8fa67f4ef1b1a1a075bafb14cf9eb01cd69d4b6e8473d581b763",
+        "bytes": 56734,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Common_pochard",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%9B%E3%82%B7%E3%83%8F%E3%82%B8%E3%83%AD",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%BA%A2%E5%A4%B4%E6%BD%9C%E9%B8%AD"
       }
     },
     {
@@ -152,8 +337,23 @@
       "comNameJa": "キンクロハジロ",
       "comNameZhTw": "鳳頭潛鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/aythya-fuligula.mp3",
+        "sourceUrl": "https://xeno-canto.org/1080053",
+        "catalogueNumber": "1080053",
+        "recordist": "Sonothèque ADVL",
+        "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+        "license": "CC0",
+        "nonCommercial": false,
+        "durationSeconds": 2,
+        "sha256": "db3480406b3f7787b81b78fe12a1fb669d308f4dd6c13d4078b2e3064119aeee",
+        "bytes": 60224,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Tufted_duck",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AD%E3%83%B3%E3%82%AF%E3%83%AD%E3%83%8F%E3%82%B8%E3%83%AD",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%87%A4%E5%A4%B4%E6%BD%9C%E9%B8%AD"
       }
     },
     {
@@ -163,8 +363,23 @@
       "comNameJa": "スズガモ",
       "comNameZhTw": "斑背潛鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/aythya-marila.wav",
+        "sourceUrl": "https://xeno-canto.org/772288",
+        "catalogueNumber": "772288",
+        "recordist": "William Whitehead",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "1126641b2dd4eac39af72b2490d4298e39ce754a3d7d69e464d81e1133183fca",
+        "bytes": 219864,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Greater_scaup",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%82%BA%E3%82%AC%E3%83%A2",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%96%91%E8%83%8C%E6%BD%9C%E9%B8%AD"
       }
     },
     {
@@ -174,8 +389,23 @@
       "comNameJa": "ホオジロガモ",
       "comNameZhTw": "鵲鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/bucephala-clangula.wav",
+        "sourceUrl": "https://xeno-canto.org/954670",
+        "catalogueNumber": "954670",
+        "recordist": "Le Louaver Manuel",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 0,
+        "sha256": "bea294c379528b5897edb4deb1ab385068a6c7264ae0b94b11f7804631fb5efa",
+        "bytes": 87352,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Common_goldeneye",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%9B%E3%82%AA%E3%82%B8%E3%83%AD%E3%82%AC%E3%83%A2",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%B9%8A%E9%B8%AD"
       }
     },
     {
@@ -185,8 +415,23 @@
       "comNameJa": "ノスリ",
       "comNameZhTw": "東方鵟",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/buteo-japonicus.mp3",
+        "sourceUrl": "https://xeno-canto.org/687285",
+        "catalogueNumber": "687285",
+        "recordist": "Mike Nelson",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "dfb2482ea1ceede9139cd981861f5a84434c83600c165cb5ac57fb46c13eb0bf",
+        "bytes": 49511,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Eastern_buzzard",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%8E%E3%82%B9%E3%83%AA",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%9D%B1%E6%96%B9%E9%B5%9F"
       }
     },
     {
@@ -196,8 +441,23 @@
       "comNameJa": "コシアカツバメ",
       "comNameZhTw": "金腰燕",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/cecropis-daurica.mp3",
+        "sourceUrl": "https://xeno-canto.org/178393",
+        "catalogueNumber": "178393",
+        "recordist": "José Carlos Sires",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "04f0e308a055e477ae727cb320b63f64eb7f097727b13f4b124b76f06bd23bce",
+        "bytes": 55427,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Eastern_red-rumped_swallow",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%82%B7%E3%82%A2%E3%82%AB%E3%83%84%E3%83%90%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%87%91%E8%85%B0%E7%87%95"
       }
     },
     {
@@ -207,8 +467,23 @@
       "comNameJa": "カワラヒワ",
       "comNameZhTw": "金翅雀",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/chloris-sinica.wav",
+        "sourceUrl": "https://xeno-canto.org/986615",
+        "catalogueNumber": "986615",
+        "recordist": "Lucas-Chen",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 4,
+        "sha256": "615ee882b8a9911e16b7c9c3969c8b7a03dcf7ee3a7c822e0b59d29225dc7f64",
+        "bytes": 1781044,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Oriental_greenfinch",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%AF%E3%83%A9%E3%83%92%E3%83%AF",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%87%91%E7%BF%85%E9%9B%80"
       }
     },
     {
@@ -218,8 +493,23 @@
       "comNameJa": "ユリカモメ",
       "comNameZhTw": "紅嘴鷗",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/chroicocephalus-ridibundus.mp3",
+        "sourceUrl": "https://xeno-canto.org/890362",
+        "catalogueNumber": "890362",
+        "recordist": "Olivier SWIFT",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "d5f8ac96e22db7cdde4abe4b2649818e5d16fea6051b1365edc63c7e6569dc1e",
+        "bytes": 104370,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Black-headed_gull",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%A6%E3%83%AA%E3%82%AB%E3%83%A2%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%BA%A2%E5%98%B4%E9%B8%A5"
       }
     },
     {
@@ -229,8 +519,23 @@
       "comNameJa": "シメ",
       "comNameZhTw": "臘嘴雀",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/coccothraustes-coccothraustes.mp3",
+        "sourceUrl": "https://xeno-canto.org/552996",
+        "catalogueNumber": "552996",
+        "recordist": "Guillaume Marchais",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "b933385d901033cd72b009e92525c0130dbd14be883bd94d331a92541e5a07fe",
+        "bytes": 43853,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Hawfinch",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%94%A1%E5%98%B4%E9%9B%80"
       }
     },
     {
@@ -240,8 +545,23 @@
       "comNameJa": "カワラバト",
       "comNameZhTw": "野鴿",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/columba-livia.wav",
+        "sourceUrl": "https://xeno-canto.org/862852",
+        "catalogueNumber": "862852",
+        "recordist": "Andrew Harrop",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "8cc6949df1d3a17211fa68c62eb1a9aaae660747d654708c5e922795eeedca78",
+        "bytes": 108572,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Rock_dove",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%AF%E3%83%A9%E3%83%90%E3%83%88",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%8E%9F%E9%B8%BD"
       }
     },
     {
@@ -251,8 +571,23 @@
       "comNameJa": "ハシボソガラス",
       "comNameZhTw": "小嘴烏鴉",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/corvus-corone.mp3",
+        "sourceUrl": "https://xeno-canto.org/526995",
+        "catalogueNumber": "526995",
+        "recordist": "Stanislas Wroza",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "adf07ae5ac316e9041d5145e674d5c46e4a1ae87940445df08f384ff7867f57a",
+        "bytes": 108144,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Carrion_crow",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%8F%E3%82%B7%E3%83%9C%E3%82%BD%E3%82%AC%E3%83%A9%E3%82%B9",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%B0%8F%E5%98%B4%E4%B9%8C%E9%B8%A6"
       }
     },
     {
@@ -262,8 +597,23 @@
       "comNameJa": "ハシブトガラス",
       "comNameZhTw": "巨嘴鴉",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/corvus-macrorhynchos.mp3",
+        "sourceUrl": "https://xeno-canto.org/316353",
+        "catalogueNumber": "316353",
+        "recordist": "Greg Irving",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 6,
+        "sha256": "7e24d387a9530d0e7a614b41c2e122e8ce92379c91240e8db7e4f914007d31bb",
+        "bytes": 260072,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Large-billed_crow",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%8F%E3%82%B7%E3%83%96%E3%83%88%E3%82%AC%E3%83%A9%E3%82%B9",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%A4%A7%E5%98%B4%E4%B9%8C%E9%B8%A6"
       }
     },
     {
@@ -273,8 +623,23 @@
       "comNameJa": "オナガ",
       "comNameZhTw": "灰喜鵲",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/cyanopica-cyanus.mp3",
+        "sourceUrl": "https://xeno-canto.org/505449",
+        "catalogueNumber": "505449",
+        "recordist": "Ding Li Yong",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 34,
+        "sha256": "b4baf1f5631761e482fb027f194cb98e0d548fccc93433dd359734cde13b62ae",
+        "bytes": 561130,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Azure-winged_magpie",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AA%E3%83%8A%E3%82%AC",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%81%B0%E5%96%9C%E9%B9%8A"
       }
     },
     {
@@ -284,8 +649,23 @@
       "comNameJa": "コブハクチョウ",
       "comNameZhTw": "疣鼻天鵝",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/cygnus-olor.mp3",
+        "sourceUrl": "https://xeno-canto.org/642148",
+        "catalogueNumber": "642148",
+        "recordist": "Maxence Fouillade",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "8ffb34f150ef595430ba3e82c852314346a6076296b48d0f482a797107e51873",
+        "bytes": 65621,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Mute_swan",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%83%96%E3%83%8F%E3%82%AF%E3%83%81%E3%83%A7%E3%82%A6",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%96%A3%E9%BC%BB%E5%A4%A9%E9%B9%85"
       }
     },
     {
@@ -295,8 +675,23 @@
       "comNameJa": "イワツバメ",
       "comNameZhTw": "東方毛腳燕",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/delichon-dasypus.mp3",
+        "sourceUrl": "https://xeno-canto.org/486358",
+        "catalogueNumber": "486358",
+        "recordist": "Stanislas Wroza",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 9,
+        "sha256": "e8ed8a3af0be01c812a6901d0fd580c7947f8e45b59841c1ecc86a7db076e628",
+        "bytes": 367273,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Asian_house_martin",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%A4%E3%83%AF%E3%83%84%E3%83%90%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%83%9F%E8%85%B9%E6%AF%9B%E8%84%9A%E7%87%95"
       }
     },
     {
@@ -306,8 +701,23 @@
       "comNameJa": "コサギ",
       "comNameZhTw": "小白鷺",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/egretta-garzetta.mp3",
+        "sourceUrl": "https://xeno-canto.org/166250",
+        "catalogueNumber": "166250",
+        "recordist": "Eveny Luis",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/3.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 5,
+        "sha256": "ca8c78e286f14cd23e3dea94c3c8be0f64a3f2bc580b0f86ddd827c39e3cf4f9",
+        "bytes": 237935,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Little_egret",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%82%B5%E3%82%AE",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%99%BD%E9%B9%AD"
       }
     },
     {
@@ -318,7 +728,12 @@
       "comNameZhTw": "Masked Bunting",
       "audio": {
         "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "reason": "No exact-name xeno-canto recording with an accepted licence was found."
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Masked_bunting",
+        "ja": "https://en.wikipedia.org/wiki/Masked_bunting",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E8%8A%B1%E8%84%B8%E9%B9%80"
       }
     },
     {
@@ -328,8 +743,23 @@
       "comNameJa": "チョウゲンボウ",
       "comNameZhTw": "紅隼",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/falco-tinnunculus.mp3",
+        "sourceUrl": "https://xeno-canto.org/800442",
+        "catalogueNumber": "800442",
+        "recordist": "Romuald Mikusek",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 4,
+        "sha256": "349c6e932c7f23b6c81d672d93c71350175370c689e046cbd96b64603b5c2294",
+        "bytes": 57561,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Common_kestrel",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%81%E3%83%A7%E3%82%A6%E3%82%B2%E3%83%B3%E3%83%9C%E3%82%A6",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%B4%85%E9%9A%BC"
       }
     },
     {
@@ -339,8 +769,23 @@
       "comNameJa": "アトリ",
       "comNameZhTw": "花雀",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/fringilla-montifringilla.wav",
+        "sourceUrl": "https://xeno-canto.org/914630",
+        "catalogueNumber": "914630",
+        "recordist": "Aku Kalliomäki",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "9f01d95638dc8983157870109485e2980d2cead57e74d504ab6e792783db7d19",
+        "bytes": 128620,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Brambling",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%83%88%E3%83%AA",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%87%95%E9%9B%80"
       }
     },
     {
@@ -350,8 +795,23 @@
       "comNameJa": "オオバン",
       "comNameZhTw": "白冠雞",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/fulica-atra.mp3",
+        "sourceUrl": "https://xeno-canto.org/640159",
+        "catalogueNumber": "640159",
+        "recordist": "Nelson Conceição",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 4,
+        "sha256": "b7706423e7147b41933a9f4df9ff27c311901e0bd589acf5b3fba5b0027cb54a",
+        "bytes": 170911,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Eurasian_coot",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AA%E3%82%AA%E3%83%90%E3%83%B3",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%AA%A8%E9%A1%B6%E9%B8%A1"
       }
     },
     {
@@ -361,8 +821,23 @@
       "comNameJa": "バン",
       "comNameZhTw": "紅冠水雞",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/gallinula-chloropus.mp3",
+        "sourceUrl": "https://xeno-canto.org/459905",
+        "catalogueNumber": "459905",
+        "recordist": "Nelson Conceição",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "350c5deccd486ef7ea75237fd6fc55028ebb03f44e49d1515819154095459826",
+        "bytes": 56567,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Common_moorhen",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%90%E3%83%B3_(%E9%B3%A5%E9%A1%9E)",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%BB%91%E6%B0%B4%E9%B8%A1"
       }
     },
     {
@@ -372,8 +847,23 @@
       "comNameJa": "ガビチョウ",
       "comNameZhTw": "大陸畫眉",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/garrulax-canorus.mp3",
+        "sourceUrl": "https://xeno-canto.org/723506",
+        "catalogueNumber": "723506",
+        "recordist": "Tiantian Zhao 赵天天",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 5,
+        "sha256": "3d6c9e72082e75a57fbbc0eee80e20ff650cf1cfb4c0f9d5164ae77100f3d1eb",
+        "bytes": 21339,
+        "contentType": "text/html"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Chinese_hwamei",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AC%E3%83%93%E3%83%81%E3%83%A7%E3%82%A6",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%94%BB%E7%9C%89"
       }
     },
     {
@@ -383,8 +873,23 @@
       "comNameJa": "ツバメ",
       "comNameZhTw": "家燕",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/hirundo-rustica.mp3",
+        "sourceUrl": "https://xeno-canto.org/662354",
+        "catalogueNumber": "662354",
+        "recordist": "Susanne Kuijpers",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "1cfb88cf1a3853d444d7cfe8f0ffe4b4a02a3fa0ad3d7e9ff83e7b0dd5e6c7ba",
+        "bytes": 50410,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Barn_swallow",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%84%E3%83%90%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%AE%B6%E7%87%95"
       }
     },
     {
@@ -394,8 +899,23 @@
       "comNameJa": "ウグイス",
       "comNameZhTw": "日本樹鶯",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/horornis-diphone.mp3",
+        "sourceUrl": "https://xeno-canto.org/410204",
+        "catalogueNumber": "410204",
+        "recordist": "Collaborator of Anon Torimi",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "189e32875ec793a420c579b35d9824d0ca1d4658cd186a10a059d8a2b2d1d59a",
+        "bytes": 49489,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Japanese_bush_warbler",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%A6%E3%82%B0%E3%82%A4%E3%82%B9",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%97%A5%E6%9C%AC%E6%A0%91%E8%8E%BA"
       }
     },
     {
@@ -405,8 +925,23 @@
       "comNameJa": "ヒヨドリ",
       "comNameZhTw": "棕耳鵯",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/hypsipetes-amaurotis.mp3",
+        "sourceUrl": "https://xeno-canto.org/915062",
+        "catalogueNumber": "915062",
+        "recordist": "Uku Paal",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 6,
+        "sha256": "d36b587f8fb3ef26eca3c209d45dcc08788dafcafc101e186995c67b257af41e",
+        "bytes": 83533,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Brown-eared_bulbul",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%92%E3%83%A8%E3%83%89%E3%83%AA",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%A0%97%E8%80%B3%E7%9F%AD%E8%84%9A%E9%B9%8E"
       }
     },
     {
@@ -416,8 +951,23 @@
       "comNameJa": "モズ",
       "comNameZhTw": "紅頭伯勞",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/lanius-bucephalus.wav",
+        "sourceUrl": "https://xeno-canto.org/782307",
+        "catalogueNumber": "782307",
+        "recordist": "Katsuhiro Morishita",
+        "licenseUrl": "https://creativecommons.org/licenses/by/4.0/",
+        "license": "CC BY",
+        "nonCommercial": false,
+        "durationSeconds": 10,
+        "sha256": "e1925e6e3d9c8ac4310a541bd87a106f61489818e97c3f67c4f14f767919130a",
+        "bytes": 962640,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Bull-headed_shrike",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%A2%E3%82%BA",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%89%9B%E5%A4%B4%E4%BC%AF%E5%8A%B3"
       }
     },
     {
@@ -427,8 +977,23 @@
       "comNameJa": "カモメ",
       "comNameZhTw": "歐亞海鷗",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/larus-canus.mp3",
+        "sourceUrl": "https://xeno-canto.org/1027831",
+        "catalogueNumber": "1027831",
+        "recordist": "Lionel FREDERIC",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 5,
+        "sha256": "046bf592b4283155a03577eb2cf56983b3492f6b53d1138cb22503f9786f00d8",
+        "bytes": 77362,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Common_gull",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%A2%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%99%AE%E9%80%9A%E6%B5%B7%E9%B8%A5"
       }
     },
     {
@@ -438,8 +1003,23 @@
       "comNameJa": "ウミネコ",
       "comNameZhTw": "黑尾鷗",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/larus-crassirostris.mp3",
+        "sourceUrl": "https://xeno-canto.org/344913",
+        "catalogueNumber": "344913",
+        "recordist": "Albert Lastukhin &amp; Yuri Glushchenko",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 12,
+        "sha256": "6ca59992ffd24075230d426cf86e2d5d9d2d1d4fb063bebba913aad17af399e6",
+        "bytes": 300027,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Black-tailed_gull",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%A6%E3%83%9F%E3%83%8D%E3%82%B3",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%BB%91%E5%B0%BE%E9%B8%A5"
       }
     },
     {
@@ -449,8 +1029,23 @@
       "comNameJa": "オオセグロカモメ",
       "comNameZhTw": "灰背鷗",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/larus-schistisagus.mp3",
+        "sourceUrl": "https://xeno-canto.org/155743",
+        "catalogueNumber": "155743",
+        "recordist": "Frank Lambert",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 4,
+        "sha256": "c5d12f3bf845eb4523d6a4baee302c124fb1350b9cd120d71dd8d1d87fd04f8f",
+        "bytes": 184264,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Slaty-backed_gull",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AA%E3%82%AA%E3%82%BB%E3%82%B0%E3%83%AD%E3%82%AB%E3%83%A2%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%81%B0%E8%83%8C%E9%B8%A5"
       }
     },
     {
@@ -460,8 +1055,23 @@
       "comNameJa": "セグロカモメ",
       "comNameZhTw": "Vega Gull",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/larus-vegae.mp3",
+        "sourceUrl": "https://xeno-canto.org/487188",
+        "catalogueNumber": "487188",
+        "recordist": "Stanislas Wroza",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 4,
+        "sha256": "499173163e61915b660c57ea16ef48a85b1ddf40cbbd561ed2d2558e6113b354",
+        "bytes": 178171,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Vega_gull",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%BB%E3%82%B0%E3%83%AD%E3%82%AB%E3%83%A2%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E8%A5%BF%E4%BC%AF%E5%88%A9%E4%BA%9E%E9%8A%80%E9%B7%97"
       }
     },
     {
@@ -471,8 +1081,23 @@
       "comNameJa": "ヒドリガモ",
       "comNameZhTw": "赤頸鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/mareca-penelope.wav",
+        "sourceUrl": "https://xeno-canto.org/1068487",
+        "catalogueNumber": "1068487",
+        "recordist": "Denis Dujardin",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "8ca6459e7e411258f90a8bec8d741a3df96e2a65037e882c688132c8767669aa",
+        "bytes": 396190,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Eurasian_wigeon",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%92%E3%83%89%E3%83%AA%E3%82%AC%E3%83%A2",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E8%B5%A4%E9%A2%88%E9%B8%AD"
       }
     },
     {
@@ -482,8 +1107,23 @@
       "comNameJa": "オカヨシガモ",
       "comNameZhTw": "赤膀鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/mareca-strepera.mp3",
+        "sourceUrl": "https://xeno-canto.org/723438",
+        "catalogueNumber": "723438",
+        "recordist": "Lars Edenius",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 3,
+        "sha256": "aefad669ba1bc745702aebe470231725f9491e80daa7ed710c9e054d23d198a1",
+        "bytes": 112749,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Gadwall",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AA%E3%82%AB%E3%83%A8%E3%82%B7%E3%82%AC%E3%83%A2",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E8%B5%A4%E8%86%80%E9%B8%AD"
       }
     },
     {
@@ -493,8 +1133,23 @@
       "comNameJa": "トビ",
       "comNameZhTw": "黑鳶",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/milvus-migrans.wav",
+        "sourceUrl": "https://xeno-canto.org/896543",
+        "catalogueNumber": "896543",
+        "recordist": "Guillaume WETZEL",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "6734f990e5bfd18d44122427a50d089baf6427ad4a524495f4acd5972d2148ba",
+        "bytes": 226614,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Black_kite",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%88%E3%83%93",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%BB%91%E9%B8%A2"
       }
     },
     {
@@ -504,8 +1159,23 @@
       "comNameJa": "ハクセキレイ",
       "comNameZhTw": "白鶺鴒",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/motacilla-alba.mp3",
+        "sourceUrl": "https://xeno-canto.org/596854",
+        "catalogueNumber": "596854",
+        "recordist": "Peter van Vlaardingen",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "e8d4210371b830188cf7063d99b769e170d62bd8b0a268447e44eaba30ba5592",
+        "bytes": 54734,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/White_wagtail",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%BF%E3%82%A4%E3%83%AA%E3%82%AF%E3%83%8F%E3%82%AF%E3%82%BB%E3%82%AD%E3%83%AC%E3%82%A4",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%99%BD%E9%B9%A1%E9%B8%B0"
       }
     },
     {
@@ -515,8 +1185,23 @@
       "comNameJa": "キセキレイ",
       "comNameZhTw": "灰鶺鴒",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/motacilla-cinerea.mp3",
+        "sourceUrl": "https://xeno-canto.org/797916",
+        "catalogueNumber": "797916",
+        "recordist": "brickegickel",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "d18a7b6e2f08c698865abfc1cdf8d04a8ef2dbd2884aa836237530eab267afed",
+        "bytes": 83373,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Grey_wagtail",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AD%E3%82%BB%E3%82%AD%E3%83%AC%E3%82%A4",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%81%B0%E9%B6%BA%E9%B4%92"
       }
     },
     {
@@ -526,8 +1211,23 @@
       "comNameJa": "セグロセキレイ",
       "comNameZhTw": "日本鶺鴒",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/motacilla-grandis.mp3",
+        "sourceUrl": "https://xeno-canto.org/89513",
+        "catalogueNumber": "89513",
+        "recordist": "Grant Fisher",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/2.5/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 20,
+        "sha256": "71ce1f50122585e28e6bf9769432a432b940c06acf981fc5e3dd5743e811f5ec",
+        "bytes": 841571,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Japanese_wagtail",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%BB%E3%82%B0%E3%83%AD%E3%82%BB%E3%82%AD%E3%83%AC%E3%82%A4",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%97%A5%E6%9C%AC%E9%B9%A1%E9%B8%B0"
       }
     },
     {
@@ -537,8 +1237,23 @@
       "comNameJa": "ゴイサギ",
       "comNameZhTw": "夜鷺",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/nycticorax-nycticorax.mp3",
+        "sourceUrl": "https://xeno-canto.org/465156",
+        "catalogueNumber": "465156",
+        "recordist": "JAYRSON ARAUJO DE OLIVEIRA",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "40bf0e7c837a674e250289614aef58dc1e58d319167766fa861b4a41328e8b91",
+        "bytes": 98782,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Black-crowned_night_heron",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B4%E3%82%A4%E3%82%B5%E3%82%AE",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%A4%9C%E9%B9%AD"
       }
     },
     {
@@ -548,8 +1263,23 @@
       "comNameJa": "クロシジュウカラ",
       "comNameZhTw": "Cinereous Tit",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/parus-cinereus.mp3",
+        "sourceUrl": "https://xeno-canto.org/35475",
+        "catalogueNumber": "35475",
+        "recordist": "Arnold Meijer",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/2.5/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "c01c814c96b1834dad32c73558e9ecf100f0bb770cd43d3dcb6f52d37e014d10",
+        "bytes": 31332,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Cinereous_tit",
+        "ja": "https://en.wikipedia.org/wiki/Cinereous_tit",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E8%8B%8D%E8%83%8C%E5%B1%B1%E9%9B%80"
       }
     },
     {
@@ -559,8 +1289,23 @@
       "comNameJa": "スズメ",
       "comNameZhTw": "麻雀",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/passer-montanus.mp3",
+        "sourceUrl": "https://xeno-canto.org/596079",
+        "catalogueNumber": "596079",
+        "recordist": "Peter van Vlaardingen",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 3,
+        "sha256": "67624ffc5684200ff4ce4c32b4304b3bdb328702ad767a67a7ad2a465d21096c",
+        "bytes": 164223,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Eurasian_tree_sparrow",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B9%E3%82%BA%E3%83%A1",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%BA%BB%E9%9B%80"
       }
     },
     {
@@ -570,8 +1315,23 @@
       "comNameJa": "ヒガラ",
       "comNameZhTw": "煤山雀",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/periparus-ater.mp3",
+        "sourceUrl": "https://xeno-canto.org/481786",
+        "catalogueNumber": "481786",
+        "recordist": "W. Agster",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "f524a8596ceba039e5bad27dcad661442af6a1cbeecb38729b605217ec41a1b2",
+        "bytes": 35761,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Coal_tit",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%92%E3%82%AC%E3%83%A9",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%85%A4%E5%B1%B1%E9%9B%80"
       }
     },
     {
@@ -581,8 +1341,23 @@
       "comNameJa": "カワウ",
       "comNameZhTw": "鸕鷀",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/phalacrocorax-carbo.mp3",
+        "sourceUrl": "https://xeno-canto.org/401073",
+        "catalogueNumber": "401073",
+        "recordist": "Esperanza Poveda",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 7,
+        "sha256": "f48a4225bba0363b280fd08e8aef58badad19b1a26a3f39088139da154fb545a",
+        "bytes": 294179,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Great_cormorant",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%83%AF%E3%82%A6",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%99%AE%E9%80%9A%E9%B8%95%E9%B6%BF"
       }
     },
     {
@@ -592,8 +1367,23 @@
       "comNameJa": "ジョウビタキ",
       "comNameZhTw": "黃尾鴝",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/phoenicurus-auroreus.mp3",
+        "sourceUrl": "https://xeno-canto.org/768453",
+        "catalogueNumber": "768453",
+        "recordist": "Dave Guo",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 1,
+        "sha256": "1f33747a3ea64deff4f6ebbb2373438f101763cd837b2dcbb774e8de5b0eb74f",
+        "bytes": 53751,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Daurian_redstart",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B8%E3%83%A7%E3%82%A6%E3%83%93%E3%82%BF%E3%82%AD",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E9%BB%83%E5%B0%BE%E9%B4%9D"
       }
     },
     {
@@ -603,8 +1393,23 @@
       "comNameJa": "センダイムシクイ",
       "comNameZhTw": "冠羽柳鶯",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/phylloscopus-coronatus.wav",
+        "sourceUrl": "https://xeno-canto.org/987982",
+        "catalogueNumber": "987982",
+        "recordist": "Lucas-Chen",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 3,
+        "sha256": "e7d20a4c9f3cb7b810c3db92d29a66a9b2ec6c5bd21b3e4d8ddc7cb5a784c97f",
+        "bytes": 518782,
+        "contentType": "audio/wav"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Eastern_crowned_warbler",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%BB%E3%83%B3%E3%83%80%E3%82%A4%E3%83%A0%E3%82%B7%E3%82%AF%E3%82%A4",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%86%95%E6%9F%B3%E8%8E%BA"
       }
     },
     {
@@ -614,8 +1419,23 @@
       "comNameJa": "ホンセイインコ",
       "comNameZhTw": "紅領綠鸚鵡",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/psittacula-krameri.mp3",
+        "sourceUrl": "https://xeno-canto.org/626055",
+        "catalogueNumber": "626055",
+        "recordist": "Larry Joseph",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 6,
+        "sha256": "427242319bf23add49ab28578ce0a09795db523c6571bbd80706ca7687f7fbb3",
+        "bytes": 257506,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Rose-ringed_parakeet",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%AF%E3%82%AB%E3%82%B1%E3%83%9B%E3%83%B3%E3%82%BB%E3%82%A4%E3%82%A4%E3%83%B3%E3%82%B3",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%BA%A2%E9%A2%86%E7%BB%BF%E9%B9%A6%E9%B9%89"
       }
     },
     {
@@ -625,8 +1445,23 @@
       "comNameJa": "ヤマガラ",
       "comNameZhTw": "雜色山雀",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/sittiparus-varius.mp3",
+        "sourceUrl": "https://xeno-canto.org/94562",
+        "catalogueNumber": "94562",
+        "recordist": "Tom Beeke",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/2.5/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 5,
+        "sha256": "bc0de2ecca6e4ab5f97a6952b6fafb8d40953dd58acc4035740c9a2a422901aa",
+        "bytes": 181220,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Varied_tit",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%A4%E3%83%9E%E3%82%AC%E3%83%A9",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%9D%82%E8%89%B2%E5%B1%B1%E9%9B%80"
       }
     },
     {
@@ -636,8 +1471,23 @@
       "comNameJa": "ハシビロガモ",
       "comNameZhTw": "琵嘴鴨",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/spatula-clypeata.mp3",
+        "sourceUrl": "https://xeno-canto.org/634557",
+        "catalogueNumber": "634557",
+        "recordist": "Cédric JOUVE",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 4,
+        "sha256": "ce1ce8d6250c63a89ddad4cf3fb7fedcfc74fa996a5ea81307b10b4eae2e9605",
+        "bytes": 52981,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Northern_shoveler",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%8F%E3%82%B7%E3%83%93%E3%83%AD%E3%82%AC%E3%83%A2",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%90%B5%E5%98%B4%E9%B8%AD"
       }
     },
     {
@@ -647,8 +1497,23 @@
       "comNameJa": "ムクドリ",
       "comNameZhTw": "灰椋鳥",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/spodiopsar-cineraceus.mp3",
+        "sourceUrl": "https://xeno-canto.org/805675",
+        "catalogueNumber": "805675",
+        "recordist": "Vadim Ivushkin",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 24,
+        "sha256": "806be0d03c53887ce78758adb27ce787da712861f45f79dda6c5620cfc19c6de",
+        "bytes": 774687,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/White-cheeked_starling",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%A0%E3%82%AF%E3%83%89%E3%83%AA",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%81%B0%E6%A4%8B%E9%B8%9F"
       }
     },
     {
@@ -658,8 +1523,23 @@
       "comNameJa": "キジバト",
       "comNameZhTw": "金背鳩",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/streptopelia-orientalis.mp3",
+        "sourceUrl": "https://xeno-canto.org/265902",
+        "catalogueNumber": "265902",
+        "recordist": "Mike Nelson",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 5,
+        "sha256": "5d3b007dc295c5d1cad1e8d1c418d7d98f4e5c3c8451f71eee714a8741a72e54",
+        "bytes": 89132,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Oriental_turtle_dove",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AD%E3%82%B8%E3%83%90%E3%83%88",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%B1%B1%E6%96%91%E9%B8%A0"
       }
     },
     {
@@ -669,8 +1549,23 @@
       "comNameJa": "カイツブリ",
       "comNameZhTw": "小鸊鷉",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/tachybaptus-ruficollis.mp3",
+        "sourceUrl": "https://xeno-canto.org/373560",
+        "catalogueNumber": "373560",
+        "recordist": "Roby",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "729a8b7418cd251c04769f1e6244bfa4007017db5259341b80aa7d0bc72f8d73",
+        "bytes": 87916,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Little_grebe",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%AB%E3%82%A4%E3%83%84%E3%83%96%E3%83%AA",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%B0%8F%E9%B8%8A%E9%B7%89"
       }
     },
     {
@@ -681,7 +1576,7 @@
       "comNameZhTw": "Japanese Sparrowhawk",
       "audio": {
         "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "reason": "No exact-name xeno-canto recording with an accepted licence was found."
       }
     },
     {
@@ -691,8 +1586,23 @@
       "comNameJa": "アオバト",
       "comNameZhTw": "綠鳩",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/treron-sieboldii.mp3",
+        "sourceUrl": "https://xeno-canto.org/284646",
+        "catalogueNumber": "284646",
+        "recordist": "Antony Schubert",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 7,
+        "sha256": "d431a187502bd60f3a02f487e128b60d6f8807a09691cd92a85aa0f98d9a4e98",
+        "bytes": 118401,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/White-bellied_green_pigeon",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AA%E3%83%90%E3%83%88",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%BA%A2%E7%BF%85%E7%BB%BF%E9%B8%A0"
       }
     },
     {
@@ -702,8 +1612,23 @@
       "comNameJa": "アカハラ",
       "comNameZhTw": "赤腹鶇",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/turdus-chrysolaus.mp3",
+        "sourceUrl": "https://xeno-canto.org/299721",
+        "catalogueNumber": "299721",
+        "recordist": "Vadim Ivushkin",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 10,
+        "sha256": "95cce1c44112b479ca115f4a644970cdde498b9099e45b0f744f5425ed4f98b4",
+        "bytes": 167506,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Brown-headed_thrush",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%A2%E3%82%AB%E3%83%8F%E3%83%A9",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E8%B5%A4%E8%83%B8%E9%B8%AB"
       }
     },
     {
@@ -713,8 +1638,23 @@
       "comNameJa": "ツグミ",
       "comNameZhTw": "斑點鶇",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/turdus-eunomus.mp3",
+        "sourceUrl": "https://xeno-canto.org/308861",
+        "catalogueNumber": "308861",
+        "recordist": "Albert Lastukhin",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 10,
+        "sha256": "7eed9a9614ce25b25fc1fe918267c2266c8c98e4576dafdfbc0ef7ce9c7754b1",
+        "bytes": 303891,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Dusky_thrush",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%84%E3%82%B0%E3%83%9F",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%96%91%E9%B8%AB"
       }
     },
     {
@@ -724,8 +1664,23 @@
       "comNameJa": "シロハラ",
       "comNameZhTw": "白腹鶇",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/turdus-pallidus.mp3",
+        "sourceUrl": "https://xeno-canto.org/805719",
+        "catalogueNumber": "805719",
+        "recordist": "Vadim Ivushkin",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-sa/4.0/",
+        "license": "CC BY-NC-SA",
+        "nonCommercial": true,
+        "durationSeconds": 10,
+        "sha256": "5b743f303a5e0c12c118830985cf87b66175b560c9d00edf01c02b2cf2acddba",
+        "bytes": 337484,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Pale_thrush",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B7%E3%83%AD%E3%83%8F%E3%83%A9",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E7%99%BD%E8%85%B9%E9%B8%AB"
       }
     },
     {
@@ -735,8 +1690,23 @@
       "comNameJa": "コゲラ",
       "comNameZhTw": "Japanese Pygmy Woodpecker",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/yungipicus-kizuki.mp3",
+        "sourceUrl": "https://xeno-canto.org/156016",
+        "catalogueNumber": "156016",
+        "recordist": "Frank Lambert",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 2,
+        "sha256": "7d4c55a7c59e2cb93d7cbd9bc2218ff3b6b353be577995731401bba0c56d9752",
+        "bytes": 114123,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Japanese_pygmy_woodpecker",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%82%B3%E3%82%B2%E3%83%A9",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E5%B0%8F%E6%98%9F%E5%A4%B4%E5%95%84%E6%9C%A8%E9%B8%9F"
       }
     },
     {
@@ -746,8 +1716,23 @@
       "comNameJa": "メジロ",
       "comNameZhTw": "日菲繡眼",
       "audio": {
-        "status": "unavailable",
-        "reason": "Audio has not been selected yet; run pnpm audio:select."
+        "status": "available",
+        "file": "data/audio/zosterops-japonicus.mp3",
+        "sourceUrl": "https://xeno-canto.org/69777",
+        "catalogueNumber": "69777",
+        "recordist": "Frank Lambert",
+        "licenseUrl": "https://creativecommons.org/licenses/by-nc-nd/4.0/",
+        "license": "CC BY-NC-ND",
+        "nonCommercial": true,
+        "durationSeconds": 9,
+        "sha256": "a51f0312409d72ebc70dbec0ed2be977762df346ee9e721c09f53aed80e5e865",
+        "bytes": 151980,
+        "contentType": "audio/mpeg"
+      },
+      "wikipedia": {
+        "en": "https://en.wikipedia.org/wiki/Warbling_white-eye",
+        "ja": "https://ja.wikipedia.org/wiki/%E3%83%A1%E3%82%B8%E3%83%AD",
+        "zhTw": "https://zh.wikipedia.org/zh-tw/%E6%97%A5%E8%8F%B2%E7%B9%A1%E7%9C%BC"
       }
     }
   ]
