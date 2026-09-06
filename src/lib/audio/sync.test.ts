@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  normalizeConvexDeploymentUrl,
-  syncAudioManifest,
-  type AudioSyncAdapters,
-} from "./sync";
+import { syncAudioManifest, type AudioSyncAdapters } from "./sync";
 import type { AudioManifest } from "./types";
 
 const manifest: AudioManifest = {
@@ -108,13 +104,5 @@ describe("syncAudioManifest", () => {
       unavailable: 1,
       totalBytes: 7,
     });
-  });
-});
-
-describe("normalizeConvexDeploymentUrl", () => {
-  it("removes trailing slashes before the HTTP client appends its API path", () => {
-    expect(normalizeConvexDeploymentUrl("https://example.convex.cloud/")).toBe(
-      "https://example.convex.cloud",
-    );
   });
 });

@@ -23,11 +23,6 @@ export type AudioSyncFileReport = {
   bytes: number;
 };
 
-/** ConvexHttpClient appends /api paths, so deployment URLs cannot end in /. */
-export function normalizeConvexDeploymentUrl(url: string): string {
-  return url.replace(/\/+$/, "");
-}
-
 export type AudioSyncReport = {
   files: AudioSyncFileReport[];
   uploaded: number;
