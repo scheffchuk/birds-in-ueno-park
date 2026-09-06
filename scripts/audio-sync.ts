@@ -4,7 +4,11 @@ import { ConvexHttpClient } from "convex/browser";
 import { api } from "../convex/_generated/api";
 import type { Id } from "../convex/_generated/dataModel";
 import { assertManifestCoverage } from "../src/lib/audio/generator";
-import { syncAudioManifest, type ExistingAudioState } from "../src/lib/audio/sync";
+import {
+  normalizeConvexDeploymentUrl,
+  syncAudioManifest,
+  type ExistingAudioState,
+} from "../src/lib/audio/sync";
 import type { AudioManifest, GuideSpeciesForAudio } from "../src/lib/audio/types";
 
 const root = resolve(import.meta.dirname, "..");
@@ -49,7 +53,7 @@ async function main() {
 
   const manifest = readManifest();
   assertManifestCoverage(manifest, readGuideSpecies());
-  const client = new ConvexHttpClient(url);
+  const client = new ConvexHttpClient(normalizeConvexDeploymentUrl(url));
 
   const report = await syncAudioManifest(manifest, {
     listExisting: async (slugs): Promise<Record<string, ExistingAudioState>> => {
