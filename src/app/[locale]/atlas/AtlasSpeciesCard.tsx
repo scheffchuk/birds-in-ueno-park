@@ -67,9 +67,7 @@ export function AtlasSpeciesCard({
       size="sm"
       className={cn(
         "atlas-card-enter h-full overflow-hidden ring-1 ring-hairline shadow-none",
-        "transition-transform duration-200 ease-out",
         "focus-within:ring-ring/50",
-        "active:scale-[0.98]",
       )}
       style={{ animationDelay: `${delayMs}ms` }}
     >
