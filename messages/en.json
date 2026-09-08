@@ -87,16 +87,16 @@
       "art": {
         "title": "Illustrations",
         "body": "The cutouts use a bird-and-flower print style. They’re AI-generated from anatomy references and reviewed by hand. The page layout and interaction also take cues from AvianVisitors."
-      },
-      "audio": {
-        "title": "Audio credits",
-        "body": "Bird recordings are selected from xeno-canto and remain unchanged from the source. Each recording’s recordist, catalogue number, source, and exact Creative Commons licence are listed below.",
-        "recordist": "Recordist",
-        "catalogue": "Catalogue",
-        "source": "Source recording",
-        "license": "Licence",
-        "none": "Audio credits will appear here after the first selection run."
       }
     }
+  },
+  "Audio": {
+    "title": "Audio credits",
+    "body": "Bird recordings are selected from xeno-canto and remain unchanged from the source. Each recording’s recordist, catalogue number, source, and exact Creative Commons licence are listed below.",
+    "recordist": "Recordist",
+    "catalogue": "Catalogue",
+    "source": "Source recording",
+    "license": "Licence",
+    "none": "Audio credits will appear here after the first selection run."
   }
 }

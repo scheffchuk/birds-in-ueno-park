@@ -14,19 +14,21 @@ describe("site attribution", () => {
     expect(SITE_FOOTER.authorUrl).toMatch(/scheff\.dev/);
   });
 
-  it("about message catalogs cover about, data, art, and audio in all Locales", () => {
+  it("message catalogs cover about, data, art, and audio in all Locales", () => {
     for (const catalog of [en, ja, zhTw]) {
       const sections = catalog.About.sections;
-      expect(Object.keys(sections)).toEqual(["about", "data", "art", "audio"]);
+      expect(Object.keys(sections)).toEqual(["about", "data", "art"]);
       for (const section of Object.values(sections)) {
         expect(section.title.length).toBeGreaterThan(0);
         expect(section.body.length).toBeGreaterThan(40);
       }
-      expect(sections.audio.recordist.length).toBeGreaterThan(0);
-      expect(sections.audio.catalogue.length).toBeGreaterThan(0);
-      expect(sections.audio.source.length).toBeGreaterThan(0);
-      expect(sections.audio.license.length).toBeGreaterThan(0);
-      expect(sections.audio.none.length).toBeGreaterThan(0);
+      expect(catalog.Audio.title.length).toBeGreaterThan(0);
+      expect(catalog.Audio.body.length).toBeGreaterThan(40);
+      expect(catalog.Audio.recordist.length).toBeGreaterThan(0);
+      expect(catalog.Audio.catalogue.length).toBeGreaterThan(0);
+      expect(catalog.Audio.source.length).toBeGreaterThan(0);
+      expect(catalog.Audio.license.length).toBeGreaterThan(0);
+      expect(catalog.Audio.none.length).toBeGreaterThan(0);
       expect(catalog.Footer.audioCredits.length).toBeGreaterThan(0);
     }
   });

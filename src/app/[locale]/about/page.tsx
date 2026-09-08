@@ -6,17 +6,10 @@ import { LocaleChromeBar, LocaleChromeBarFallback } from "@/components/site/Loca
 import { LocaleSiteFooter } from "@/components/site/LocaleSiteFooter";
 import { SiteFooterFallback } from "@/components/site/SiteFooter";
 import { SeasonLink } from "@/components/season/SeasonLink";
-import { AudioCredits } from "@/components/site/AudioCredits";
 import { loadMessages } from "@/i18n/load-messages";
 import type { AppLocale } from "@/i18n/routing";
-import audioManifestData from "../../../../data/audio-manifest.json";
-import { audioCreditsForManifest } from "@/lib/audio/credits";
-import type { AudioManifest } from "@/lib/audio/types";
 
-const audioManifest = audioManifestData as AudioManifest;
-const audioCredits = audioCreditsForManifest(audioManifest);
-
-const SECTION_IDS = ["about", "data", "art", "audio"] as const;
+const SECTION_IDS = ["about", "data", "art"] as const;
 
 export async function generateMetadata(): Promise<Metadata> {
   const tMeta = await getTranslations("Meta");
@@ -51,7 +44,6 @@ async function AboutChrome() {
 
 async function AboutBody() {
   const t = await getTranslations("About");
-  const locale = (await getLocale()) as AppLocale;
 
   return (
     <>
@@ -63,19 +55,6 @@ async function AboutBody() {
           <p className="text-base leading-relaxed text-ink-2">
             {t(`sections.${id}.body`)}
           </p>
-          {id === "audio" ? (
-            <AudioCredits
-              locale={locale}
-              credits={audioCredits}
-              labels={{
-                recordist: t("sections.audio.recordist"),
-                catalogue: t("sections.audio.catalogue"),
-                source: t("sections.audio.source"),
-                license: t("sections.audio.license"),
-                none: t("sections.audio.none"),
-              }}
-            />
-          ) : null}
         </section>
       ))}
     </>

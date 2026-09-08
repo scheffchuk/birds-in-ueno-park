@@ -28,11 +28,11 @@ vi.mock("@/i18n/load-messages", () => ({
 
 describe("SiteFooter", () => {
   it.each(["en", "ja", "zh-tw"] as const)(
-    "links %s to its localized Audio credits section",
+    "links %s to its localized Audio credits page",
     async (locale) => {
       const markup = renderToStaticMarkup(await SiteFooter({ locale }));
 
-      expect(markup).toContain(`href="/${locale}/about#audio"`);
+      expect(markup).toContain(`href="/${locale}/audio"`);
       expect(markup).toContain(footerCopy[locale].audioCredits);
     },
   );

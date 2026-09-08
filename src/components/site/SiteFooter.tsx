@@ -41,7 +41,7 @@ export async function SiteFooter({ locale }: { locale: AppLocale }) {
           </a>
           {" · "}
           <a
-            href={`/${locale}/about#audio`}
+            href={`/${locale}/audio`}
             className="underline decoration-hairline underline-offset-4 transition-colors hover:text-ink"
           >
             {t.audioCredits}
