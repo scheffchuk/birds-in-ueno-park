@@ -87,7 +87,7 @@ export function AtlasSpeciesCard({
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 288px"
                 loading={index < 4 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
-                className="object-contain"
+                className="object-contain scale-[0.9]"
               />
             ) : (
               <div
@@ -103,7 +103,7 @@ export function AtlasSpeciesCard({
           </CardTitle>
         </CardHeader>
       </Link>
-      <div className="px-(--card-spacing)">
+      <div className="-mt-2 px-(--card-spacing)">
         <CardDescription className="truncate text-xs text-ink-soft italic">
           {sciName}
         </CardDescription>

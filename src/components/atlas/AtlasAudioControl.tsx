@@ -1,8 +1,18 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PauseIcon, PlayIcon, RotateCcwIcon } from "lucide-react";
+import {
+  AudioLinesIcon,
+  LoaderCircleIcon,
+  RotateCcwIcon,
+  SquareIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type AudioControlState = "idle" | "loading" | "playing" | "paused" | "error";
 
@@ -126,29 +136,39 @@ export function AtlasAudioControl({
         : state === "playing"
           ? labels.pause
           : labels.play;
-  const Icon = unavailable
-    ? PlayIcon
-    : state === "error"
-      ? RotateCcwIcon
-      : state === "playing"
-        ? PauseIcon
-        : PlayIcon;
+  const Icon =
+    unavailable
+      ? AudioLinesIcon
+      : state === "loading"
+        ? LoaderCircleIcon
+        : state === "error"
+          ? RotateCcwIcon
+          : state === "playing"
+            ? SquareIcon
+            : AudioLinesIcon;
 
   return (
     <>
-      <Button
-        type="button"
-        variant="ghost"
-        size="sm"
-        disabled={unavailable || state === "loading"}
-        aria-label={label}
-        aria-busy={state === "loading"}
-        onClick={() => void handleClick()}
-        className="h-7 gap-1.5 px-2 text-[0.7rem] text-ink-soft hover:text-ink"
-      >
-        <Icon aria-hidden />
-        <span>{label}</span>
-      </Button>
+      <Tooltip>
+        <TooltipTrigger render={<span className="inline-flex" />}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            disabled={unavailable || state === "loading"}
+            aria-label={label}
+            aria-busy={state === "loading"}
+            onClick={() => void handleClick()}
+            className="text-ink-soft hover:text-ink"
+          >
+            <Icon
+              aria-hidden
+              className={state === "loading" ? "animate-spin" : undefined}
+            />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>{label}</TooltipContent>
+      </Tooltip>
       <audio
         ref={registerAudio}
         preload="none"

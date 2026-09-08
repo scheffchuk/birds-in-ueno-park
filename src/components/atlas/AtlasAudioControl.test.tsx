@@ -77,6 +77,8 @@ describe("AtlasAudioControl", () => {
     expect(audio().getAttribute("src")).toBeNull();
     expect(audio().getAttribute("preload")).toBe("none");
     expect(button().getAttribute("aria-label")).toBe("Play audio");
+    expect(button().textContent).toBe("");
+    expect(button().querySelector("svg")).not.toBeNull();
 
     await act(async () => {
       button().click();
