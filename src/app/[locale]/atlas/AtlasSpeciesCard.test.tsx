@@ -86,6 +86,14 @@ afterEach(() => {
 });
 
 describe("AtlasSpeciesCard", () => {
+  it("does not shrink the card on press", () => {
+    const container = renderCard();
+    const card = container.querySelector('[data-slot="card"]');
+
+    expect(card?.className).not.toContain("active:scale");
+    expect(card?.className).not.toContain("transition-transform");
+  });
+
   it("keeps the detail link on the illustration and Locale common name", () => {
     const container = renderCard();
     const detailLink = container.querySelector("a") as HTMLAnchorElement;
