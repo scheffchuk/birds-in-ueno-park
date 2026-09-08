@@ -173,7 +173,7 @@
 
 @media (hover: hover) and (pointer: fine) {
   .atlas-card-enter:hover:not(:active) {
-    transform: scale(0.99);
+    transform: translateY(-1px);
   }
 }
 
