@@ -41,7 +41,7 @@ async function HomeChrome() {
       <LocaleChromeBar
         className="fixed top-4 right-4 z-30 md:top-5 md:right-7"
         trailing={
-          <>
+          <div className="flex items-center gap-1">
             <SeasonLink
               pathname="/atlas"
               aria-label={copy.atlas}
@@ -54,7 +54,7 @@ async function HomeChrome() {
               <BookOpenIcon />
             </SeasonLink>
             <LocaleSwitcher />
-          </>
+          </div>
         }
       />
 
@@ -77,7 +77,7 @@ function HomeChromeFallback() {
   return (
     <>
       <div
-        className="fixed top-4 right-4 z-30 flex items-center gap-2 md:top-5 md:right-7"
+        className="fixed top-4 right-4 z-30 flex items-center gap-1 md:top-5 md:right-7"
         aria-hidden
       >
         <div className="size-8 rounded-lg bg-paper-2 shadow-(--recess)" />
