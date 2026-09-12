@@ -107,7 +107,7 @@ export function AtlasSpeciesCard({
         </CardDescription>
       </div>
       <Separator className="mx-auto w-[90%] self-center bg-hairline opacity-50 data-horizontal:w-[90%]" />
-      <div className="flex flex-wrap items-center gap-1 px-3 py-2">
+      <div className="flex items-center justify-between px-3 py-2">
         <AtlasAudioControl
           audioUrl={audio?.url}
           available={hasAudio}
@@ -124,30 +124,32 @@ export function AtlasSpeciesCard({
           onError={onError}
           onAudioElement={onAudioElement}
         />
-        {wikipediaUrl ? (
-          <a
-            href={wikipediaUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${t("wikipedia")} (${t("opensNewTab")})`}
-            className="inline-flex h-7 items-center gap-1 rounded-lg px-2 text-[0.7rem] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-          >
-            <span>{t("wikipedia")}</span>
-            <ExternalLinkIcon aria-hidden className="size-3" />
-          </a>
-        ) : null}
-        {ebird?.url ? (
-          <a
-            href={ebird.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label={`${t("ebird")} (${t("opensNewTab")})`}
-            className="inline-flex h-7 items-center gap-1 rounded-lg px-2 text-[0.7rem] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
-          >
-            <span>{t("ebird")}</span>
-            <ExternalLinkIcon aria-hidden className="size-3" />
-          </a>
-        ) : null}
+        <div className="flex items-center gap-1">
+          {wikipediaUrl ? (
+            <a
+              href={wikipediaUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${t("wikipedia")} (${t("opensNewTab")})`}
+              className="inline-flex h-7 items-center gap-1 rounded-lg px-2 text-[0.7rem] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <span>{t("wikipedia")}</span>
+              <ExternalLinkIcon aria-hidden className="size-3" />
+            </a>
+          ) : null}
+          {ebird?.url ? (
+            <a
+              href={ebird.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label={`${t("ebird")} (${t("opensNewTab")})`}
+              className="inline-flex h-7 items-center gap-1 rounded-lg px-2 text-[0.7rem] text-ink-soft underline-offset-4 transition-colors hover:text-ink hover:underline focus-visible:ring-3 focus-visible:ring-ring/50"
+            >
+              <span>{t("ebird")}</span>
+              <ExternalLinkIcon aria-hidden className="size-3" />
+            </a>
+          ) : null}
+        </div>
       </div>
     </Card>
   );

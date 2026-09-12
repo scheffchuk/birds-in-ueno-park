@@ -115,6 +115,9 @@ describe("AtlasSpeciesCard", () => {
     expect(buttons[0]?.textContent).toBe("");
     expect(buttons[0]?.querySelector("svg")).not.toBeNull();
     expect(container.querySelector("img")?.className).toContain("scale-[0.9]");
+    expect(
+      container.querySelector(".flex.items-center.justify-between"),
+    ).not.toBeNull();
     expect(links.map((link) => link.textContent?.trim())).toEqual([
       "スズメ",
       "Wikipedia",
