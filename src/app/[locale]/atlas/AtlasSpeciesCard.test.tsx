@@ -92,6 +92,9 @@ describe("AtlasSpeciesCard", () => {
 
     expect(card?.className).not.toContain("active:scale");
     expect(card?.className).not.toContain("transition-transform");
+    expect(card?.className).toContain("shadow-[var(--raised)]");
+    expect(card?.className).not.toContain("ring-hairline");
+    expect(card?.className).not.toContain("focus-within:");
   });
 
   it("keeps the detail link on the illustration and Locale common name", () => {
@@ -114,7 +117,9 @@ describe("AtlasSpeciesCard", () => {
     expect(buttons[0]?.getAttribute("aria-label")).toBe("Play audio");
     expect(buttons[0]?.textContent).toBe("");
     expect(buttons[0]?.querySelector("svg")).not.toBeNull();
-    expect(container.querySelector("img")?.className).toContain("scale-[0.9]");
+    expect(container.querySelector("img")?.className).toContain(
+      "atlas-card-specimen",
+    );
     expect(
       container.querySelector(".flex.items-center.justify-between"),
     ).not.toBeNull();

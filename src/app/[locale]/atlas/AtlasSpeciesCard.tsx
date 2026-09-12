@@ -13,7 +13,6 @@ import { Separator } from "@/components/ui/separator";
 import { Link } from "@/i18n/navigation";
 import { hrefWithSeason } from "@/lib/season/url";
 import type { SeasonFilter } from "@/lib/season/types";
-import { cn } from "@/lib/utils";
 import { AtlasAudioControl } from "@/components/atlas/AtlasAudioControl";
 import { wikipediaUrlForLocale } from "@/lib/audio/links";
 import type {
@@ -65,15 +64,12 @@ export function AtlasSpeciesCard({
   return (
     <Card
       size="sm"
-      className={cn(
-        "atlas-card-enter h-full overflow-hidden ring-1 ring-hairline shadow-none",
-        "focus-within:ring-ring/50",
-      )}
+      className="atlas-card-enter h-full overflow-hidden ring-0 shadow-[var(--raised)]"
       style={{ animationDelay: `${delayMs}ms` }}
     >
       <Link
         href={detailHref}
-        className="block rounded-t-xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
+        className="atlas-card-detail block rounded-t-xl outline-none focus-visible:ring-3 focus-visible:ring-ring/50"
       >
         <div className="px-(--card-spacing) pt-(--card-spacing)">
           <div className="relative aspect-square w-full overflow-hidden">
@@ -85,18 +81,18 @@ export function AtlasSpeciesCard({
                 sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 288px"
                 loading={index < 4 ? "eager" : "lazy"}
                 fetchPriority={index === 0 ? "high" : "auto"}
-                className="object-contain scale-[0.9]"
+                className="atlas-card-specimen object-contain"
               />
             ) : (
               <div
-                className="absolute inset-[12%] rounded-[40%_40%_35%_35%] bg-silhouette/25"
+                className="atlas-card-specimen absolute inset-[12%] rounded-[40%_40%_35%_35%] bg-silhouette/25"
                 aria-hidden
               />
             )}
           </div>
         </div>
         <CardHeader className="gap-0.5">
-          <CardTitle className="line-clamp-2 text-sm leading-snug text-ink">
+          <CardTitle className="atlas-card-title line-clamp-2 text-sm leading-snug text-ink underline-offset-4 decoration-hairline">
             {comName}
           </CardTitle>
         </CardHeader>
